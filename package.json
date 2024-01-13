@@ -23,6 +23,7 @@
     "core-js": "^3.8.3",
     "devextreme": "23.2.3",
     "devextreme-vue": "23.2.3",
+    "git": "^0.1.5",
     "pinia": "^2.1.7",
     "vue": "^3.3.11",
     "vue-router": "^4.2.5"
