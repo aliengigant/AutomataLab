@@ -174,7 +174,9 @@
           <grammar-component></grammar-component>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          <button type="button" class="btn btn-primary" @click="saveGrammar">
+            Speichern</button
+          ><button type="button" class="btn btn-secondary" data-dismiss="modal">
             Close
           </button>
         </div>
@@ -218,10 +220,15 @@
 <script setup>
 import { defineProps, ref } from "vue";
 import { useAutomataElementsStore } from "@/store/automataElementsStore";
+import { usetransitionTableElementsStore } from "@/store/TransitionTabelElementsStore";
 import { useRouter } from "vue-router";
 import tableComponent from "./automat/transitionsTabelleComponent.vue";
 import grammarComponent from "./grammar/grammarComponent.vue";
+import { storageHooks } from "@/hooks/transitionTableStorageHook";
 
+const { SaveTransitionTable } = storageHooks();
+
+const table = usetransitionTableElementsStore();
 const automat = useAutomataElementsStore();
 const router = useRouter();
 var ranId = () => Math.floor(Math.random() * 1000);
@@ -265,6 +272,12 @@ function newAutomata() {
   router.push({ path: "/automat", name: "automatPage", params: { id: id } });
   automat.getData();
   alert("Neuer Automat wurde erstellt!");
+}
+
+//Speicher die Grammatik um auch auf der Grammatikseite diese auszuwählen
+function saveGrammar() {
+  //Speicher/Update erstmal die Transitionstabelle ins LocalStorage
+  SaveTransitionTable(table.getElements);
 }
 </script>
 

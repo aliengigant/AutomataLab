@@ -5,12 +5,10 @@ nutzen können
 */
 
 import { defineStore } from "pinia";
-import { storageHooks } from "@/hooks/transitionTableStorageHook";
-
-const { SaveTransitionTableChanges } = storageHooks();
 
 class transitionTable {
-  constructor(name, type, automat_id, alphabet, nodes) {
+  constructor(id, name, type, automat_id, alphabet, nodes) {
+    this.id = id;
     this.name = name;
     this.type = type;
     this.automat_id = automat_id;
@@ -23,6 +21,7 @@ export const usetransitionTableElementsStore = defineStore({
   id: "transitionTableElement",
   state: () => ({
     elements: {
+      id: null,
       name: null,
       type: null,
       automat_id: null,
@@ -104,14 +103,21 @@ export const usetransitionTableElementsStore = defineStore({
           row.push({ variable: s.state_label, rule: rule });
         }
 
-        SaveTransitionTableChanges(row, "0");
         return row;
       }
       return "kein wert";
     },
   },
   actions: {
-    addTransitionTable(name, type, automat_id, alphabet, nodes, transition) {
+    addTransitionTable(
+      id,
+      name,
+      type,
+      automat_id,
+      alphabet,
+      nodes,
+      transition
+    ) {
       // Überprüfen Sie, ob das Array "nodes" existiert und mindestens ein Element enthält
       if (Array.isArray(nodes) && nodes.length > 0) {
         // Erstellen Sie ein neues Array mit den gewünschten Werten
@@ -130,8 +136,12 @@ export const usetransitionTableElementsStore = defineStore({
                 .map((mn) => mn.label)[0],
             })),
         }));
+        if (id == null) {
+          id = automat_id;
+        }
 
         const newTable = new transitionTable(
+          id,
           name,
           type,
           automat_id,

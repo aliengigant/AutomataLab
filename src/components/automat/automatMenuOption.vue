@@ -134,10 +134,9 @@ watch([() => getNodes.value, () => getEdges.value], ([nodes, edges]) => {
 });
 
 function saveTransTable() {
-  //   console.log(transitionTablle.getElements);
-  //   console.log(transitionTablle.getVariable);
   //State speichern
   transitionTablle.addTransitionTable(
+    automat.value.id,
     automat.value.name,
     automat.value.type,
     automat.value.id,
