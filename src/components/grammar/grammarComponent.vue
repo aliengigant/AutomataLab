@@ -34,8 +34,7 @@ const transitionTablle = usetransitionTableElementsStore();
 
 //String für die Darstellung beim Tupel
 const variablenString = computed(() => transitionTablle.getVariableString);
-const rows = computed(() => transitionTablle.makeGrammarRowArray)
-
+const rows = computed(() => transitionTablle.getGrammarRowArray)
 </script>
 
 <style scoped>

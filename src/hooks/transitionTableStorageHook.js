@@ -7,7 +7,9 @@ export const storageHooks = () => {
     const localTransitionTable = localStorage.getItem("TransitionTable");
     if (localTransitionTable) {
       const TransitionTableArray = JSON.parse(localTransitionTable);
-      const foundTransitionTable = TransitionTableArray.find((TransitionTable) => TransitionTable.id === id);
+      const foundTransitionTable = TransitionTableArray.find(
+        (TransitionTable) => TransitionTable.id === id
+      );
       return foundTransitionTable; // Wenn die ID nicht gefunden wurde, wird null zurückgegeben
     }
     return null; // Wenn localAutomata nicht existiert, wird ebenfalls null zurückgegeben
@@ -34,7 +36,10 @@ export const storageHooks = () => {
         parsedData[indexToUpdate] = updatedAutomat;
 
         // Die aktualisierten Daten zurück in den Local Storage speichern
-        localStorage.setItem("localTransitionTable", JSON.stringify(parsedData));
+        localStorage.setItem(
+          "localTransitionTable",
+          JSON.stringify(parsedData)
+        );
 
         console.log("Eintrag erfolgreich aktualisiert.");
       } else {
@@ -46,7 +51,10 @@ export const storageHooks = () => {
   }
 
   function updateStorage(updatedStorage) {
-    localStorage.setItem("localTransitionTable", JSON.stringify(updatedStorage));
+    localStorage.setItem(
+      "localTransitionTable",
+      JSON.stringify(updatedStorage)
+    );
   }
 
   function makeArray(stringObj) {

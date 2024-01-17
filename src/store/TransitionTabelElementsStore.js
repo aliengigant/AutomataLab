@@ -1,4 +1,13 @@
+/*
+Die Idee dieser Store ist es, dass wir einen Tabelle haben,
+mit der wir auch andere Module, wie Grammatik und Tabelle,
+nutzen können
+*/
+
 import { defineStore } from "pinia";
+import { storageHooks } from "@/hooks/transitionTableStorageHook";
+
+const { SaveTransitionTableChanges } = storageHooks();
 
 class transitionTable {
   constructor(name, type, automat_id, alphabet, nodes) {
@@ -13,7 +22,20 @@ class transitionTable {
 export const usetransitionTableElementsStore = defineStore({
   id: "transitionTableElement",
   state: () => ({
-    elements: [],
+    elements: {
+      name: null,
+      type: null,
+      automat_id: null,
+      alphabet: null,
+      states: [
+        {
+          state_id: null,
+          state_label: null,
+          state_type: null,
+          transitions: [],
+        },
+      ],
+    },
   }),
   getters: {
     getElements(state) {
@@ -22,10 +44,8 @@ export const usetransitionTableElementsStore = defineStore({
     getVariableString(state) {
       let result = " ";
 
-      for (const table of state.elements) {
-        for (const stateObj of table.states) {
-          result = result + stateObj.state_label;
-        }
+      for (const stateObj of state.elements.states) {
+        result = result + stateObj.state_label;
       }
 
       return result;
@@ -45,19 +65,23 @@ export const usetransitionTableElementsStore = defineStore({
     },
     getAlphabet(state) {
       // Wenn Sie auf das Alphabet des ersten Elements im Array zugreifen möchten
-      if (state.elements.length > 0) {
-        return state.elements[0].alphabet;
+      if (state.elements.alphabet != null) {
+        const alphabetArray = state.elements.alphabet.slice(1, -1).split(",");
+        return alphabetArray;
       }
       return null; // Oder eine Standardwert, wenn das Array leer ist
     },
-    makeGrammarRowArray(state) {
+    //Erstelle aus den daten der State eine benutzbare Array-Struktur für den Grammatik teil (Automat zu Grammatik konvetierung)
+    getGrammarRowArray(state) {
       // Unsere Array-Struktur
       // const rows = [
-      //   { variable: ["S"], rule: ["aS", "b", "c"] },
-      //   { variable: ["A"], rule: ["aS", "b"] },
-      //   { variable: ["X"], rule: ["aS", "b"] },
+      //   { variable: ["S"], rule: ["aS", "b", "c"], start: true, end: false },
+      //   { variable: ["A"], rule: ["aS", "b"], start: false, end: false },
+      //   { variable: ["X"], rule: ["aS", "b"], start: false, end: false },
       // ];
-      const table = state.elements[0];
+
+      //Da nur ein element gleichzeitig erzeugt wird, greifen wir immer auf den ersten Eintrag
+      const table = state.elements;
 
       if (table) {
         const states = table.states;
@@ -74,11 +98,13 @@ export const usetransitionTableElementsStore = defineStore({
               return Translabel + target_label;
             });
           } else {
-            // Wenn s.transitions leer ist, fügen Sie einen Standardwert "empty" hinzu
-            rule.push("empty");
+            // Wenn s.transitions leer ist, fügen Sie einen Standardwert "ESPILON" hinzu
+            rule.push("EPSILON");
           }
           row.push({ variable: s.state_label, rule: rule });
         }
+
+        SaveTransitionTableChanges(row, "0");
         return row;
       }
       return "kein wert";
@@ -112,12 +138,18 @@ export const usetransitionTableElementsStore = defineStore({
           alphabet,
           nodeIds
         );
-        this.elements.pop();
-        this.elements.push(newTable);
+        this.elements;
+        this.elements = newTable;
+        console.log(newTable);
       } else {
         // Behandeln Sie den Fall, dass das Array leer ist oder nicht existiert
         console.error('Ungültiges Array für "nodes" übergeben');
       }
+    },
+    //Speichere beim Aufruf den gewünschten Store Element in die Storage(Langzeitspeicher)
+    saveToStorage(state) {
+      console.log("da ist ein state in TransitionState");
+      localStorage.setItem("localTransitionTable", state.elements);
     },
   },
 });

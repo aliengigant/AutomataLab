@@ -6,22 +6,22 @@
         <thead>
           <tr>
             <th scope="col">{{ automat.type }}</th>
-            <th v-for="item in automataAlphabet" :key="item.id" scope="col">
-              {{ item.value }}
+            <th v-for="item in transitionTablle.getAlphabet" :key="item.id" scope="col">
+              {{ item }}
             </th>
           </tr>
         </thead>
         <tbody>
           <!-- Iteriere durch die Daten und erstelle dynamisch Tabellenzeilen -->
-          <tr v-for="node in nodes" :key="node.id">
+          <tr v-for="node in nodes.states" :key="node.state_id">
             <td>
               <i
                 class="fa-solid fa-arrow-right-long"
-                v-if="node.data.state == 'start'"
+                v-if="node.state_type == 'start'"
               ></i
               ><i
                 class="fa-solid fa-asterisk"
-                v-if="node.data.state == 'end'"
+                v-if="node.state_type == 'end'"
               ></i>
               {{ node.label }}
             </td>
@@ -46,8 +46,8 @@ import { useVueFlow } from "@vue-flow/core";
 
 const transitionTablle = usetransitionTableElementsStore();
 
-const { getNodes, getEdges, findNode } = useVueFlow();
-const nodes = ref(getNodes);
+const { getEdges, findNode } = useVueFlow();
+const nodes = ref(transitionTablle.getElements);
 
 const route = useRoute();
 const { findAutomataById, makeArray } = storageHooks();
