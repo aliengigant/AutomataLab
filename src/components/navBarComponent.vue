@@ -22,7 +22,7 @@
             <a class="nav-link" href="/automatOverview">Automaten</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/grammatik">Grammatik</a>
+            <a class="nav-link" href="/grammatikOverview">Grammatik</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/regAusdruck">Regulärer Ausdrücke</a>

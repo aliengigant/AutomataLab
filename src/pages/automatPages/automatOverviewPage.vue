@@ -22,7 +22,7 @@
 </template>
 
 <script setup>
-import modulLayout from "../layouts/modulLayout.vue";
+import modulLayout from "../../layouts/modulLayout.vue";
 import popUpComponent from "@/components/popUpComponent.vue";
 import automataOverviewCard from "@/components/automat/automataOverviewCard.vue";
 import { useModalNameStore } from "@/store/modalNameStore";

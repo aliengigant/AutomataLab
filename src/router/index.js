@@ -1,8 +1,9 @@
 import { createRouter, createWebHistory } from "vue-router";
 import homePage from "@/pages/homePage.vue";
-import automatPage from "@/pages/automatPage";
-import automatOverviewPage from "@/pages/automatOverviewPage";
-import grammatikPage from "@/pages/grammatikPage";
+import automatPage from "@/pages/automatPages/automatPage";
+import automatOverviewPage from "@/pages/automatPages/automatOverviewPage";
+import grammatikOverviewPage from "@/pages/grammatikPages/grammatikOverviewPage";
+import grammatikPage from "@/pages/grammatikPages/grammatikPage";
 import regAusdruckPage from "@/pages/regAusdruckPage";
 
 const router = createRouter({
@@ -24,8 +25,14 @@ const router = createRouter({
       component: automatOverviewPage,
     },
     {
-      path: "/grammatik",
+      path: "/grammatikOverview",
+      component: grammatikOverviewPage,
+    },
+    {
+      path: "/grammatik/:id",
+      name: "grammatikPage",
       component: grammatikPage,
+      props: true,
     },
     {
       path: "/regAusdruck",
