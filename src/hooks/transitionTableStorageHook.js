@@ -19,31 +19,36 @@ export const storageHooks = () => {
   //Diese wird anstelle des Automatens mit der ID ersetzt
   function SaveTransitionTable(transitionTable) {
     const localData = localStorage.getItem("localTransitionTable");
+    // Die vorhandenen Daten parsen
+    const existingData = JSON.parse(localData) || []; // Stelle sicher, dass existingData immer ein Array ist
+  
     let id = null;
     if (transitionTable.automat_id != null) {
       id = transitionTable.automat_id;
     } else {
       id = transitionTable.id;
     }
-    console.log(id)
-    if (localData) {
-      // Schon existierende Daten aus der Storage ziehen
-      const existingData = JSON.parse(localData); // Hier solltest du bereits JSON.parse verwenden
-      let updatedData = [];
-
-      if (Array.isArray(existingData)) {
-        // Stelle sicher, dass es sich um ein Array handelt
-        updatedData = existingData;
-      } else {
-        console.error("Fehler beim Parsen der vorhandenen Daten.");
-        return;
-      }
-
-      updatedData.push(transitionTable);
-      setStorage(updatedData);
+  
+    // Index des zu aktualisierenden Eintrags finden
+    const indexToUpdate = existingData.findIndex((item) => item.id === id);
+    if (indexToUpdate !== -1) {
+      // Eintrag ersetzen (oder aktualisieren)
+      existingData[indexToUpdate] = transitionTable;
+  
+      // Die aktualisierten Daten zurück in den Local Storage speichern
+      localStorage.setItem("localTransitionTable", JSON.stringify(existingData));
+  
+      alert("Eintrag erfolgreich aktualisiert.");
     } else {
-      console.log("Keine Daten im Local Storage.");
-      setStorage([transitionTable]); // Achte darauf, dass du ein Array mit dem neuen Eintrag erstellst
+      console.log("Eintrag mit der angegebenen ID nicht gefunden.");
+  
+      // Eintrag hinzufügen, wenn er nicht gefunden wurde
+      existingData.push(transitionTable);
+  
+      // Die aktualisierten Daten zurück in den Local Storage speichern
+      localStorage.setItem("localTransitionTable", JSON.stringify(existingData));
+  
+      console.log("Eintrag erfolgreich hinzugefügt.");
     }
   }
 
