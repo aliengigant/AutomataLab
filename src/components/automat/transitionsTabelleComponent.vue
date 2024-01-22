@@ -13,7 +13,7 @@
         </thead>
         <tbody>
           <!-- Iteriere durch die Daten und erstelle dynamisch Tabellenzeilen -->
-          <tr v-for="node in nodes.states" :key="node.state_id">
+          <tr v-for="node in transitionTablle.getNodes" :key="node.state_id">
             <td>
               <i
                 class="fa-solid fa-arrow-right-long"
@@ -23,10 +23,10 @@
                 class="fa-solid fa-asterisk"
                 v-if="node.state_type == 'end'"
               ></i>
-              {{ node.label }}
+              {{ node.state_label }}
             </td>
             <td v-for="word in automataAlphabet" :key="word.id">
-              {{ getTransition(node.id, word.value) }}
+              {{ getTransition(node.state_id, word.value) }}
             </td>
           </tr>
         </tbody>
@@ -47,7 +47,7 @@ import { useVueFlow } from "@vue-flow/core";
 const transitionTablle = usetransitionTableElementsStore();
 
 const { getEdges, findNode } = useVueFlow();
-const nodes = ref(transitionTablle.getElements);
+const nodes = ref(transitionTablle.getNodes);
 
 const route = useRoute();
 const { findAutomataById, makeArray } = storageHooks();
@@ -56,25 +56,6 @@ const automatID = route.params.id || null;
 
 const automat = ref(null);
 let automataAlphabet = ref([]);
-// const formData = ref({
-//   id: 2,
-//   name: "",
-//   type: "",
-//   automat_id: "",
-//   alphabet: [],
-//   states: [
-//     {
-//       state: "",
-//       state_type: "",
-//       transitions: [
-//         {
-//           target: "",
-//           transition: "",
-//         },
-//       ],
-//     },
-//   ],
-// });
 
 if (automatID) {
   automat.value = findAutomataById(automatID);

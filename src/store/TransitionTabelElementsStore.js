@@ -70,6 +70,19 @@ export const usetransitionTableElementsStore = defineStore({
       }
       return null; // Oder eine Standardwert, wenn das Array leer ist
     },
+    getNodes(state) {
+      const table = state.elements;
+
+      if (table) {
+        const states = table.states;
+        let nodes = [];
+        for (const sta of states) {
+          nodes.push(sta);
+        }
+        console.log(nodes);
+        return nodes;
+      }
+    },
     //Erstelle aus den daten der State eine benutzbare Array-Struktur für den Grammatik teil (Automat zu Grammatik konvetierung)
     getGrammarRowArray(state) {
       // Unsere Array-Struktur
