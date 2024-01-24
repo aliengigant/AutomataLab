@@ -60,7 +60,7 @@ automatAlphabet.value = makeArray(automat.value.automat.alphabet);
 function checkBoxChange(id, event) {
   if (edge) {
     edge.data.transitions[id].flag = event.target.checked;
-    edge.label = edge.data.transitions[id].value.toString();
+    edge.label = edge.data.transitions[id].value;
   } else {
     console.log("Kein Edge");
   }

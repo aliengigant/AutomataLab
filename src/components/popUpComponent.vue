@@ -92,6 +92,12 @@
               </select>
             </div>
           </form>
+          <input
+            type="file"
+            id="fileInput"
+            accept=".json"
+            @change="handleFileSelect"
+          />
         </div>
 
         <div class="modal-footer">
@@ -218,15 +224,15 @@
 </template>
 
 <script setup>
-import { defineProps, ref } from "vue";
+import { defineProps } from "vue";
 import { useAutomataElementsStore } from "@/store/automataElementsStore";
 import { usetransitionTableElementsStore } from "@/store/TransitionTabelElementsStore";
 import { useRouter } from "vue-router";
 import tableComponent from "./automat/transitionsTabelleComponent.vue";
 import grammarComponent from "./grammar/grammarComponent.vue";
-import { storageHooks } from "@/hooks/transitionTableStorageHook";
+import { storageHooksTrans } from "@/hooks/transitionTableStorageHook";
 
-const { SaveTransitionTable } = storageHooks();
+const { SaveTransitionTable } = storageHooksTrans();
 
 const table = usetransitionTableElementsStore();
 const automat = useAutomataElementsStore();
@@ -234,7 +240,7 @@ const router = useRouter();
 var ranId = () => Math.floor(Math.random() * 1000);
 const id = ranId();
 
-const firstAutomatData = ref({
+const firstAutomatData = {
   id: id,
   name: "",
   type: "DEA",
@@ -252,7 +258,7 @@ const firstAutomatData = ref({
     ],
     edges: [],
   },
-});
+};
 
 const prop = defineProps({
   modalType: {
@@ -268,6 +274,8 @@ const prop = defineProps({
 //Hinzufügen von einem neuen Automat EVENTUELL auslagern nach OverView
 function newAutomata() {
   automat.addAutomat(firstAutomatData);
+
+  console.log("Importierte Daten:", firstAutomatData.value);
   //öffne die Automaten seite
   router.push({ path: "/automat", name: "automatPage", params: { id: id } });
   automat.getData();
@@ -278,6 +286,37 @@ function newAutomata() {
 function saveGrammar() {
   //Speicher/Update erstmal die Transitionstabelle ins LocalStorage
   SaveTransitionTable(table.getElements);
+}
+
+function handleFileSelect(event) {
+  const file = event.target.files[0];
+
+  if (file) {
+    const reader = new FileReader();
+
+    reader.onload = function (e) {
+      const fileContent = e.target.result;
+
+      try {
+        const importedData = JSON.parse(fileContent);
+        // Hier kannst du die Daten weiter verarbeiten
+        console.log("Importierte Daten:", importedData);
+        automat.addAutomat(importedData);
+        const newId = importedData.id;
+        // //öffne die Automaten seite
+        router.push({
+          path: "/automat",
+          name: "automatPage",
+          params: { id: newId },
+        });
+        automat.getData();
+      } catch (error) {
+        console.error("Fehler beim Parsen der Datei:", error);
+      }
+    };
+
+    reader.readAsText(file);
+  }
 }
 </script>
 

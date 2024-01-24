@@ -13,7 +13,11 @@
         <li>
           <a class="dropdown-item" @click="openAutomat" href="#">Bearbeiten</a>
         </li>
-        <li><a class="dropdown-item" href="#">Exportieren</a></li>
+        <li>
+          <a class="dropdown-item" @click="exportLocalStorage(id)"
+            >Exportieren</a
+          >
+        </li>
         <li>
           <a class="dropdown-item" @click="deleteAutomat()" href="#">Löschen</a>
         </li>
@@ -34,7 +38,7 @@ import { defineProps, ref } from "vue";
 import { useRouter } from "vue-router";
 import { storageHooks } from "@/hooks/automatStorageHook";
 
-const { updateStorage } = storageHooks();
+const { updateStorage, exportLocalStorage } = storageHooks();
 const router = useRouter();
 const props = defineProps({
   id: Number,

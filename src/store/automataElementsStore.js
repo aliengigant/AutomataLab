@@ -8,7 +8,7 @@ function saveToLocal(data) {
     updatedData = JSON.parse(existingData);
   }
 
-  updatedData.push(data.value);
+  updatedData.push(data);
   localStorage.setItem("localAutomata", JSON.stringify(updatedData));
   return updatedData;
 }

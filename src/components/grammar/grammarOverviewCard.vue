@@ -30,9 +30,9 @@
 <script setup>
 import { defineProps, ref } from "vue";
 import { useRouter } from "vue-router";
-import { storageHooks } from "@/hooks/transitionTableStorageHook";
+import { storageHooksTrans } from "@/hooks/transitionTableStorageHook";
 
-const { setStorage } = storageHooks();
+const { setStorage } = storageHooksTrans();
 const router = useRouter();
 const props = defineProps({
   id: Number,

@@ -86,7 +86,7 @@ function makeTransitionArray(stringObj) {
     value: value.trim(), // Wert bleibt ein String
     flag: false,
   }));
-
+  console.log(arrayObjects)
   return arrayObjects;
 }
 </script>

@@ -29,10 +29,10 @@
               ><i class="fa-solid fa-circle-info"></i> Hilfe</a
             >
           </li>
-          <li class="nav-item ml-2">
+          <li class="nav-item ml-2" @click="checkAutomat()">
             <!--Alphabte aussuchen-->
             <a class="nav-link" href="#">
-              <i class="fa-solid fa-font"></i> Alphabet</a
+              <i class="fa-solid fa-font"></i> Überprüfen</a
             >
           </li>
           <li class="nav-item ml-2" @click="saveTransTable">
@@ -61,12 +61,6 @@
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="#">NEA zu DEA</a></li>
               <li>
-                <popUpComponent
-                  :modal-type="'#Grammatik'"
-                  :buttonLabel="'Grammatik'"
-                ></popUpComponent>
-              </li>
-              <li>
                 <a class="dropdown-item" href="#"
                   >Automat zu regulären Ausdruck</a
                 >
@@ -74,10 +68,14 @@
             </ul>
           </li>
 
-          <li class="nav-item ml-2">
+          <li
+            @click="exportLocalStorage(route.params.id)"
+            class="nav-item ml-2"
+          >
             <!--Alphabte aussuchen-->
             <a class="nav-link" href="#">
-              <i class="fa-solid fa-file-export"></i> Export Automat</a
+              <i class="fa-solid fa-file-export"></i>
+              Export Automat</a
             >
           </li>
         </ul>
@@ -88,6 +86,7 @@
 
 <script setup>
 import { storageHooks } from "@/hooks/automatStorageHook";
+import { storageHooksTrans } from "@/hooks/transitionTableStorageHook";
 import popUpComponent from "../popUpComponent.vue";
 import { useVueFlow } from "@vue-flow/core";
 import { ref, onMounted, watch } from "vue";
@@ -95,7 +94,8 @@ import { useRoute } from "vue-router";
 
 import { usetransitionTableElementsStore } from "@/store/TransitionTabelElementsStore";
 const route = useRoute();
-const { findAutomataById, makeArray } = storageHooks();
+const { findAutomataById, makeArray, exportLocalStorage } = storageHooks();
+const { SaveTransitionTable } = storageHooksTrans();
 
 const automatID = route.params.id || null;
 
@@ -144,6 +144,101 @@ function saveTransTable() {
     nodes.value,
     edges.value
   );
+}
+
+//Überprüfen der Automaten-Eigenschaften
+function checkAutomat() {
+  saveTransTable();
+  const table = transitionTablle.getElements; // Sollte es 'transitionTable' statt 'transitionTablle' sein?
+  SaveTransitionTable(table);
+
+  // Counter für die Anzahl an StartNodes (muss genau 1 sein)
+  let start_count = 0;
+  // Counter für die Anzahl der EndNodes (mindestens 1)
+  let end_count = 0;
+
+  // DEA-Eigenschaften überprüfen
+  if (table.type == "DEA") {
+    console.log("ICH BIN EIN DEA");
+
+    // Durchgehen aller Einträge/Nodes
+    for (const state of table.states) {
+      let usedAlphabet = "";
+      if (state.state_type == "start") {
+        start_count += 1; // oder start_count++;
+      } else if (state.state_type == "end") {
+        end_count += 1; // oder end_count++;
+      }
+      //Durchgehen der Transitionen
+      for (const transition of state.transitions) {
+        if (
+          transition.transition_label != "" &&
+          usedAlphabet.includes(transition.transition_label)
+        ) {
+          console.log(
+            "Der Übergangswert " +
+              transition.transition_label +
+              " in " +
+              state.state_label +
+              " taucht mehrmals auf "
+          );
+        }
+        usedAlphabet += transition.transition_label;
+        //Auf leere Transitionen prüfen (Fehlt ein Übergangswert?)
+        if (
+          transition.transition_label == "" ||
+          transition.transition_label == null
+        ) {
+          console.log(
+            "Es fehlt ein Übergang in " +
+              state.state_label +
+              " zu " +
+              transition.target_label
+          );
+        }
+        //Es darf nur einen Übergangswert geben, deswegen darf die länge max. 1 sein! (TODO: Space entfernen, deswegen 2)
+        if (transition.transition_label.length > 2) {
+          console.log(
+            "Es darf nur eine Eindeutigen übergang geben von " +
+              state.state_label +
+              " zu " +
+              transition.target_label
+          );
+        }
+      }
+    }
+
+    if (start_count !== 1) {
+      console.log("Es muss genau einen Startzustand geben");
+    }
+
+    if (end_count < 1) {
+      console.log("Es fehlen Endzustände");
+    }
+
+    return true;
+  } else if (table.type == "NEA") {
+    console.log("ICH BIN EIN NEA!");
+    // Durchgehen aller Einträge/Nodes
+    for (const state of table.states) {
+      if (state.state_type == "start") {
+        start_count += 1; // oder start_count++;
+      } else if (state.state_type == "end") {
+        end_count += 1; // oder end_count++;
+      }
+    }
+    if (start_count !== 1) {
+      console.log("Es muss genau einen Startzustand geben");
+    }
+
+    if (end_count < 1) {
+      console.log("Es fehlen Endzustände");
+    }
+    return true;
+  } else {
+    console.log("Kein Typ angegeben");
+    return false;
+  }
 }
 </script>
 

@@ -65,10 +65,48 @@ export const storageHooks = () => {
 
     return arrayObjects;
   }
+  function exportLocalStorage(id) {
+    // Daten aus dem Local Storage abrufen
+    const storedData = localStorage.getItem("localAutomata"); // Ersetze 'deinSchluessel' durch den tatsächlichen Schlüssel, den du verwendet hast
+  
+    // Überprüfen, ob Daten im Local Storage vorhanden sind
+    if (storedData) {
+      try {
+        // Daten von JSON-String zu JavaScript-Objekt umwandeln
+        const parsedData = findAutomataById(id);
+        //const automat = findAutomataById(route.params.id);
+        // JSON-Objekt in einen Blob umwandeln
+        const blob = new Blob([JSON.stringify(parsedData)], {
+          type: "application/json",
+        });
+  
+        // Blob in eine URL umwandeln
+        const blobUrl = URL.createObjectURL(blob);
+  
+        // Link erstellen und automatisch auf die Datei klicken lassen
+        const link = document.createElement("a");
+        link.href = blobUrl;
+        link.download = parsedData.name + "_Exported_Data.json"; // Dateiname für die exportierte Datei
+        document.body.appendChild(link);
+        link.click();
+  
+        // Link und Blob-Ressourcen freigeben
+        document.body.removeChild(link);
+        URL.revokeObjectURL(blobUrl);
+  
+        console.log("Daten erfolgreich exportiert.");
+      } catch (error) {
+        console.error("Fehler beim Parsen der Daten:", error);
+      }
+    } else {
+      console.log("Keine Daten im Local Storage gefunden.");
+    }
+  }
   return {
     findAutomataById,
     SaveAutomatChanges,
     updateStorage,
     makeArray,
+    exportLocalStorage
   };
 };

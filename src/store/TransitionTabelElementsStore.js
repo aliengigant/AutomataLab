@@ -79,7 +79,6 @@ export const usetransitionTableElementsStore = defineStore({
         for (const sta of states) {
           nodes.push(sta);
         }
-        console.log(nodes);
         return nodes;
       }
     },

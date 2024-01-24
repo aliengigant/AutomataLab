@@ -1,4 +1,4 @@
-export const storageHooks = () => {
+export const storageHooksTrans = () => {
   //Übergeben ID wird im LocalStorage gesucht und gibt dann den richtigen automaten zurück
   const findTransitionTableById = (toFindid) => {
     // ID kann von route.params. id kommen und das ist ein String
@@ -21,33 +21,39 @@ export const storageHooks = () => {
     const localData = localStorage.getItem("localTransitionTable");
     // Die vorhandenen Daten parsen
     const existingData = JSON.parse(localData) || []; // Stelle sicher, dass existingData immer ein Array ist
-  
+
     let id = null;
     if (transitionTable.automat_id != null) {
       id = transitionTable.automat_id;
     } else {
       id = transitionTable.id;
     }
-  
+
     // Index des zu aktualisierenden Eintrags finden
     const indexToUpdate = existingData.findIndex((item) => item.id === id);
     if (indexToUpdate !== -1) {
       // Eintrag ersetzen (oder aktualisieren)
       existingData[indexToUpdate] = transitionTable;
-  
+
       // Die aktualisierten Daten zurück in den Local Storage speichern
-      localStorage.setItem("localTransitionTable", JSON.stringify(existingData));
-  
-      alert("Eintrag erfolgreich aktualisiert.");
+      localStorage.setItem(
+        "localTransitionTable",
+        JSON.stringify(existingData)
+      );
+
+      console.log("Eintrag erfolgreich aktualisiert.");
     } else {
       console.log("Eintrag mit der angegebenen ID nicht gefunden.");
-  
+
       // Eintrag hinzufügen, wenn er nicht gefunden wurde
       existingData.push(transitionTable);
-  
+
       // Die aktualisierten Daten zurück in den Local Storage speichern
-      localStorage.setItem("localTransitionTable", JSON.stringify(existingData));
-  
+      localStorage.setItem(
+        "localTransitionTable",
+        JSON.stringify(existingData)
+      );
+
       console.log("Eintrag erfolgreich hinzugefügt.");
     }
   }
@@ -73,6 +79,8 @@ export const storageHooks = () => {
 
     return arrayObjects;
   }
+
+  
   return {
     findTransitionTableById,
     SaveTransitionTable,
