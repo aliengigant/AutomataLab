@@ -92,12 +92,20 @@
               </select>
             </div>
           </form>
-          <input
-            type="file"
-            id="fileInput"
-            accept=".json"
-            @change="handleFileSelect"
-          />
+          <form>
+            <div class="form-group">
+              <label class="input-group-text" for="fileInput"
+                >Oder Importiere einen Automaten</label
+              >
+              <input
+                class="form-control"
+                type="file"
+                id="fileInput"
+                accept=".json"
+                @change="handleFileSelect"
+              />
+            </div>
+          </form>
         </div>
 
         <div class="modal-footer">
@@ -300,8 +308,10 @@ function handleFileSelect(event) {
       try {
         const importedData = JSON.parse(fileContent);
         // Hier kannst du die Daten weiter verarbeiten
+        importedData.id = id;
         console.log("Importierte Daten:", importedData);
         automat.addAutomat(importedData);
+
         const newId = importedData.id;
         // //öffne die Automaten seite
         router.push({
@@ -309,6 +319,17 @@ function handleFileSelect(event) {
           name: "automatPage",
           params: { id: newId },
         });
+        // Modal schließen ohne jQuery
+        const modal = document.getElementById("newAutomata");
+        if (modal) {
+          modal.classList.remove("show");
+          modal.style.display = "none";
+          document.body.classList.remove("modal-open");
+          const modalBackdrop = document.querySelector(".modal-backdrop");
+          if (modalBackdrop) {
+            modalBackdrop.remove();
+          }
+        }
         automat.getData();
       } catch (error) {
         console.error("Fehler beim Parsen der Datei:", error);

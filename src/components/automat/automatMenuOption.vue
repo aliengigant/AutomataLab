@@ -29,10 +29,16 @@
               ><i class="fa-solid fa-circle-info"></i> Hilfe</a
             >
           </li>
-          <li class="nav-item ml-2" @click="checkAutomat()">
-            <!--Alphabte aussuchen-->
+          <li class="nav-item ml-2" @click="checkAutomatView()">
+            <!--Überprüfen aussuchen-->
             <a class="nav-link" href="#">
               <i class="fa-solid fa-font"></i> Überprüfen</a
+            >
+          </li>
+          <li class="nav-item ml-2" @click="automatSimuView()">
+            <!--Simulation aussuchen-->
+            <a class="nav-link" href="#">
+              <i class="fa-solid fa-font"></i> Simulieren</a
             >
           </li>
           <li class="nav-item ml-2" @click="saveTransTable">
@@ -82,6 +88,121 @@
       </div>
     </div>
   </nav>
+  <!--OffCanvas für Check Automat-->
+  <div
+    class="offcanvas offcanvas-start"
+    tabindex="-1"
+    id="offcanvasCheck"
+    aria-labelledby="offcanvasExampleLabel"
+  >
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="offcanvasExampleLabel">
+        Überprüfe des {{ automat.type }}s
+      </h5>
+      <button
+        type="button"
+        class="btn-close text-reset"
+        data-bs-dismiss="offcanvas"
+        aria-label="Close"
+      ></button>
+    </div>
+    <div class="offcanvas-body">
+      <ul class="list-group">
+        <div v-for="(text, index) in CheckTextArray" :key="index">
+          <li class="list-group-item">
+            <i class="fa-regular fa-circle-xmark"></i> {{ text }}
+          </li>
+        </div>
+      </ul>
+    </div>
+  </div>
+  <!--OffCanvas für Simulation-->
+  <div
+    class="offcanvas offcanvas-end"
+    tabindex="-1"
+    id="offcanvasSimulation"
+    aria-labelledby="offcanvasExampleLabel"
+  >
+    <div class="offcanvas-header">
+      <h5 class="offcanvas-title" id="offcanvasExampleLabel">Simulation</h5>
+      <button
+        type="button"
+        class="btn-close text-reset"
+        data-bs-dismiss="offcanvas"
+        aria-label="Close"
+      ></button>
+    </div>
+    <div class="offcanvas-body">
+      <p class="lead">Eingabewort:</p>
+      <div class="input-group mb-3">
+        <button
+          class="btn btn-outline-primary"
+          type="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <i class="fa fa-plus" aria-hidden="true"></i>
+        </button>
+        <ul class="dropdown-menu">
+          <div v-for="(word, id) in automataAlphabet" :key="id">
+            <li>
+              <a
+                class="dropdown-item"
+                href="#"
+                @click="selectedWord(word.value)"
+                >{{ word.value }}</a
+              >
+            </li>
+          </div>
+        </ul>
+        <input
+          id="words"
+          type="text"
+          class="form-control"
+          aria-label="Text input with dropdown button"
+          onfocus="this.blur()"
+          value=""
+          readonly
+        />
+        <button
+          type="button"
+          class="btn btn-danger"
+          @click="deleteSelectedWord()"
+        >
+          <i class="fa fa-trash" aria-hidden="true"></i>
+        </button>
+      </div>
+      <button type="button" class="btn btn-success" @click="automatSimulation">
+        Simulieren
+      </button>
+      <div
+        v-if="ListSimulationResultat.length > 0"
+        class="card"
+        style="width: 18rem"
+      >
+        <div class="card-body">
+          <h5 class="card-title">Card title</h5>
+          <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">trans</th>
+                <th scope="col">state</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(word, index) in ListSimulationResultat" :key="index">
+                <th scope="row">{{ word.word }}</th>
+                <td>
+                  {{ word.value }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -91,6 +212,7 @@ import popUpComponent from "../popUpComponent.vue";
 import { useVueFlow } from "@vue-flow/core";
 import { ref, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
+import { Offcanvas } from "bootstrap";
 
 import { usetransitionTableElementsStore } from "@/store/TransitionTabelElementsStore";
 const route = useRoute();
@@ -98,11 +220,15 @@ const { findAutomataById, makeArray, exportLocalStorage } = storageHooks();
 const { SaveTransitionTable } = storageHooksTrans();
 
 const automatID = route.params.id || null;
-
 const transitionTablle = usetransitionTableElementsStore();
 const automat = ref(null);
 let automataAlphabet = ref([]);
-
+const CheckText = ref("");
+const CheckTextArray = ref([]);
+const transListSimulation = ref([]);
+const stateListSimulation = ref([]);
+const ListSimulationResultat = ref([]);
+const selectedWordValue = ref("");
 if (automatID) {
   automat.value = findAutomataById(automatID);
   // Überprüfe, ob der automat und seine Eigenschaften vorhanden sind
@@ -145,9 +271,15 @@ function saveTransTable() {
     edges.value
   );
 }
+function checkAutomatView() {
+  checkAutomat();
+  const b = new Offcanvas(document.getElementById("offcanvasCheck"));
+  b.show();
+}
 
 //Überprüfen der Automaten-Eigenschaften
 function checkAutomat() {
+  CheckText.value = "";
   saveTransTable();
   const table = transitionTablle.getElements; // Sollte es 'transitionTable' statt 'transitionTablle' sein?
   SaveTransitionTable(table);
@@ -175,13 +307,12 @@ function checkAutomat() {
           transition.transition_label != "" &&
           usedAlphabet.includes(transition.transition_label)
         ) {
-          console.log(
+          CheckText.value +=
             "Der Übergangswert " +
-              transition.transition_label +
-              " in " +
-              state.state_label +
-              " taucht mehrmals auf "
-          );
+            transition.transition_label +
+            " in " +
+            state.state_label +
+            " taucht mehrmals auf!";
         }
         usedAlphabet += transition.transition_label;
         //Auf leere Transitionen prüfen (Fehlt ein Übergangswert?)
@@ -189,34 +320,38 @@ function checkAutomat() {
           transition.transition_label == "" ||
           transition.transition_label == null
         ) {
-          console.log(
+          CheckText.value +=
             "Es fehlt ein Übergang in " +
-              state.state_label +
-              " zu " +
-              transition.target_label
-          );
+            state.state_label +
+            " zu " +
+            transition.target_label +
+            "!";
         }
         //Es darf nur einen Übergangswert geben, deswegen darf die länge max. 1 sein! (TODO: Space entfernen, deswegen 2)
         if (transition.transition_label.length > 2) {
-          console.log(
+          CheckText.value +=
             "Es darf nur eine Eindeutigen übergang geben von " +
-              state.state_label +
-              " zu " +
-              transition.target_label
-          );
+            state.state_label +
+            " zu " +
+            transition.target_label +
+            "!";
         }
       }
     }
 
     if (start_count !== 1) {
-      console.log("Es muss genau einen Startzustand geben");
+      CheckText.value += "Es muss genau einen Startzustand geben" + "!";
     }
 
     if (end_count < 1) {
-      console.log("Es fehlen Endzustände");
+      CheckText.value += "Es fehlen Endzustände" + "!";
     }
-
-    return true;
+    if (CheckText.value.length > 0) {
+      checkTextSplit(CheckText.value);
+      return false;
+    } else {
+      return true;
+    }
   } else if (table.type == "NEA") {
     console.log("ICH BIN EIN NEA!");
     // Durchgehen aller Einträge/Nodes
@@ -228,17 +363,132 @@ function checkAutomat() {
       }
     }
     if (start_count !== 1) {
-      console.log("Es muss genau einen Startzustand geben");
+      CheckText.value += "Es muss genau einen Startzustand geben";
     }
 
     if (end_count < 1) {
-      console.log("Es fehlen Endzustände");
+      CheckText.value += "Es fehlen Endzustände";
     }
-    return true;
+    if (CheckText.value.length > 0) {
+      checkTextSplit(CheckText.value);
+      return false;
+    } else {
+      return true;
+    }
   } else {
-    console.log("Kein Typ angegeben");
+    CheckText.value += "Kein Typ angegeben";
     return false;
   }
+}
+
+function checkTextSplit(checkText) {
+  if (checkText.trim() !== "") {
+    // Split the string based on "!"
+    CheckTextArray.value = checkText.split("!");
+    CheckTextArray.value = CheckTextArray.value.filter(
+      (error) => error.trim() !== ""
+    );
+  } else {
+    CheckTextArray.value = ["Automat wurde korrekt definiert!"];
+  }
+}
+
+//Open Simulation OffCanvas
+function automatSimuView() {
+  const b = new Offcanvas(document.getElementById("offcanvasSimulation"));
+  b.show();
+}
+function automatSimulation() {
+  const table = transitionTablle.getElements; // Sollte es 'transitionTable' statt 'transitionTablle' sein?
+  const word = selectedWordValue.value;
+  let state = transitionTablle.getNodes.find(
+    (state) => state.state_type == "start"
+  ); // state mit dem Startzustand (In folge immer der Aktuelle zustand)
+  transListSimulation.value.push({ word: "start" });
+  stateListSimulation.value.push({ value: state.state_label });
+  //Unterscheide zwischen DEA und NEA
+  if (checkAutomat() && table.type == "DEA") {
+    //Gehe das Eingabewort Char für Char durch
+    for (let i = 0; i < word.length; i++) {
+      const char = word.charAt(i);
+
+      for (const trans of state.transitions) {
+        if (trans.transition_label.includes(char)) {
+          console.log(char + " ist drin " + state.state_label);
+          if (state.state_id == trans.target) {
+            console.log("Ich habe den selben Node: " + state.state_label);
+
+            stateListSimulation.value.push({ value: state.state_label });
+            transListSimulation.value.push({ word: char });
+            continue;
+          } else if (state.state_id != trans.target) {
+            console.log("Ich habe einen anderen Node: " + trans.target_label);
+            state = transitionTablle.getNodes.find(
+              (sta) => sta.state_id == trans.target
+            );
+
+            stateListSimulation.value.push({ value: state.state_label });
+            transListSimulation.value.push({ word: char });
+            break;
+          }
+        } else if (!trans.transition_label.includes(char)) {
+          console.log(
+            char +
+              " ist nicht gleich " +
+              trans.transition_label +
+              "! nächste Transition"
+          );
+          continue;
+        } else {
+          console.log(
+            "Es gibt keinen Übergang mit dem " +
+              char +
+              " in " +
+              state.state_label
+          );
+        }
+        //Den Übergang mit dem Char gibt es nicht
+        // Spring zum nächsten Transition
+        // Es gibt kein Transition mit dem Char => Break
+        //Er verweißt auf sich selber
+        // Spring zum nächsten Transition
+        // Kein andere Transition => Überprüfen ob endState
+        //Wenn nicht, Wort nicht im Alphabet
+        //Er verweißt auf einen anderen Knoten
+        // Spring zum nächsten State
+      }
+    }
+    ListSimulationResultat.value = stateListSimulation.value.map(
+      (item, index) => {
+        return {
+          value: item.value,
+          word: transListSimulation.value[index].word,
+        };
+      }
+    );
+  } else if (checkAutomat() && table.type == "NEA") {
+    //Gehe das Eingabewort Char für Char durch
+    for (let i = 0; i < word.length; i++) {
+      const char = word.charAt(i);
+      console.log(char);
+    }
+  } else {
+    alert(
+      "Automate wurde nicht korrekt definiert! Bitte überprüft deinen Automaten."
+    );
+  }
+}
+//erweitere den Input für das Eingabewort
+function selectedWord(value) {
+  selectedWordValue.value = selectedWordValue.value + value;
+  document.getElementById("words").value = selectedWordValue.value;
+}
+function deleteSelectedWord() {
+  selectedWordValue.value = "";
+  transListSimulation.value = [];
+  stateListSimulation.value = [];
+  ListSimulationResultat.value = [];
+  document.getElementById("words").value = selectedWordValue.value;
 }
 </script>
 

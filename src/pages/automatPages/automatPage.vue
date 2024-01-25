@@ -1,13 +1,11 @@
 <template>
-  <automatLayout></automatLayout> <toastMessage></toastMessage>
+  <automatLayout></automatLayout>
 </template>
 
 <script setup>
 import automatLayout from "@/layouts/automatLayout.vue";
 import { useModalNameStore } from "@/store/modalNameStore";
 import { onMounted } from "vue";
-
-import toastMessage from "@/components/toastMessage.vue";
 
 const modalStore = useModalNameStore();
 

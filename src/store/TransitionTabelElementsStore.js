@@ -86,9 +86,9 @@ export const usetransitionTableElementsStore = defineStore({
     getGrammarRowArray(state) {
       // Unsere Array-Struktur
       // const rows = [
-      //   { variable: ["S"], rule: ["aS", "b", "c"], start: true, end: false },
-      //   { variable: ["A"], rule: ["aS", "b"], start: false, end: false },
-      //   { variable: ["X"], rule: ["aS", "b"], start: false, end: false },
+      //   { variable: ["q0"], rule: ["1q0", "bq1", "cq2"] },
+      //   { variable: ["q1"], rule: ["aq0", "bq2"] },
+      //   { variable: ["q2"], rule: ["aq0", "bq2"] },
       // ];
 
       //Da nur ein element gleichzeitig erzeugt wird, greifen wir immer auf den ersten Eintrag
