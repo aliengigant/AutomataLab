@@ -28,7 +28,7 @@
       data-toggle="modal"
       :data-target="prop.modalType"
     >
-      {{ buttonLabel }}</a
+      <i class="fa-brands fa-fonticons-fi"></i> {{ buttonLabel }}</a
     >
   </div>
   <div v-else>{{ buttonLabel }}</div>

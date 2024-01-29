@@ -100,7 +100,7 @@ watch(
     let lab = "";
     for (const item of edge.data.transitions) {
       if (item.flag) {
-        lab += item.value + " ";
+        lab += item.value;
       }
     }
     edge.label = lab;

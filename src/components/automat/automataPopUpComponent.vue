@@ -25,9 +25,7 @@
       <div class="card-footer text-muted">
         <a href="#" class="btn btn-danger" @click="removeEdges(props.edgeId)"
           >Übergang löschen</a
-        ><button type="button" class="btn btn-secondary">
-          x
-        </button>
+        ><button type="button" class="btn btn-secondary">x</button>
       </div>
     </div>
   </div>

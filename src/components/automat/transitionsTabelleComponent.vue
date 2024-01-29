@@ -6,7 +6,11 @@
         <thead>
           <tr>
             <th scope="col">{{ automat.type }}</th>
-            <th v-for="item in transitionTablle.getAlphabet" :key="item.id" scope="col">
+            <th
+              v-for="item in transitionTablle.getAlphabet"
+              :key="item.id"
+              scope="col"
+            >
               {{ item }}
             </th>
           </tr>
@@ -129,9 +133,23 @@ function saveStorage() {
     automat.value.id,
     automat.value.automat.alphabet,
     nodes.value,
-    getEdges.value
+    transitionForm(getEdges.value)
   );
   console.log(transitionTablle.getId);
+}
+function transitionForm(edges) {
+  let result = [];
+  for (const edge of edges) {
+    let tmp = [];
+    tmp.push = {
+      id: edge.id,
+      targe: edge.targe,
+      target_label: edge.target_label,
+      transition_label: edge.transition_label,
+    };
+    result.push = tmp;
+  }
+  return result;
 }
 </script>
 

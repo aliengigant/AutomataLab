@@ -121,6 +121,30 @@ export const usetransitionTableElementsStore = defineStore({
     },
   },
   actions: {
+    // Überprüfe und ändere die Transitionen, die mehr als nur einen Übergangswert haben ( Wenn der Label>1 ist)
+    splitTransition() {
+      const states = this.elements.states;
+      //Gehe jeden Node durch
+      for (const state of states) {
+        //Temporäre behälter für das endresultat
+        let transitionsTMP = [];
+        //Gehe vom jeden Node die Transitionen durch
+        for (const transition of state.transitions) {
+          //Wenn mehr als nur ein Label in dieser Transition ist, spalte es in die Anzahl der Labelanzahl
+          if (transition.transition_label.length > 1) {
+            for (let i = 0; i < transition.transition_label.length; i++) {
+              transitionsTMP.push({
+                id: transition.id,
+                target: transition.target,
+                target_label: transition.target_label,
+                transition_label: transition.transition_label[i],
+              });
+            }
+          }
+        }
+        state.transitions = transitionsTMP;
+      }
+    },
     addTransitionTable(
       id,
       name,
@@ -162,7 +186,8 @@ export const usetransitionTableElementsStore = defineStore({
         );
         this.elements;
         this.elements = newTable;
-        console.log(newTable);
+
+        this.splitTransition();
       } else {
         // Behandeln Sie den Fall, dass das Array leer ist oder nicht existiert
         console.error('Ungültiges Array für "nodes" übergeben');

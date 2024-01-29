@@ -32,13 +32,13 @@
           <li class="nav-item ml-2" @click="checkAutomatView()">
             <!--Überprüfen aussuchen-->
             <a class="nav-link" href="#">
-              <i class="fa-solid fa-font"></i> Überprüfen</a
+              <i class="fa-solid fa-circle-check"></i> Überprüfen</a
             >
           </li>
           <li class="nav-item ml-2" @click="automatSimuView()">
             <!--Simulation aussuchen-->
             <a class="nav-link" href="#">
-              <i class="fa-solid fa-font"></i> Simulieren</a
+              <i class="fa-solid fa-play"></i> Simulieren</a
             >
           </li>
           <li class="nav-item ml-2" @click="saveTransTable">
@@ -181,13 +181,19 @@
         style="width: 18rem"
       >
         <div class="card-body">
-          <h5 class="card-title">Card title</h5>
-          <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-          <table class="table">
+          <h5 class="card-title">Ergebnis</h5>
+          <h6 class="card-subtitle mb-2 text-muted">
+            Das Eingabewort ist
+            <a v-if="isEnd" :style="{ color: 'green' }"> in der Sprache</a>
+            <a v-else :style="{ color: 'red' }"> nicht in der Sprache</a>
+          </h6>
+
+          <table class="table table-striped">
             <thead>
               <tr>
                 <th scope="col">trans</th>
                 <th scope="col">state</th>
+                <th scope="col">rest</th>
               </tr>
             </thead>
             <tbody>
@@ -195,6 +201,9 @@
                 <th scope="row">{{ word.word }}</th>
                 <td>
                   {{ word.value }}
+                </td>
+                <td>
+                  {{ word.rest }}
                 </td>
               </tr>
             </tbody>
@@ -227,7 +236,9 @@ const CheckText = ref("");
 const CheckTextArray = ref([]);
 const transListSimulation = ref([]);
 const stateListSimulation = ref([]);
+const alphabetListSimulation = ref([]);
 const ListSimulationResultat = ref([]);
+let isEnd = false;
 const selectedWordValue = ref("");
 if (automatID) {
   automat.value = findAutomataById(automatID);
@@ -271,6 +282,7 @@ function saveTransTable() {
     edges.value
   );
 }
+
 function checkAutomatView() {
   checkAutomat();
   const b = new Offcanvas(document.getElementById("offcanvasCheck"));
@@ -280,10 +292,14 @@ function checkAutomatView() {
 //Überprüfen der Automaten-Eigenschaften
 function checkAutomat() {
   CheckText.value = "";
+  CheckTextArray.value = [];
   saveTransTable();
   const table = transitionTablle.getElements; // Sollte es 'transitionTable' statt 'transitionTablle' sein?
   SaveTransitionTable(table);
 
+  //Für die Überpüfung der Transitionenanzahl
+  const grammarRows = transitionTablle.getGrammarRowArray;
+  //const alphabetAnzahl = automataAlphabet.value.length;
   // Counter für die Anzahl an StartNodes (muss genau 1 sein)
   let start_count = 0;
   // Counter für die Anzahl der EndNodes (mindestens 1)
@@ -292,6 +308,26 @@ function checkAutomat() {
   // DEA-Eigenschaften überprüfen
   if (table.type == "DEA") {
     console.log("ICH BIN EIN DEA");
+    console.log(grammarRows);
+    //Überprüfen der Vollständigkeit der Übergänge
+    for (const row of grammarRows) {
+      let ruleString = "";
+      let count = 0;
+      for (const rule of row.rule) {
+        ruleString += rule;
+      }
+      console.log(ruleString);
+      for (const letter of automataAlphabet.value) {
+        for (let i = 0; i < ruleString.length; i++) {
+          if (ruleString[i].value == letter) {
+            count++;
+          }
+        }
+      }
+      if (count > 1) {
+        console.log("Zuviele übergänge mit dem Selben buchstaben");
+      }
+    }
 
     // Durchgehen aller Einträge/Nodes
     for (const state of table.states) {
@@ -327,15 +363,16 @@ function checkAutomat() {
             transition.target_label +
             "!";
         }
-        //Es darf nur einen Übergangswert geben, deswegen darf die länge max. 1 sein! (TODO: Space entfernen, deswegen 2)
-        if (transition.transition_label.length > 2) {
-          CheckText.value +=
-            "Es darf nur eine Eindeutigen übergang geben von " +
-            state.state_label +
-            " zu " +
-            transition.target_label +
-            "!";
-        }
+        //Es darf nur einen Übergangswert geben, deswegen darf die länge max. 1 sein!
+        //  Verworfen, da wir eine Transition für mehrere Übergangparameter nutzen werden
+        // if (transition.transition_label.length > 2) {
+        //   CheckText.value +=
+        //     "Es darf nur eine Eindeutigen übergang geben von " +
+        //     state.state_label +
+        //     " zu " +
+        //     transition.target_label +
+        //     "!";
+        // }
       }
     }
 
@@ -395,23 +432,29 @@ function checkTextSplit(checkText) {
 
 //Open Simulation OffCanvas
 function automatSimuView() {
+  deleteSelectedWord();
   const b = new Offcanvas(document.getElementById("offcanvasSimulation"));
   b.show();
 }
 function automatSimulation() {
   const table = transitionTablle.getElements; // Sollte es 'transitionTable' statt 'transitionTablle' sein?
   const word = selectedWordValue.value;
+  let wordList = word;
+  isEnd = false;
   let state = transitionTablle.getNodes.find(
     (state) => state.state_type == "start"
   ); // state mit dem Startzustand (In folge immer der Aktuelle zustand)
   transListSimulation.value.push({ word: "start" });
   stateListSimulation.value.push({ value: state.state_label });
+  alphabetListSimulation.value.push({ rest: wordList });
   //Unterscheide zwischen DEA und NEA
   if (checkAutomat() && table.type == "DEA") {
     //Gehe das Eingabewort Char für Char durch
     for (let i = 0; i < word.length; i++) {
       const char = word.charAt(i);
 
+      wordList = wordList.replace(char, "");
+      alphabetListSimulation.value.push({ rest: wordList });
       for (const trans of state.transitions) {
         if (trans.transition_label.includes(char)) {
           console.log(char + " ist drin " + state.state_label);
@@ -466,6 +509,20 @@ function automatSimulation() {
         };
       }
     );
+    ListSimulationResultat.value = ListSimulationResultat.value.map(
+      (item, index) => {
+        return {
+          value: item.value,
+          word: item.word,
+          rest: alphabetListSimulation.value[index].rest,
+        };
+      }
+    );
+    if (state.state_type == "end") {
+      isEnd = true;
+    } else {
+      isEnd = false;
+    }
   } else if (checkAutomat() && table.type == "NEA") {
     //Gehe das Eingabewort Char für Char durch
     for (let i = 0; i < word.length; i++) {
@@ -488,6 +545,8 @@ function deleteSelectedWord() {
   transListSimulation.value = [];
   stateListSimulation.value = [];
   ListSimulationResultat.value = [];
+  alphabetListSimulation.value = [];
+  isEnd = false;
   document.getElementById("words").value = selectedWordValue.value;
 }
 </script>
