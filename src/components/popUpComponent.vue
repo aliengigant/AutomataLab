@@ -124,6 +124,60 @@
       </div>
     </div>
   </div>
+  <!-- Neue Grammatik erstellen: #newGrammatik -->
+  <div
+    v-if="buttonLabel == 'default'"
+    class="modal fade"
+    id="newGrammatik"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="newGrammatik"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="ModalLabel">Neue Grammatik erstellen</h5>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="automata">
+            <div id="name" class="form-group">
+              <label for="nameAutomata">Name</label>
+              <input
+                class="form-control"
+                type="text"
+                id="nameAutomata"
+                placeholder="Name des Grammatiks"
+                v-model="firstAutomatData.name"
+              />
+            </div>
+          </form>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Abbrechen
+          </button>
+          <button
+            @click="newGrammatik"
+            type="button"
+            class="btn btn-primary"
+            data-dismiss="modal"
+          >
+            Erstelle Grammatik
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Übergangstabelle -->
   <div
@@ -267,6 +321,14 @@ const firstAutomatData = {
     edges: [],
   },
 };
+const firstGrammatikData = {
+  id: id,
+  name: "Test",
+  type: "",
+  automat_id: null,
+  alphabet: "[a,b]",
+  states: [],
+};
 
 const prop = defineProps({
   modalType: {
@@ -289,7 +351,15 @@ function newAutomata() {
   automat.getData();
   alert("Neuer Automat wurde erstellt!");
 }
-
+function newGrammatik() {
+  table.addGrammtiktoTransitionTable(firstGrammatikData);
+  console.log("Importierte Daten: " + JSON.stringify(firstGrammatikData));
+  router.push({
+    path: "/grammatik",
+    name: "grammatikPage",
+    params: { id: id },
+  });
+}
 //Speicher die Grammatik um auch auf der Grammatikseite diese auszuwählen
 function saveGrammar() {
   //Speicher/Update erstmal die Transitionstabelle ins LocalStorage

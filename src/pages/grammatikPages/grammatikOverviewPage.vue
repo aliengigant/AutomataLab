@@ -2,7 +2,7 @@
   <modulLayout>
     <template #content>
       <div class="container">
-        <popUpComponent :modal-type="'#newAutomata'"></popUpComponent>
+        <popUpComponent :modal-type="'#newGrammatik'"></popUpComponent>
         <div class="row justify-content-evenly">
           <div
             v-for="(table, index) in tables"

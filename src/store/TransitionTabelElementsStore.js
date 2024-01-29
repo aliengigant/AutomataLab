@@ -5,6 +5,8 @@ nutzen können
 */
 
 import { defineStore } from "pinia";
+import { storageHooksTrans } from "@/hooks/transitionTableStorageHook";
+const { SaveTransitionTable } = storageHooksTrans();
 
 class transitionTable {
   constructor(id, name, type, automat_id, alphabet, nodes) {
@@ -42,9 +44,10 @@ export const usetransitionTableElementsStore = defineStore({
     },
     getVariableString(state) {
       let result = " ";
-
-      for (const stateObj of state.elements.states) {
-        result = result + stateObj.state_label;
+      if (state.elements.states) {
+        for (const stateObj of state.elements.states) {
+          result = result + stateObj.state_label;
+        }
       }
 
       return result;
@@ -192,6 +195,19 @@ export const usetransitionTableElementsStore = defineStore({
         // Behandeln Sie den Fall, dass das Array leer ist oder nicht existiert
         console.error('Ungültiges Array für "nodes" übergeben');
       }
+    },
+    addGrammtiktoTransitionTable(data) {
+      const newTable = new transitionTable(
+        data.id,
+        data.name,
+        data.type,
+        data.automat_id,
+        data.alphabet,
+        data.states
+      );
+      this.elements;
+      this.elements = newTable;
+      SaveTransitionTable(newTable);
     },
     //Speichere beim Aufruf den gewünschten Store Element in die Storage(Langzeitspeicher)
     saveToStorage(state) {
