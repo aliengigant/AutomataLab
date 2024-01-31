@@ -1,5 +1,7 @@
 <template>
   <!-- Button trigger modal -->
+  <!-- Aussehen der Buttons-->
+
   <div v-if="buttonLabel == 'default'">
     <button
       id="bottomRightBtn"
@@ -11,7 +13,7 @@
       <i class="fa-solid fa-plus"></i>
     </button>
   </div>
-  <div v-else-if="buttonLabel == 'Übergangstabelle'">
+  <div v-else-if="modalType == '#Übergangstabelle'">
     <a
       class="nav-link"
       href="#"
@@ -21,7 +23,7 @@
       <i class="fa-solid fa-table"></i> {{ buttonLabel }}</a
     >
   </div>
-  <div v-else-if="buttonLabel == 'Grammatik'">
+  <div v-else-if="modalType == '#Grammatik'">
     <a
       class="nav-link"
       href="#"
@@ -31,7 +33,19 @@
       <i class="fa-brands fa-fonticons-fi"></i> {{ buttonLabel }}</a
     >
   </div>
+  <div v-else-if="modalType == '#newRuleGrammatik'">
+    <a
+      class="btn btn-danger"
+      href="#"
+      data-toggle="modal"
+      :data-target="prop.modalType"
+    >
+      <i class="fa-solid fa-plus"></i> {{ buttonLabel }}</a
+    >
+  </div>
   <div v-else>{{ buttonLabel }}</div>
+
+  <!--Die Modals/PopUpFenster-->
 
   <!-- Neue Automat erstellen: #newAutomata -->
   <div
@@ -148,16 +162,28 @@
           </button>
         </div>
         <div class="modal-body">
-          <form id="automata">
+          <form id="grammatik">
             <div id="name" class="form-group">
-              <label for="nameAutomata">Name</label>
+              <label for="nameGrammatik">Name</label>
               <input
                 class="form-control"
                 type="text"
-                id="nameAutomata"
+                id="nameGrammatik"
                 placeholder="Name des Grammatiks"
-                v-model="firstAutomatData.name"
+                v-model="firstGrammatikData.name"
               />
+            </div>
+            <div id="alphabet" class="form-group">
+              <label for="alphabetFormControlSelect">Alphabet</label>
+              <select
+                class="form-control"
+                id="alphabetFormControlSelect"
+                v-model="firstGrammatikData.alphabet"
+              >
+                <option selected>[0,1]</option>
+                <option>[a,b]</option>
+                <option>[a,b,c]</option>
+              </select>
             </div>
           </form>
         </div>
@@ -179,7 +205,7 @@
     </div>
   </div>
 
-  <!-- Übergangstabelle -->
+  <!-- Übergangstabelle: #Übergangstabelle -->
   <div
     v-if="buttonLabel == 'Übergangstabelle'"
     class="modal fade"
@@ -214,7 +240,7 @@
       </div>
     </div>
   </div>
-  <!-- Grammar -->
+  <!-- Grammatik aus Automatensicht #Grammatik -->
   <div
     v-if="buttonLabel == 'Grammatik'"
     class="modal fade"
@@ -238,8 +264,10 @@
           </button>
         </div>
         <div class="modal-body">
-          <!--Tabelle mit Übergängen-->
-          <grammar-component></grammar-component>
+          <div class="container">
+            <!--Tabelle mit Übergängen-->
+            <grammar-component></grammar-component>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-primary" @click="saveGrammar">
@@ -247,6 +275,79 @@
           ><button type="button" class="btn btn-secondary" data-dismiss="modal">
             Close
           </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Grammatik neuer Eintrag/Regel: #newRuleGrammatik -->
+  <div
+    v-if="modalType == '#newRuleGrammatik'"
+    class="modal fade"
+    id="newRuleGrammatik"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="newRuleGrammatik"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="ModalName">Neue Regel</h5>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="newRuleForm">
+            <select
+              id="initState"
+              class="select"
+              v-model="selectedInitState"
+              :class="{
+                noValueInit: selectedInitState == null,
+                newValueInit: selectedInitState == 'new',
+              }"
+            >
+              <option
+                v-for="state of table.getNodes"
+                :key="state.state_id"
+                :value="state.state_id"
+              >
+                {{ state.state_label }}
+              </option>
+              <option value="new">{{ newState }}</option>
+            </select>
+            <select id="transition" class="select" v-model="selectedTransition">
+              <option v-for="(word, index) of table.getAlphabet" :key="index">
+                {{ word }}
+              </option>
+            </select>
+            <select
+              id="endState"
+              class="select"
+              v-model="selectedEndState"
+              :disabled="
+                selectedInitState == null || selectedInitState == 'new'
+              "
+            >
+              <option :value="''"></option>
+              <option
+                v-for="state of table.getNodes"
+                :key="state.state_id"
+                :value="state.state_id"
+              >
+                {{ state.state_label }}
+              </option>
+            </select>
+            <button @click.prevent="newRule" data-dismiss="modal">
+              Setzen
+            </button>
+          </form>
         </div>
       </div>
     </div>
@@ -286,7 +387,7 @@
 </template>
 
 <script setup>
-import { defineProps } from "vue";
+import { computed, defineProps, ref } from "vue";
 import { useAutomataElementsStore } from "@/store/automataElementsStore";
 import { usetransitionTableElementsStore } from "@/store/TransitionTabelElementsStore";
 import { useRouter } from "vue-router";
@@ -323,11 +424,18 @@ const firstAutomatData = {
 };
 const firstGrammatikData = {
   id: id,
-  name: "Test",
+  name: "",
   type: "",
   automat_id: null,
   alphabet: "[a,b]",
-  states: [],
+  states: [
+    {
+      state_id: 0,
+      state_label: "q0",
+      state_type: "start",
+      transitions: [],
+    },
+  ],
 };
 
 const prop = defineProps({
@@ -340,6 +448,11 @@ const prop = defineProps({
     default: "default",
   },
 });
+
+const selectedInitState = ref();
+const selectedTransition = ref("a");
+const selectedEndState = ref(0);
+const newState = computed(() => "q" + table.getNodes.length);
 
 //Hinzufügen von einem neuen Automat EVENTUELL auslagern nach OverView
 function newAutomata() {
@@ -359,6 +472,72 @@ function newGrammatik() {
     name: "grammatikPage",
     params: { id: id },
   });
+}
+function newRule() {
+  let initNode = findNodeById(selectedInitState.value);
+  let targetNode = findNodeById(selectedEndState.value);
+  if (selectedInitState.value == "new") {
+    console.log("neue Regel");
+    const id = table.elements.states.length;
+    let newState = {
+      state_id: id,
+      state_label: "q" + id,
+      state_type: "normal",
+      transitions: [],
+    };
+    console.log(newState);
+    table.elements.states.push(newState);
+    saveGrammar();
+    initNode = findNodeById(newState.state_id);
+    selectedInitState.value = newState.state_id;
+  } else {
+    if (checkTransition(initNode, selectedTransition.value, targetNode)) {
+      const transition = {
+        id:
+          initNode.state_id +
+          "to" +
+          targetNode.state_id +
+          selectedTransition.value,
+        target: targetNode.state_id,
+        target_label: targetNode.state_label,
+        transition_label: selectedTransition.value,
+      };
+      const index = findNodeIndex(initNode.state_id);
+      table.elements.states[index].transitions.push(transition);
+      saveGrammar();
+      console.log(table.elements);
+    }
+  }
+}
+//Finde einen State/Node anhand seiner ID
+function findNodeById(idToFind) {
+  const node = table.getNodes;
+  if (node.find((element) => element.state_id == idToFind)) {
+    return node.find((element) => element.state_id == idToFind);
+  } else {
+    return null;
+  }
+}
+//gib den Indexzahl zurück für den node
+function findNodeIndex(idToFind) {
+  let index = 0;
+  for (const state of table.getNodes) {
+    if (state.state_id == idToFind) {
+      return index;
+    }
+    index++;
+  }
+  return -1;
+}
+function checkTransition(init, transition, target) {
+  const id = init.state_id + "to" + target.state_id + transition;
+  console.log(id);
+  for (const trans of init.transitions) {
+    if (trans.id == id) {
+      return false;
+    }
+  }
+  return true;
 }
 //Speicher die Grammatik um auch auf der Grammatikseite diese auszuwählen
 function saveGrammar() {
@@ -423,5 +602,12 @@ function handleFileSelect(event) {
   bottom: 50px;
   right: 20px;
   z-index: 999; /* Stelle sicher, dass der Button über anderen Inhalten liegt */
+}
+.noValueInit {
+  border: 2px solid red;
+}
+
+.newValueInit {
+  border: 2px solid green;
 }
 </style>

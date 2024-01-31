@@ -89,35 +89,38 @@ export const usetransitionTableElementsStore = defineStore({
     getGrammarRowArray(state) {
       // Unsere Array-Struktur
       // const rows = [
-      //   { variable: ["q0"], rule: ["1q0", "bq1", "cq2"] },
+      //   { transitionID: "0to01", variable: ["q0"], rule: ["1q0"] },
       //   { variable: ["q1"], rule: ["aq0", "bq2"] },
       //   { variable: ["q2"], rule: ["aq0", "bq2"] },
       // ];
 
       //Da nur ein element gleichzeitig erzeugt wird, greifen wir immer auf den ersten Eintrag
       const table = state.elements;
-
-      if (table) {
+      if (table.states.length > 0) {
         const states = table.states;
         let row = [];
         for (const s of states) {
           let rule = [];
+          let id = "";
           // Überprüfen, ob s.transitions leer ist
           if (s.transitions.length > 0) {
             // Wenn nicht leer, die map-Funktion anwenden
             rule = s.transitions.map((r) => {
               const Translabel = r.transition_label;
               let target_label = r.target_label;
-
               return Translabel + target_label;
             });
+            id = s.transitions[0].id;
           } else {
             // Wenn s.transitions leer ist, fügen Sie einen Standardwert "ESPILON" hinzu
             rule.push("EPSILON");
           }
-          row.push({ variable: s.state_label, rule: rule });
+          row.push({
+            transitionID: id,
+            variable: s.state_label,
+            rule: rule,
+          });
         }
-
         return row;
       }
       return "kein wert";
@@ -197,22 +200,44 @@ export const usetransitionTableElementsStore = defineStore({
       }
     },
     addGrammtiktoTransitionTable(data) {
-      const newTable = new transitionTable(
-        data.id,
-        data.name,
-        data.type,
-        data.automat_id,
-        data.alphabet,
-        data.states
-      );
-      this.elements;
-      this.elements = newTable;
-      SaveTransitionTable(newTable);
+      if (data != null) {
+        const newTable = new transitionTable(
+          data.id,
+          data.name,
+          data.type,
+          data.automat_id,
+          data.alphabet,
+          data.states
+        );
+        this.elements;
+        this.elements = newTable;
+        SaveTransitionTable(newTable);
+      } else {
+        console.error("Etwas stimmt nicht mit deinen Daten: ");
+        console.log(data);
+      }
     },
     //Speichere beim Aufruf den gewünschten Store Element in die Storage(Langzeitspeicher)
     saveToStorage(state) {
       console.log("da ist ein state in TransitionState");
       localStorage.setItem("localTransitionTable", state.elements);
+    },
+    deleteTransition(transitionId) {
+      console.log(transitionId+ " wird gelöscht!");
+      if (transitionId.length > 0) {
+        const initStateID = transitionId.charAt(0);
+        const states = this.elements.states[initStateID];
+        let newTransitions = "";
+        if (this.getElements.id != null) {
+          newTransitions = this.elements.states[initStateID].transitions.filter(
+            (element) => element.id != transitionId
+          );
+          states.transitions = newTransitions;
+          this.saveToStorage;
+        }
+      } else {
+        console.log("Es gibt keine Transitionen!");
+      }
     },
   },
 });

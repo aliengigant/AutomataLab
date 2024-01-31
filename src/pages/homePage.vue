@@ -25,7 +25,7 @@
                 <img src="@/assets/logo.png" class="card-img-top" alt="..." />
                 <h5 class="card-title">Grammatik</h5>
                 <p class="card-text">Erstelle deinen Grammatik</p>
-                <a class="btn btn-outline-secondary m-2" href="/grammatik">Klick</a>
+                <a class="btn btn-outline-secondary m-2" href="/grammatikOverview">Klick</a>
               </div>
             </div>
           </div>

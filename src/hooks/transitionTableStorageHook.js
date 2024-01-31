@@ -4,7 +4,7 @@ export const storageHooksTrans = () => {
     // ID kann von route.params. id kommen und das ist ein String
     const id = parseInt(toFindid); // Die ID des zu aktualisierenden Eintrags
 
-    const localTransitionTable = localStorage.getItem("TransitionTable");
+    const localTransitionTable = localStorage.getItem("localTransitionTable");
     if (localTransitionTable) {
       const TransitionTableArray = JSON.parse(localTransitionTable);
       const foundTransitionTable = TransitionTableArray.find(
@@ -80,7 +80,6 @@ export const storageHooksTrans = () => {
     return arrayObjects;
   }
 
-  
   return {
     findTransitionTableById,
     SaveTransitionTable,
