@@ -46,7 +46,6 @@ const route = useRoute();
 
 const id = parseInt(route.params.id) || -1;
 const transitionTablle = usetransitionTableElementsStore();
-console.log(transitionTablle.getElements);
 
 function loadDataFromStorage() {
   if (findTransitionTableById(id)) {

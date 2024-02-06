@@ -280,7 +280,6 @@ function saveTransTable() {
     nodes.value,
     edges.value
   );
-  console.log(transitionTablle);
 }
 
 function checkAutomatView() {

@@ -89,8 +89,7 @@ export const usetransitionTableElementsStore = defineStore({
       // Unsere Array-Struktur
       // const rows = [
       //   { transitionID: "0to01", variable: ["q0"], rule: ["1q0"] },
-      //   { variable: ["q1"], rule: ["aq0", "bq2"] },
-      //   { variable: ["q2"], rule: ["aq0", "bq2"] },
+      //   { transitionID: "1to01",variable: ["q1"], rule: ["aq0"] },
       // ];
 
       //Da nur ein element gleichzeitig erzeugt wird, greifen wir immer auf den ersten Eintrag
@@ -98,28 +97,43 @@ export const usetransitionTableElementsStore = defineStore({
       if (table.states.length > 0) {
         const states = table.states;
         let row = [];
+        let endStateVariabel = "";
+        for (const s of states) {
+          if (s.state_type == "end" || s.state_type == "startend") {
+            endStateVariabel = s.state_label;
+            console.log(endStateVariabel);
+          }
+        }
         for (const s of states) {
           let rule = [];
           let id = "";
+          if (s.state_type == "startend") {
+            rule.push("EPSILON");
+          }
           // Überprüfen, ob s.transitions leer ist
-          console.log(s);
           if (s.transitions.length > 0) {
             // Wenn nicht leer, die map-Funktion anwenden
-            rule = s.transitions.map((r) => {
+            let ruletmp = s.transitions.map((r) => {
               const Translabel = r.transition_label;
               let target_label = r.target_label;
               return Translabel + target_label;
             });
+            for (const r of ruletmp) {
+              rule.push(r);
+            }
             id = s.transitions[0].id;
-          } else if (s.state_type == "start") {
-            // Wenn s.transitions leer ist, fügen Sie einen Standardwert "ESPILON" hinzu
-            rule.push("EPSILON");
           }
           row.push({
             transitionID: id,
             variable: s.state_label,
             rule: rule,
           });
+        }
+        //Einfügen der Endübergänge
+        for(const r of row){
+         //TODO:
+         // Untersuche die List anhand der endStateVariable und füge einen Extra Reihe ein, wenn dieser mit dorthin transitiert
+         console.log(r)
         }
         return row;
       }
@@ -140,7 +154,7 @@ export const usetransitionTableElementsStore = defineStore({
           if (transition.transition_label.length > 0) {
             for (let i = 0; i < transition.transition_label.length; i++) {
               transitionsTMP.push({
-                id: transition.id,
+                id: transition.id + transition.transition_label[i],
                 target: transition.target,
                 target_label: transition.target_label,
                 transition_label: transition.transition_label[i],
@@ -246,7 +260,6 @@ export const usetransitionTableElementsStore = defineStore({
       if (StateId.length > 0) {
         const state = this.elements.states[StateId];
         state.state_type = type;
-        console.log("Es wird nun Gespeichert")
       } else {
         console.log("Es gibt keine State!");
       }
