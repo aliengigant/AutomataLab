@@ -23,7 +23,6 @@
           >Löschen</a
         >
       </li>
-      <li><a class="dropdown-item" href="#">State-Type ändern</a></li>
     </ul>
   </div>
 </template>

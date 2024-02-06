@@ -7,7 +7,6 @@ nutzen können
 import { defineStore } from "pinia";
 import { storageHooksTrans } from "@/hooks/transitionTableStorageHook";
 const { SaveTransitionTable } = storageHooksTrans();
-
 class transitionTable {
   constructor(id, name, type, automat_id, alphabet, nodes) {
     this.id = id;
@@ -103,6 +102,7 @@ export const usetransitionTableElementsStore = defineStore({
           let rule = [];
           let id = "";
           // Überprüfen, ob s.transitions leer ist
+          console.log(s);
           if (s.transitions.length > 0) {
             // Wenn nicht leer, die map-Funktion anwenden
             rule = s.transitions.map((r) => {
@@ -111,7 +111,7 @@ export const usetransitionTableElementsStore = defineStore({
               return Translabel + target_label;
             });
             id = s.transitions[0].id;
-          } else {
+          } else if (s.state_type == "start") {
             // Wenn s.transitions leer ist, fügen Sie einen Standardwert "ESPILON" hinzu
             rule.push("EPSILON");
           }
@@ -137,7 +137,7 @@ export const usetransitionTableElementsStore = defineStore({
         //Gehe vom jeden Node die Transitionen durch
         for (const transition of state.transitions) {
           //Wenn mehr als nur ein Label in dieser Transition ist, spalte es in die Anzahl der Labelanzahl
-          if (transition.transition_label.length > 1) {
+          if (transition.transition_label.length > 0) {
             for (let i = 0; i < transition.transition_label.length; i++) {
               transitionsTMP.push({
                 id: transition.id,
@@ -220,10 +220,13 @@ export const usetransitionTableElementsStore = defineStore({
     //Speichere beim Aufruf den gewünschten Store Element in die Storage(Langzeitspeicher)
     saveToStorage(state) {
       console.log("da ist ein state in TransitionState");
-      localStorage.setItem("localTransitionTable", state.elements);
+      localStorage.setItem(
+        "localTransitionTable",
+        JSON.stringify(state.elements)
+      );
     },
     deleteTransition(transitionId) {
-      console.log(transitionId+ " wird gelöscht!");
+      console.log(transitionId + " wird gelöscht!");
       if (transitionId.length > 0) {
         const initStateID = transitionId.charAt(0);
         const states = this.elements.states[initStateID];
@@ -233,10 +236,19 @@ export const usetransitionTableElementsStore = defineStore({
             (element) => element.id != transitionId
           );
           states.transitions = newTransitions;
-          this.saveToStorage;
         }
       } else {
         console.log("Es gibt keine Transitionen!");
+      }
+    },
+    updateStateType(StateId, type) {
+      console.log(StateId + " wird geändert!");
+      if (StateId.length > 0) {
+        const state = this.elements.states[StateId];
+        state.state_type = type;
+        console.log("Es wird nun Gespeichert")
+      } else {
+        console.log("Es gibt keine State!");
       }
     },
   },

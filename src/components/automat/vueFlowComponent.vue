@@ -15,6 +15,13 @@
             style="position: absolute; right: 60px; bottom: 15px"
           ></i>
           <automatStartNode v-bind="startNodeProps"></automatStartNode>
+        </template> 
+        <template #node-startend="startendNodeProps">
+          <i
+            class="fa-solid fa-arrow-right-long"
+            style="position: absolute; right: 60px; bottom: 15px"
+          ></i>
+          <automatStartEndNode v-bind="startendNodeProps"></automatStartEndNode>
         </template>
         <template #node-end="endNodeProps">
           <automatEndNode v-bind="endNodeProps"></automatEndNode>
@@ -37,6 +44,7 @@ import vueFlowControlsComponent from "./vueFlowControlsComponent.vue";
 import { storageHooks } from "@/hooks/automatStorageHook";
 import automatNormalNode from "./nodes/automatNormalNode.vue";
 import automatStartNode from "./nodes/automatStartNode.vue";
+import automatStartEndNode from "./nodes/automatStartEndNode.vue";
 import automatEndNode from "./nodes/automatEndNode.vue";
 import automataArrowEdge from "./edges/automataArrowEdge.vue";
 
@@ -50,11 +58,12 @@ const Aedges = ref(automat.automat.edges);
 const Aalphabet = ref([automat.automat.alphabet]);
 
 onConnectStart((params) => {
-  console.log(params);
+  console.log(params.nodeId);
 });
 onConnect((params) =>
   addEdges({
     ...params,
+    id: params.source + "to" + params.target,
     label: "",
     type: "arrow",
     markerEnd: {
@@ -69,7 +78,7 @@ onConnect((params) =>
   })
 );
 onConnectEnd((params) => {
-  console.log(params.x);
+  console.log(params);
 });
 
 function makeTransitionArray(stringObj) {
@@ -86,7 +95,7 @@ function makeTransitionArray(stringObj) {
     value: value.trim(), // Wert bleibt ein String
     flag: false,
   }));
-  console.log(arrayObjects)
+  console.log(arrayObjects);
   return arrayObjects;
 }
 </script>

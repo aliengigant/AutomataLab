@@ -41,7 +41,7 @@ function onAdd() {
 }
 
 function onSave() {
-  console.log(toObject().nodes);
+  console.log(toObject());
   let automat1 = findAutomataById(parseInt(route.params.id));
   automat1 = saveNodes(automat1);
   automat1 = saveEdges(automat1);

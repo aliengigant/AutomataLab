@@ -264,10 +264,9 @@
           </button>
         </div>
         <div class="modal-body">
-          <div class="container">
-            <!--Tabelle mit Übergängen-->
-            <grammar-component></grammar-component>
-          </div>
+          <div class="container"></div>
+          <!--Tabelle mit Übergängen-->
+          <grammar-component></grammar-component>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-primary" @click="saveGrammar">

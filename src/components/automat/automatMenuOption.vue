@@ -265,11 +265,10 @@ const edges = ref(getEdges);
 onMounted(() => {
   saveTransTable();
 });
-watch([() => getNodes.value, () => getEdges.value], ([nodes, edges]) => {
+watch([() => getNodes.value, () => getEdges.value], () => {
   // Call saveTransTable with the updated values
-  saveTransTable(nodes, edges);
+  saveTransTable();
 });
-
 function saveTransTable() {
   //State speichern
   transitionTablle.addTransitionTable(
@@ -281,6 +280,7 @@ function saveTransTable() {
     nodes.value,
     edges.value
   );
+  console.log(transitionTablle);
 }
 
 function checkAutomatView() {

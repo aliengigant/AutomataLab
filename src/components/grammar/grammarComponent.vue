@@ -1,9 +1,13 @@
 <template>
   <div class="container">
-    <div>G= ( { {{ variablenString }} } ,E,S,P)</div>
+    <h1 class="display-6">
+      G= ( { {{ variablenString }} } ,E,{{ startState }})
+    </h1>
 
     <div class="card" style="width: auto">
-      <div class="card-header">P =</div>
+      <div class="card-header">
+        <h1 class="display-6">P =</h1>
+      </div>
       <div class="card-body">
         <div v-for="row in rows" :key="row.transitionID">
           <div
@@ -32,7 +36,7 @@
 <script setup>
 import { storageHooksTrans } from "@/hooks/transitionTableStorageHook";
 import { usetransitionTableElementsStore } from "@/store/TransitionTabelElementsStore";
-import { computed, onMounted } from "vue";
+import { computed, onMounted, watch } from "vue";
 import popUpComponent from "../popUpComponent.vue";
 import { useRoute } from "vue-router";
 import grammarInputComponent from "./grammarInputComponent.vue";
@@ -60,7 +64,39 @@ onMounted(() => {
 //String für die Darstellung beim Tupel
 const variablenString = computed(() => transitionTablle.getVariableString);
 const rows = computed(() => transitionTablle.getGrammarRowArray);
+const startState = computed(() => getStartState());
+// Watcher für Änderungen im Store
+watch(
+  () => transitionTablle.getElements,
+  () => {
+    // Wenn sich der Store ändert, aktualisiere die Zeilen
+    rows.value = transitionTablle.getGrammarRowArray;
+  }
+);
 
+function getStartState() {
+  if (
+    transitionTablle.elements.states.find(
+      (element) => element.state_type == "start"
+    )
+  ) {
+    const test = transitionTablle.elements.states.find(
+      (element) => element.state_type == "start"
+    );
+    return test.state_label;
+  } else if (
+    transitionTablle.elements.states.find(
+      (element) => element.state_type == "startend"
+    )
+  ) {
+    const test = transitionTablle.elements.states.find(
+      (element) => element.state_type == "startend"
+    );
+    return test.state_label;
+  } else {
+    return "x";
+  }
+}
 // const addRow = () => {
 //   const id = instance.getNodes.value.length - 1;
 //   console.log(id);
