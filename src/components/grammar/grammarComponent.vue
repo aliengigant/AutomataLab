@@ -66,7 +66,7 @@ onMounted(() => {
 });
 
 //String für die Darstellung beim Tupel
-const variablenString = computed(() => transitionTablle.getVariableString);
+const variablenString = computed(() => transitionTablle.getVariableStringForGrammar);
 const rows = computed(() => transitionTablle.getGrammarRowArray);
 const startState = computed(() => getStartState());
 // Watcher für Änderungen im Store

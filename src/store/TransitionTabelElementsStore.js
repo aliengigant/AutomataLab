@@ -51,6 +51,21 @@ export const usetransitionTableElementsStore = defineStore({
 
       return result;
     },
+    getVariableStringForGrammar(state) {
+      let result = " ";
+      if (state.elements.states) {
+        let count = 1;
+        for (const stateObj of state.elements.states) {
+          result = result + stateObj.state_label;
+          if (count != state.elements.states.length) {
+            result += ", ";
+          }
+          count++;
+        }
+      }
+
+      return result;
+    },
     getVariable(state) {
       const result = [];
 
