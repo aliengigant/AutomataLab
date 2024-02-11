@@ -319,7 +319,6 @@
               >
                 {{ state.state_label }}
               </option>
-              <option value="new">{{ newState }}</option>
             </select>
             <select id="transition" class="select" v-model="selectedTransition">
               <option v-for="(word, index) of table.getAlphabet" :key="index">
@@ -386,7 +385,7 @@
 </template>
 
 <script setup>
-import { computed, defineProps, ref } from "vue";
+import { defineProps, ref } from "vue";
 import { useAutomataElementsStore } from "@/store/automataElementsStore";
 import { usetransitionTableElementsStore } from "@/store/TransitionTabelElementsStore";
 import { useRouter } from "vue-router";
@@ -451,7 +450,6 @@ const prop = defineProps({
 const selectedInitState = ref();
 const selectedTransition = ref("a");
 const selectedEndState = ref(0);
-const newState = computed(() => "q" + table.getNodes.length);
 
 //Hinzufügen von einem neuen Automat EVENTUELL auslagern nach OverView
 function newAutomata() {
@@ -475,39 +473,25 @@ function newGrammatik() {
 function newRule() {
   let initNode = findNodeById(selectedInitState.value);
   let targetNode = findNodeById(selectedEndState.value);
-  if (selectedInitState.value == "new") {
-    console.log("neue Regel");
-    const id = table.elements.states.length;
-    let newState = {
-      state_id: id,
-      state_label: "q" + id,
-      state_type: "normal",
-      transitions: [],
+
+  if (checkTransition(initNode, selectedTransition.value, targetNode)) {
+    const transition = {
+      id:
+        initNode.state_id +
+        "to" +
+        targetNode.state_id +
+        selectedTransition.value,
+      target: targetNode.state_id,
+      target_label: targetNode.state_label,
+      transition_label: selectedTransition.value,
     };
-    console.log(newState);
-    table.elements.states.push(newState);
+    const index = findNodeIndex(initNode.state_id);
+    table.elements.states[index].transitions.push(transition);
     saveGrammar();
-    initNode = findNodeById(newState.state_id);
-    selectedInitState.value = newState.state_id;
-  } else {
-    if (checkTransition(initNode, selectedTransition.value, targetNode)) {
-      const transition = {
-        id:
-          initNode.state_id +
-          "to" +
-          targetNode.state_id +
-          selectedTransition.value,
-        target: targetNode.state_id,
-        target_label: targetNode.state_label,
-        transition_label: selectedTransition.value,
-      };
-      const index = findNodeIndex(initNode.state_id);
-      table.elements.states[index].transitions.push(transition);
-      saveGrammar();
-      console.log(table.elements);
-    }
+    console.log(table.elements);
   }
 }
+
 //Finde einen State/Node anhand seiner ID
 function findNodeById(idToFind) {
   const node = table.getNodes;

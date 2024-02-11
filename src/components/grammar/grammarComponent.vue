@@ -1,7 +1,11 @@
 <template>
   <div class="container">
     <h1 class="display-6">
-      G= ( { {{ variablenString }} } ,E,{{ startState }})
+      G= ( { {{ variablenString }}
+      <button class="btn" @click="newState">
+        <i class="fa fa-plus-circle" aria-hidden="true"></i>
+      </button>
+      } ,E,{{ startState }})
     </h1>
 
     <div class="card" style="width: auto">
@@ -40,6 +44,7 @@ import { computed, onMounted, watch } from "vue";
 import popUpComponent from "../popUpComponent.vue";
 import { useRoute } from "vue-router";
 import grammarInputComponent from "./grammarInputComponent.vue";
+const { SaveTransitionTable } = storageHooksTrans();
 
 const { findTransitionTableById } = storageHooksTrans();
 const route = useRoute();
@@ -95,6 +100,18 @@ function getStartState() {
   } else {
     return "x";
   }
+}
+function newState() {
+  console.log("neue Regel");
+  const id = transitionTablle.elements.states.length;
+  let newState = {
+    state_id: id,
+    state_label: "q" + id,
+    state_type: "normal",
+    transitions: [],
+  };
+  transitionTablle.elements.states.push(newState);
+  SaveTransitionTable(transitionTablle.getElements);
 }
 // const addRow = () => {
 //   const id = instance.getNodes.value.length - 1;
