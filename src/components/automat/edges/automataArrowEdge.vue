@@ -98,12 +98,14 @@ watch(
   () => edge.data.transitions.map((item) => item.flag),
   () => {
     let lab = "";
-    for (const item of edge.data.transitions) {
-      if (item.flag) {
-        lab += item.value;
+    if (edge.data.transitions != null) {
+      for (const item of edge.data.transitions) {
+        if (item.flag) {
+          lab += item.value;
+        }
       }
+      edge.label = lab;
     }
-    edge.label = lab;
   },
   { deep: true }
 );

@@ -101,7 +101,6 @@ export const usetransitionTableElementsStore = defineStore({
         for (const s of states) {
           if (s.state_type == "end" || s.state_type == "startend") {
             endStateVariabel = s.state_label;
-            console.log(endStateVariabel);
           }
         }
         for (const s of states) {
@@ -128,12 +127,19 @@ export const usetransitionTableElementsStore = defineStore({
             variable: s.state_label,
             rule: rule,
           });
+          console.log(row);
         }
         //Einfügen der Endübergänge
-        for(const r of row){
-         //TODO:
-         // Untersuche die List anhand der endStateVariable und füge einen Extra Reihe ein, wenn dieser mit dorthin transitiert
-         console.log(r)
+        for (const r of row) {
+          //TODO:
+          // Untersuche die List anhand der endStateVariable und füge einen Extra Reihe ein, wenn dieser mit dorthin transitiert
+          for (const rule of r.rule) {
+            const targetNode = rule.slice(1, 3);
+            const transitionVar = rule.slice(0, 1);
+            if (targetNode == endStateVariabel) {
+              r.rule.push(transitionVar);
+            }
+          }
         }
         return row;
       }

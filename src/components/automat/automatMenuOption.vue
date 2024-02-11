@@ -258,7 +258,7 @@ if (automatID) {
   // Behandle den Fall, wenn route.params.id nicht definiert ist
   console.error("Route ID not defined");
 }
-const { getEdges, getNodes } = useVueFlow();
+const { getEdges, getNodes, getElements } = useVueFlow();
 const nodes = ref(getNodes);
 const edges = ref(getEdges);
 
@@ -268,6 +268,7 @@ onMounted(() => {
 watch([() => getNodes.value, () => getEdges.value], () => {
   // Call saveTransTable with the updated values
   saveTransTable();
+  console.log(getElements);
 });
 function saveTransTable() {
   //State speichern
@@ -287,7 +288,6 @@ function checkAutomatView() {
   const b = new Offcanvas(document.getElementById("offcanvasCheck"));
   b.show();
 }
-
 //Überprüfen der Automaten-Eigenschaften
 function checkAutomat() {
   CheckText.value = "";
@@ -308,14 +308,34 @@ function checkAutomat() {
   if (table.type == "DEA") {
     console.log("ICH BIN EIN DEA");
     console.log(grammarRows);
+
+    for (const element of table.states) {
+      if (element.transitions.length == automataAlphabet.value.length) {
+        //Do Something
+      }
+      // Überprüfe, ob es leere Transitionen gibt
+      else if (element.transitions.length == 0) {
+        CheckText.value +=
+          "Es muss für " + element.state_label + " Übergänge definiert werden!";
+      }
+      // Überprüfe, ob es leere Transitionen gibt
+      else if (element.transitions.length < automataAlphabet.value.length) {
+        CheckText.value +=
+          "Es fehlen für " + element.state_label + " Übergänge!";
+      } else {
+        CheckText.value += "Automat wurde nicht vollständig definiert!";
+      }
+    }
+
     //Überprüfen der Vollständigkeit der Übergänge
     for (const row of grammarRows) {
       let ruleString = "";
       let count = 0;
+      //Durchgehen der Regeln/Transitionen
       for (const rule of row.rule) {
         ruleString += rule;
       }
-      console.log(ruleString);
+      console.log("RuleString: " + ruleString);
       for (const letter of automataAlphabet.value) {
         for (let i = 0; i < ruleString.length; i++) {
           if (ruleString[i].value == letter) {
@@ -335,6 +355,9 @@ function checkAutomat() {
         start_count += 1; // oder start_count++;
       } else if (state.state_type == "end") {
         end_count += 1; // oder end_count++;
+      } else if (state.state_type == "startend") {
+        start_count += 1;
+        end_count += 1;
       }
       //Durchgehen der Transitionen
       for (const transition of state.transitions) {
@@ -431,9 +454,13 @@ function checkTextSplit(checkText) {
 
 //Open Simulation OffCanvas
 function automatSimuView() {
-  deleteSelectedWord();
-  const b = new Offcanvas(document.getElementById("offcanvasSimulation"));
-  b.show();
+  if (checkAutomat()) {
+    deleteSelectedWord();
+    const b = new Offcanvas(document.getElementById("offcanvasSimulation"));
+    b.show();
+  } else {
+    checkAutomatView();
+  }
 }
 function automatSimulation() {
   const table = transitionTablle.getElements; // Sollte es 'transitionTable' statt 'transitionTablle' sein?
@@ -441,9 +468,10 @@ function automatSimulation() {
   let wordList = word;
   isEnd = false;
   let state = transitionTablle.getNodes.find(
-    (state) => state.state_type == "start"
+    (state) => state.state_type == "start" || state.state_type == "startend"
   ); // state mit dem Startzustand (In folge immer der Aktuelle zustand)
   transListSimulation.value.push({ word: "start" });
+  console.log(state);
   stateListSimulation.value.push({ value: state.state_label });
   alphabetListSimulation.value.push({ rest: wordList });
   //Unterscheide zwischen DEA und NEA
@@ -517,7 +545,7 @@ function automatSimulation() {
         };
       }
     );
-    if (state.state_type == "end") {
+    if (state.state_type == "end" || state.state_type == "startend") {
       isEnd = true;
     } else {
       isEnd = false;
