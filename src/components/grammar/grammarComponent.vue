@@ -2,12 +2,12 @@
   <div class="container">
     <h1 class="display-6">
       G= ( {
-      <div class="flex" v-for="variablen in variablenString" :key="variablen.id">
+      <h1 v-for="variablen in variablenString" :key="variablen.id">
         <GrammarVariable
           :id="variablen.id"
           :variable="variablen.variable"
         ></GrammarVariable>
-      </div>
+      </h1>
       <button class="btn" @click="newState">
         <i class="fa fa-plus-circle" aria-hidden="true"></i>
       </button>
@@ -20,17 +20,11 @@
       </div>
       <div class="card-body">
         <div v-for="row in rows" :key="row.transitionID">
-          <div
-            v-for="(rule, ruleIndex) in row.rule"
-            :key="ruleIndex"
-            class="d-flex"
-          >
-            <grammarInputComponent
-              :variable="row.variable"
-              :rule="rule"
-              :transitionID="row.transitionID"
-            ></grammarInputComponent>
-          </div>
+          <grammarInputComponent
+            :variable="row.variable"
+            :rule="row.rule"
+            :transitionID="row.transitionID"
+          ></grammarInputComponent>
         </div>
         <popUpComponent
           :modal-type="'#newRuleGrammatik'"

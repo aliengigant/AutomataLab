@@ -132,40 +132,47 @@ export const usetransitionTableElementsStore = defineStore({
         }
         for (const s of states) {
           let rule = [];
-          let id = "";
+          let ruleTmp = "";
           if (s.state_type == "startend") {
             rule.push("EPSILON");
           }
           // Überprüfen, ob s.transitions leer ist
           if (s.transitions.length > 0) {
             // Wenn nicht leer, die map-Funktion anwenden
-            let ruletmp = s.transitions.map((r) => {
+            ruleTmp = s.transitions.map((r) => {
               const Translabel = r.transition_label;
               let target_label = r.target_label;
-              return Translabel + target_label;
+              return { id: r.id, rule: Translabel + target_label };
             });
-            for (const r of ruletmp) {
-              rule.push(r);
-            }
-            id = s.transitions[0].id;
+            // for (const r of ruletmp) {
+            //   rule.push(r);
+            // }
           }
-          row.push({
-            transitionID: id,
-            variable: s.state_label,
-            rule: rule,
-          });
+          for (const r of ruleTmp) {
+            row.push({
+              transitionID: r.id,
+              variable: s.state_label,
+              rule: r.rule,
+            });
+          }
           console.log(row);
         }
         //Einfügen der Endübergänge
         for (const r of row) {
           //TODO:
           // Untersuche die List anhand der endStateVariable und füge einen Extra Reihe ein, wenn dieser mit dorthin transitiert
-          for (const rule of r.rule) {
-            const targetNode = rule.slice(1, 3);
-            const transitionVar = rule.slice(0, 1);
-            if (targetNode == endStateVariabel) {
-              r.rule.push(transitionVar);
-            }
+
+          const targetNode = r.rule.slice(1, 3);
+          const transitionVar = r.rule.slice(0, 1);
+          //TODO:
+          // Neue Einträge in das GrammarRow Array wenn es ein Endzustand gibt
+          //Es müssen auf TransitionsId geachtet werden aber auch die Rule
+          if (targetNode == endStateVariabel) {
+            row.push({
+              transitionID: r.transitionID + "end",
+              variable: r.variable,
+              rule: transitionVar,
+            });
           }
         }
         return row;
@@ -302,11 +309,16 @@ export const usetransitionTableElementsStore = defineStore({
         console.log("Es gibt keine Transitionen!");
       }
     },
+    //Lösche einen bestimmten Zustand
     deleteState(stateID) {
       console.log(stateID + " wird gelöscht!");
+
+      console.log(this.elements.states);
       if (stateID) {
         const states = this.elements.states;
-        const stateType = states[stateID].type;
+        const stateType = states.find(
+          (element) => element.state_id == stateID
+        ).state_type;
         if (stateType != "start") {
           let newStates = "";
           if (this.getElements.id != null) {
