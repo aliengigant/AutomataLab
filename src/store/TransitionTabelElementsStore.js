@@ -66,6 +66,18 @@ export const usetransitionTableElementsStore = defineStore({
 
       return result;
     },
+    getVariableStringForGrammarAsArray(state) {
+      let result = [];
+      if (state.elements.states) {
+        for (const stateObj of state.elements.states) {
+          result.push({
+            id: stateObj.state_id,
+            variable: stateObj.state_label,
+          });
+        }
+      }
+      return result;
+    },
     getVariable(state) {
       const result = [];
 
@@ -253,12 +265,26 @@ export const usetransitionTableElementsStore = defineStore({
       }
     },
     //Speichere beim Aufruf den gewünschten Store Element in die Storage(Langzeitspeicher)
-    saveToStorage(state) {
-      console.log("da ist ein state in TransitionState");
-      localStorage.setItem(
-        "localTransitionTable",
-        JSON.stringify(state.elements)
-      );
+    saveToStorage() {
+      SaveTransitionTable(this.getElements);
+    },
+    //lösche alle Transitionen die zur StateId gehören
+    deleteTransitionsForStateID(stateID) {
+      let toDeleteTransitionIds = [];
+      for (const s of this.elements.states) {
+        for (const t of s.transitions) {
+          if (s.state_id == stateID || t.target == stateID) {
+            toDeleteTransitionIds.push(t.id);
+            console.log(t);
+          }
+        }
+      }
+      console.log(toDeleteTransitionIds);
+      for (const trans of toDeleteTransitionIds) {
+        this.deleteTransition(trans);
+      }
+      this.deleteState(stateID);
+      this.saveToStorage();
     },
     deleteTransition(transitionId) {
       console.log(transitionId + " wird gelöscht!");
@@ -274,6 +300,25 @@ export const usetransitionTableElementsStore = defineStore({
         }
       } else {
         console.log("Es gibt keine Transitionen!");
+      }
+    },
+    deleteState(stateID) {
+      console.log(stateID + " wird gelöscht!");
+      if (stateID) {
+        const states = this.elements.states;
+        const stateType = states[stateID].type;
+        if (stateType != "start") {
+          let newStates = "";
+          if (this.getElements.id != null) {
+            newStates = states.filter((element) => element.state_id != stateID);
+            this.elements.states = newStates;
+            console.log(newStates);
+          }
+        } else {
+          console.log("Startzustand kann nicht gelöscht werden!");
+        }
+      } else {
+        console.log("Es wurde kein StateID übergeben!");
       }
     },
     updateStateType(StateId, type) {

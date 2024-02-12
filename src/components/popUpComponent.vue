@@ -449,7 +449,7 @@ const prop = defineProps({
 
 const selectedInitState = ref();
 const selectedTransition = ref("a");
-const selectedEndState = ref(0);
+const selectedEndState = ref("");
 
 //Hinzufügen von einem neuen Automat EVENTUELL auslagern nach OverView
 function newAutomata() {

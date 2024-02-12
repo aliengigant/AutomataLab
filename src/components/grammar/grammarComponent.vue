@@ -1,7 +1,13 @@
 <template>
   <div class="container">
     <h1 class="display-6">
-      G= ( { {{ variablenString }}
+      G= ( {
+      <div class="flex" v-for="variablen in variablenString" :key="variablen.id">
+        <GrammarVariable
+          :id="variablen.id"
+          :variable="variablen.variable"
+        ></GrammarVariable>
+      </div>
       <button class="btn" @click="newState">
         <i class="fa fa-plus-circle" aria-hidden="true"></i>
       </button>
@@ -44,6 +50,8 @@ import { computed, onMounted, watch } from "vue";
 import popUpComponent from "../popUpComponent.vue";
 import { useRoute } from "vue-router";
 import grammarInputComponent from "./grammarInputComponent.vue";
+import GrammarVariable from "./grammarVariable.vue";
+
 const { SaveTransitionTable } = storageHooksTrans();
 
 const { findTransitionTableById } = storageHooksTrans();
@@ -66,7 +74,9 @@ onMounted(() => {
 });
 
 //String für die Darstellung beim Tupel
-const variablenString = computed(() => transitionTablle.getVariableStringForGrammar);
+const variablenString = computed(
+  () => transitionTablle.getVariableStringForGrammarAsArray
+);
 const rows = computed(() => transitionTablle.getGrammarRowArray);
 const startState = computed(() => getStartState());
 // Watcher für Änderungen im Store
