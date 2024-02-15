@@ -94,7 +94,18 @@ export const usetransitionTableElementsStore = defineStore({
     getAlphabet(state) {
       // Wenn Sie auf das Alphabet des ersten Elements im Array zugreifen möchten
       if (state.elements.alphabet != null) {
-        const alphabetArray = state.elements.alphabet.slice(1, -1).split(",");
+        const alphabetArraytmp = state.elements.alphabet
+          .slice(1, -1)
+          .split(",");
+        let id = 0;
+        let alphabetArray = [];
+        for (const a of alphabetArraytmp) {
+          alphabetArray.push({
+            id: id,
+            value: a,
+          });
+          id++;
+        }
         return alphabetArray;
       }
       return null; // Oder eine Standardwert, wenn das Array leer ist

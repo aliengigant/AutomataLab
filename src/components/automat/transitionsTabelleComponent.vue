@@ -11,7 +11,7 @@
               :key="item.id"
               scope="col"
             >
-              {{ item }}
+              {{ item.value }}
             </th>
           </tr>
         </thead>

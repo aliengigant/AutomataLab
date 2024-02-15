@@ -85,6 +85,15 @@ function convertGrammarToAutomat() {
   let automato = ConvertedAutomatData;
   const states = table.getNodes;
   const edges = table.getGrammarRowArray;
+  const alphabet = table.getAlphabet;
+  let transitions = [];
+  for (const a of alphabet) {
+    transitions.push({
+      id: a.id,
+      value: a.value,
+      flag: false,
+    });
+  }
   let x = 200;
 
   //Einfügen der Nodes
@@ -98,7 +107,6 @@ function convertGrammarToAutomat() {
     });
     x += 200;
   }
-  console.log(edges);
   //Pro Edge gibt es nur eine Rule
   for (const edge of edges) {
     if (edge.rule.length < 1) {
@@ -109,27 +117,47 @@ function convertGrammarToAutomat() {
     const sourceId = String(edge.variable).substring(1, 2);
     const targetId = String(edge.rule).substring(2, 3);
     const transID = sourceId + "to" + targetId;
-    console.log(label);
-    console.log(transID);
-    automato.automat.edges.push({
-      data: {
-        transitions: [
-          { id: 1, value: "a", flag: true },
-          { id: 2, value: "b", flag: false },
-        ],
-      },
-      id: transID,
-      label: label,
-      source: sourceId,
-      target: targetId,
-      type: "arrow",
-      markerEnd: {
-        type: "arrowclosed",
-        color: "black",
-        width: 100,
-        height: 40,
-      },
-    });
+
+    //Wenn die Transition schon existiert, bearbeite nur das bestehende Edge
+    if (automato.automat.edges.find((element) => element.id == transID)) {
+      let aut = automato.automat.edges.find((element) => element.id == transID);
+      aut.label = aut.label + label;
+      for (const t of aut.data.transitions) {
+        if (t.value == label) {
+          t.flag = true;
+        }
+      }
+    }
+    //Wenn ein neuer Transition erstellt wird, setze die ersten Attribute
+    else {
+      let transitionTMP = transitions;
+      for (const t of transitionTMP) {
+        console.log("Transition: " + t.id);
+        console.log("label: " + label);
+        console.log("Value: " + t.value);
+        console.log("transition: " + transitions.toString());
+        console.log("TransitionTMP: " + transitionTMP.toString());
+        if (t.value == label) {
+          t.flag = true;
+        }
+      }
+      automato.automat.edges.push({
+        data: {
+          transitions: transitionTMP,
+        },
+        id: transID,
+        label: label,
+        source: sourceId,
+        target: targetId,
+        type: "arrow",
+        markerEnd: {
+          type: "arrowclosed",
+          color: "black",
+          width: 100,
+          height: 40,
+        },
+      });
+    }
     console.error(automato.automat.edges);
   }
   addNodes(automato.automat.nodes);

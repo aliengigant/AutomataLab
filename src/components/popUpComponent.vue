@@ -321,8 +321,8 @@
               </option>
             </select>
             <select id="transition" class="select" v-model="selectedTransition">
-              <option v-for="(word, index) of table.getAlphabet" :key="index">
-                {{ word }}
+              <option v-for="(word, id) of table.getAlphabet" :key="id">
+                {{ word.value }}
               </option>
             </select>
             <select
