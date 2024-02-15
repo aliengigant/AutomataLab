@@ -99,39 +99,38 @@ function convertGrammarToAutomat() {
     x += 200;
   }
   console.log(edges);
+  //Pro Edge gibt es nur eine Rule
   for (const edge of edges) {
     if (edge.rule.length < 1) {
       continue;
     }
 
-    for (const rule of edge.rule) {
-      const label = String(rule).substring(0, 1);
-      const sourceId = String(edge.variable).substring(1, 2);
-      const targetId = String(rule).substring(2, 3);
-      const transID = sourceId + "to" + targetId;
-      console.log(label);
-      console.log(transID);
-      automato.automat.edges.push({
-        data: {
-          transitions: [
-            { id: 1, value: "a", flag: true },
-            { id: 2, value: "b", flag: false },
-          ],
-        },
-        id: transID,
-        label: label,
-        source: sourceId,
-        target: targetId,
-        type: "arrow",
-        markerEnd: {
-          type: "arrowclosed",
-          color: "black",
-          width: 100,
-          height: 40,
-        },
-      });
-      console.error(automato.automat.edges);
-    }
+    const label = String(edge.rule).substring(0, 1);
+    const sourceId = String(edge.variable).substring(1, 2);
+    const targetId = String(edge.rule).substring(2, 3);
+    const transID = sourceId + "to" + targetId;
+    console.log(label);
+    console.log(transID);
+    automato.automat.edges.push({
+      data: {
+        transitions: [
+          { id: 1, value: "a", flag: true },
+          { id: 2, value: "b", flag: false },
+        ],
+      },
+      id: transID,
+      label: label,
+      source: sourceId,
+      target: targetId,
+      type: "arrow",
+      markerEnd: {
+        type: "arrowclosed",
+        color: "black",
+        width: 100,
+        height: 40,
+      },
+    });
+    console.error(automato.automat.edges);
   }
   addNodes(automato.automat.nodes);
   addEdges(automato.automat.edges);

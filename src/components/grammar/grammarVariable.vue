@@ -1,5 +1,5 @@
 <template>
-  <h1
+  <div
     class="display-6"
     type="button"
     id="dropdownMenuButton1"
@@ -7,7 +7,7 @@
     aria-expanded="false"
   >
     {{ props.variable }}
-  </h1>
+  </div>
   <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
     <li><a class="dropdown-item" @click="deleteState">Löschen</a></li>
   </ul>

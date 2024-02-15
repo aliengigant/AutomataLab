@@ -2,12 +2,12 @@
   <div class="container">
     <h1 class="display-6">
       G= ( {
-      <h1 v-for="variablen in variablenString" :key="variablen.id">
+      <p v-for="variablen in variablenString" :key="variablen.id">
         <GrammarVariable
           :id="variablen.id"
           :variable="variablen.variable"
         ></GrammarVariable>
-      </h1>
+      </p>
       <button class="btn" @click="newState">
         <i class="fa fa-plus-circle" aria-hidden="true"></i>
       </button>
