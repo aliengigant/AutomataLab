@@ -333,7 +333,7 @@
                 selectedInitState == null || selectedInitState == 'new'
               "
             >
-              <option :value="''"></option>
+              <option :value="'/'">/</option>
               <option
                 v-for="state of table.getNodes"
                 :key="state.state_id"
@@ -472,19 +472,33 @@ function newGrammatik() {
 }
 function newRule() {
   let initNode = findNodeById(selectedInitState.value);
-  let targetNode = findNodeById(selectedEndState.value);
-
+  let targetNode;
+  if (selectedEndState.value == "/") {
+    targetNode = "";
+  } else {
+    targetNode = findNodeById(selectedEndState.value);
+  }
   if (checkTransition(initNode, selectedTransition.value, targetNode)) {
-    const transition = {
-      id:
-        initNode.state_id +
-        "to" +
-        targetNode.state_id +
-        selectedTransition.value,
-      target: targetNode.state_id,
-      target_label: targetNode.state_label,
-      transition_label: selectedTransition.value,
-    };
+    let transition = "";
+    if (targetNode != "") {
+      transition = {
+        id:
+          initNode.state_id +
+          "to" +
+          targetNode.state_id +
+          selectedTransition.value,
+        target: targetNode.state_id,
+        target_label: targetNode.state_label,
+        transition_label: selectedTransition.value,
+      };
+    } else {
+      transition = {
+        id: initNode.state_id + "toEnd" + selectedTransition.value,
+        target: "-1",
+        target_label: "End",
+        transition_label: selectedTransition.value,
+      };
+    }
     const index = findNodeIndex(initNode.state_id);
     table.elements.states[index].transitions.push(transition);
     saveGrammar();

@@ -86,17 +86,17 @@ function convertGrammarToAutomat() {
   const states = table.getNodes;
   const edges = table.getGrammarRowArray;
   const alphabet = table.getAlphabet;
-  let transitions = [];
-  for (const a of alphabet) {
-    transitions.push({
-      id: a.id,
-      value: a.value,
-      flag: false,
-    });
-  }
+
   let x = 200;
 
   //Einfügen der Nodes
+  //Einfügen eines EndStates
+  automato.automat.nodes.push({
+    id: "-1",
+    label: "End",
+    type: "end",
+    position: { x: 300, y: 200 },
+  });
   // Benutze addEdges und AddNodes
   for (const state of states) {
     automato.automat.nodes.push({
@@ -112,12 +112,31 @@ function convertGrammarToAutomat() {
     if (edge.rule.length < 1) {
       continue;
     }
+    let label = "";
+    let sourceId = "";
+    let targetId = "";
+    let transID = "";
+    if (edge.rule.includes("End")) {
+      label = String(edge.rule).substring(0, 1);
+      sourceId = String(edge.variable).substring(1, 2);
+      targetId = "-1";
+      transID = sourceId + "to" + targetId;
+    } else {
+      label = String(edge.rule).substring(0, 1);
+      sourceId = String(edge.variable).substring(1, 2);
+      targetId = String(edge.rule).substring(2, 3);
+      transID = sourceId + "to" + targetId;
+    }
 
-    const label = String(edge.rule).substring(0, 1);
-    const sourceId = String(edge.variable).substring(1, 2);
-    const targetId = String(edge.rule).substring(2, 3);
-    const transID = sourceId + "to" + targetId;
-
+    let transitions = [];
+    console.log(transitions);
+    for (const a of alphabet) {
+      transitions.push({
+        id: a.id,
+        value: a.value,
+        flag: false,
+      });
+    }
     //Wenn die Transition schon existiert, bearbeite nur das bestehende Edge
     if (automato.automat.edges.find((element) => element.id == transID)) {
       let aut = automato.automat.edges.find((element) => element.id == transID);
@@ -132,15 +151,13 @@ function convertGrammarToAutomat() {
     else {
       let transitionTMP = transitions;
       for (const t of transitionTMP) {
-        console.log("Transition: " + t.id);
-        console.log("label: " + label);
-        console.log("Value: " + t.value);
-        console.log("transition: " + transitions.toString());
-        console.log("TransitionTMP: " + transitionTMP.toString());
         if (t.value == label) {
           t.flag = true;
         }
       }
+      console.log(sourceId)
+      console.log(targetId)
+      console.log(label)
       automato.automat.edges.push({
         data: {
           transitions: transitionTMP,
@@ -158,7 +175,6 @@ function convertGrammarToAutomat() {
         },
       });
     }
-    console.error(automato.automat.edges);
   }
   addNodes(automato.automat.nodes);
   addEdges(automato.automat.edges);
