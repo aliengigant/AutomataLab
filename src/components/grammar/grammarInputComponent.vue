@@ -5,10 +5,9 @@
       <i class="fa-solid fa-arrow-right-long"></i>
     </li>
     <li class="list-group-item">{{ props.rule }}</li>
-  </div>
-  <div class="btn-group">
+
     <button
-      class="btn btn-transparent-secondary"
+      class="btn btn-sm"
       type="button"
       data-bs-toggle="dropdown"
       aria-expanded="false"
@@ -38,4 +37,4 @@ const props = defineProps({
 const table = usetransitionTableElementsStore();
 </script>
 
-<style></style>
+<style scoped></style>

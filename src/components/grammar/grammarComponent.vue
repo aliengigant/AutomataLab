@@ -14,12 +14,12 @@
       } ,E,{{ startState }})
     </h1>
 
-    <div class="card" style="width: auto">
+    <div class="card" style="width: 30rem">
       <div class="card-header">
         <h1 class="display-6">P =</h1>
       </div>
       <div class="card-body">
-        <div v-for="row in rows" :key="row.transitionID">
+        <div class="row" v-for="row in rows" :key="row.transitionID">
           <grammarInputComponent
             :variable="row.variable"
             :rule="row.rule"
