@@ -495,7 +495,7 @@ function newRule() {
       transition = {
         id: initNode.state_id + "toEnd" + selectedTransition.value,
         target: "-1",
-        target_label: "End",
+        target_label: " ",
         transition_label: selectedTransition.value,
       };
     }

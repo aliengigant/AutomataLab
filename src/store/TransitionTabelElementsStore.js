@@ -347,7 +347,9 @@ export const usetransitionTableElementsStore = defineStore({
     updateStateType(StateId, type) {
       console.log(StateId + " wird geändert!");
       if (StateId.length > 0) {
-        const state = this.elements.states[StateId];
+        const state = this.elements.states.find(
+          (state) => state.state_id == StateId
+        );
         state.state_type = type;
       } else {
         console.log("Es gibt keine State!");

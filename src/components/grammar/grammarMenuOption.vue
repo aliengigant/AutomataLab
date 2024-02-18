@@ -92,6 +92,7 @@ function convertGrammarToAutomat() {
   //Einfügen der Nodes
   //Einfügen eines EndStates
   automato.automat.nodes.push({
+    data: { state: "end" },
     id: "-1",
     label: "End",
     type: "end",
@@ -100,6 +101,7 @@ function convertGrammarToAutomat() {
   // Benutze addEdges und AddNodes
   for (const state of states) {
     automato.automat.nodes.push({
+      data: { state: state.state_type },
       id: state.state_id,
       label: state.state_label,
       type: state.state_type,
@@ -116,7 +118,7 @@ function convertGrammarToAutomat() {
     let sourceId = "";
     let targetId = "";
     let transID = "";
-    if (edge.rule.includes("End")) {
+    if (edge.transitionID.includes("End")) {
       label = String(edge.rule).substring(0, 1);
       sourceId = String(edge.variable).substring(1, 2);
       targetId = "-1";
@@ -155,9 +157,9 @@ function convertGrammarToAutomat() {
           t.flag = true;
         }
       }
-      console.log(sourceId)
-      console.log(targetId)
-      console.log(label)
+      console.log(sourceId);
+      console.log(targetId);
+      console.log(label);
       automato.automat.edges.push({
         data: {
           transitions: transitionTMP,

@@ -37,10 +37,10 @@ function makeStart() {
       nodeState.data.state = "end";
       nodeState.type = "end";
     }
-
     transitionTable.updateStateType(nodeState.id, nodeState.type);
   }
-  const node = getNodes.value.find((element) => element.id == props.id);
+  const node = getNode.value(props.id);
+  console.log(node);
   if (node.data.state == "end") {
     node.data.state = "startend";
     node.type = "startend";

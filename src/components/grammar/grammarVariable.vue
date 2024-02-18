@@ -1,6 +1,5 @@
 <template>
   <div
-    class="display-6"
     type="button"
     id="dropdownMenuButton1"
     data-bs-toggle="dropdown"

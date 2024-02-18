@@ -1,8 +1,12 @@
 <template>
   <div class="container">
-    <h1 class="display-6">
-      G= ( {
-      <p v-for="variablen in variablenString" :key="variablen.id">
+    <div class="list-group list-group-horizontal">
+      <div class="display-6">G= ( {</div>
+      <p
+        class="list-group-item"
+        v-for="variablen in variablenString"
+        :key="variablen.id"
+      >
         <GrammarVariable
           :id="variablen.id"
           :variable="variablen.variable"
@@ -11,9 +15,8 @@
       <button class="btn" @click="newState">
         <i class="fa fa-plus-circle" aria-hidden="true"></i>
       </button>
-      } ,E,{{ startState }})
-    </h1>
-
+      <div class="display-6">} ,E,{{ startState }})</div>
+    </div>
     <div class="card" style="width: 30rem">
       <div class="card-header">
         <h1 class="display-6">P =</h1>
