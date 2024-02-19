@@ -153,7 +153,11 @@ export const usetransitionTableElementsStore = defineStore({
             ruleTmp = s.transitions.map((r) => {
               const Translabel = r.transition_label;
               let target_label = r.target_label;
-              return { id: r.id, rule: Translabel + target_label };
+              if (target_label == "End") {
+                return { id: r.id, rule: Translabel };
+              } else {
+                return { id: r.id, rule: Translabel + target_label };
+              }
             });
             // for (const r of ruletmp) {
             //   rule.push(r);

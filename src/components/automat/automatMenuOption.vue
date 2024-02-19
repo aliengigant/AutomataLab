@@ -463,7 +463,7 @@ function automatSimuView() {
   }
 }
 function automatSimulation() {
-  const table = transitionTablle.getElements; // Sollte es 'transitionTable' statt 'transitionTablle' sein?
+  // const table = transitionTablle.getElements; // Sollte es 'transitionTable' statt 'transitionTablle' sein?
   const word = selectedWordValue.value;
   let wordList = word;
   isEnd = false;
@@ -475,7 +475,7 @@ function automatSimulation() {
   stateListSimulation.value.push({ value: state.state_label });
   alphabetListSimulation.value.push({ rest: wordList });
   //Unterscheide zwischen DEA und NEA
-  if (checkAutomat() && table.type == "DEA") {
+  if (checkAutomat()) {
     //Gehe das Eingabewort Char für Char durch
     for (let i = 0; i < word.length; i++) {
       const char = word.charAt(i);
@@ -550,13 +550,15 @@ function automatSimulation() {
     } else {
       isEnd = false;
     }
-  } else if (checkAutomat() && table.type == "NEA") {
-    //Gehe das Eingabewort Char für Char durch
-    for (let i = 0; i < word.length; i++) {
-      const char = word.charAt(i);
-      console.log(char);
-    }
-  } else {
+  } 
+  // else if (checkAutomat() && table.type == "NEA") {
+  //   //Gehe das Eingabewort Char für Char durch
+  //   for (let i = 0; i < word.length; i++) {
+  //     const char = word.charAt(i);
+  //     console.log(char);
+  //   }
+  // } 
+  else {
     alert(
       "Automate wurde nicht korrekt definiert! Bitte überprüft deinen Automaten."
     );
