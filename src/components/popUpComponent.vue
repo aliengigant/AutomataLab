@@ -43,6 +43,16 @@
       <i class="fa-solid fa-plus"></i> {{ buttonLabel }}</a
     >
   </div>
+  <div v-else-if="modalType == '#Prolog'">
+    <a
+      class="nav-link"
+      href="#"
+      data-toggle="modal"
+      :data-target="prop.modalType"
+    >
+      <i class="fa-solid fa-plus"></i> {{ buttonLabel }}</a
+    >
+  </div>
   <div v-else>{{ buttonLabel }}</div>
 
   <!--Die Modals/PopUpFenster-->
@@ -350,6 +360,37 @@
       </div>
     </div>
   </div>
+  <!-- Prolog -->
+  <div
+    class="modal fade"
+    id="Prolog"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="Prolog"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="Prolog">Prolog</h5>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body"><prologComponent></prologComponent></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
   <!-- tmp for new Modal-Types -->
   <div
     class="modal fade"
@@ -392,6 +433,7 @@ import { useRouter } from "vue-router";
 import tableComponent from "./automat/transitionsTabelleComponent.vue";
 import grammarComponent from "./grammar/grammarComponent.vue";
 import { storageHooksTrans } from "@/hooks/transitionTableStorageHook";
+import prologComponent from "./prolog/prologComponent.vue";
 
 const { SaveTransitionTable } = storageHooksTrans();
 

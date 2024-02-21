@@ -54,35 +54,26 @@
               :buttonLabel="'Grammatik'"
             ></popUpComponent>
           </li>
-          <li class="nav-item dropdown ml-2">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              role="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
+          <li class="nav-item ml-2" @click="convertToDea">
+            <a v-if="automat.type == 'NEA'" class="nav-link" href="#"
+              >NEA zu DEA</a
             >
-              <i class="fa-solid fa-rotate"></i> Konvetieren
-            </a>
-            <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">NEA zu DEA</a></li>
-              <li>
-                <a class="dropdown-item" href="#"
-                  >Automat zu regulären Ausdruck</a
-                >
-              </li>
-            </ul>
           </li>
-
           <li
             @click="exportLocalStorage(route.params.id)"
             class="nav-item ml-2"
           >
-            <!--Alphabte aussuchen-->
+            <!--Exportieren eines Automatens-->
             <a class="nav-link" href="#">
               <i class="fa-solid fa-file-export"></i>
               Export Automat</a
             >
+          </li>
+          <li class="nav-item ml-2" @click="convertToDea">
+            <popUpComponent
+              :modal-type="'#Prolog'"
+              :buttonLabel="'Prolog'"
+            ></popUpComponent>
           </li>
         </ul>
       </div>
@@ -281,6 +272,9 @@ function saveTransTable() {
     nodes.value,
     edges.value
   );
+}
+function convertToDea() {
+  transitionTablle.getNeaArray;
 }
 
 function checkAutomatView() {
@@ -550,14 +544,14 @@ function automatSimulation() {
     } else {
       isEnd = false;
     }
-  } 
+  }
   // else if (checkAutomat() && table.type == "NEA") {
   //   //Gehe das Eingabewort Char für Char durch
   //   for (let i = 0; i < word.length; i++) {
   //     const char = word.charAt(i);
   //     console.log(char);
   //   }
-  // } 
+  // }
   else {
     alert(
       "Automate wurde nicht korrekt definiert! Bitte überprüft deinen Automaten."

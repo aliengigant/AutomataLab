@@ -41,6 +41,9 @@ export const usetransitionTableElementsStore = defineStore({
     getElements(state) {
       return state.elements;
     },
+    getType(state) {
+      return state.elements.type;
+    },
     getVariableString(state) {
       let result = " ";
       if (state.elements.states) {
@@ -154,9 +157,21 @@ export const usetransitionTableElementsStore = defineStore({
               const Translabel = r.transition_label;
               let target_label = r.target_label;
               if (target_label == "End") {
-                return { id: r.id, rule: Translabel };
+                return {
+                  id: r.id,
+                  rule: Translabel,
+                  end: true,
+                  targetLabel: "end",
+                  transitionVar: Translabel.charAt(0,1),
+                };
               } else {
-                return { id: r.id, rule: Translabel + target_label };
+                return {
+                  id: r.id,
+                  rule: Translabel + target_label,
+                  end: false,
+                  targetLabel: target_label,
+                  transitionVar: r.transition_label.charAt(0,1),
+                };
               }
             });
             // for (const r of ruletmp) {
@@ -168,6 +183,9 @@ export const usetransitionTableElementsStore = defineStore({
               transitionID: r.id,
               variable: s.state_label,
               rule: r.rule,
+              end: r.end,
+              targetLabel: r.targetLabel,
+              transitionVar: r.transitionVar,
             });
           }
           console.log(row);
@@ -187,12 +205,33 @@ export const usetransitionTableElementsStore = defineStore({
               transitionID: r.transitionID + "end",
               variable: r.variable,
               rule: transitionVar,
+              end: true,
+              targetLabel: r.targetLabel,
+              transitionVar: r.transitionVar,
             });
           }
         }
         return row;
       }
       return "kein wert";
+    },
+    getNeaArray(state) {
+      const grammarRow = state.getGrammarRowArray;
+      console.log(grammarRow);
+      let result = new Map();
+      for (const { variable, targetLabel } of grammarRow) {
+        if (!result.has(variable)) {
+          result.set(variable, []);
+        }
+        result.get(variable).push(targetLabel);
+      }
+      console.log(result);
+      // Erweitern der Regeln für jede Variable
+      const consolidatedEntries = [];
+      for (const [variable, rules] of result) {
+        consolidatedEntries.push({ variable, rule: rules });
+      }
+      console.log(consolidatedEntries);
     },
   },
   actions: {
