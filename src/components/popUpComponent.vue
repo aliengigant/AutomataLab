@@ -50,7 +50,7 @@
       data-toggle="modal"
       :data-target="prop.modalType"
     >
-      <i class="fa-solid fa-plus"></i> {{ buttonLabel }}</a
+      <i class="fa fa-calculator"></i> {{ buttonLabel }}</a
     >
   </div>
   <div v-else>{{ buttonLabel }}</div>

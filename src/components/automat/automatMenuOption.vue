@@ -56,7 +56,7 @@
           </li>
           <li class="nav-item ml-2" @click="convertToDea">
             <a v-if="automat.type == 'NEA'" class="nav-link" href="#"
-              >NEA zu DEA</a
+              ><i class="fa-solid fa-arrows-spin"></i> NEA zu DEA</a
             >
           </li>
           <li

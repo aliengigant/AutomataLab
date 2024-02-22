@@ -125,6 +125,27 @@ export const usetransitionTableElementsStore = defineStore({
         return nodes;
       }
     },
+    getStart(state) {
+      const nodes = state.getNodes;
+      let start = "";
+      for (const node of nodes) {
+        if (node.state_type == "start") {
+          start = node.state_label;
+        }
+      }
+      console.log(nodes);
+      return start;
+    },
+    getEnds(state) {
+      const nodes = state.getNodes;
+      let ends = [];
+      for (const node of nodes) {
+        if (node.state_type == "end") {
+          ends.push(node.state_label);
+        }
+      }
+      return ends;
+    },
     //Erstelle aus den daten der State eine benutzbare Array-Struktur für den Grammatik teil (Automat zu Grammatik konvetierung)
     getGrammarRowArray(state) {
       // Unsere Array-Struktur
@@ -162,7 +183,7 @@ export const usetransitionTableElementsStore = defineStore({
                   rule: Translabel,
                   end: true,
                   targetLabel: "end",
-                  transitionVar: Translabel.charAt(0,1),
+                  transitionVar: Translabel.charAt(0, 1),
                 };
               } else {
                 return {
@@ -170,7 +191,7 @@ export const usetransitionTableElementsStore = defineStore({
                   rule: Translabel + target_label,
                   end: false,
                   targetLabel: target_label,
-                  transitionVar: r.transition_label.charAt(0,1),
+                  transitionVar: r.transition_label.charAt(0, 1),
                 };
               }
             });
