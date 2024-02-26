@@ -209,7 +209,6 @@ export const usetransitionTableElementsStore = defineStore({
               transitionVar: r.transitionVar,
             });
           }
-          console.log(row);
         }
         //Einfügen der Endübergänge
         for (const r of row) {
