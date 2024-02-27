@@ -41,8 +41,14 @@ export const usetransitionTableElementsStore = defineStore({
     getElements(state) {
       return state.elements;
     },
+    getName(state) {
+      return state.elements.name;
+    },
     getType(state) {
       return state.elements.type;
+    },
+    getAlphabetString(state) {
+      return state.elements.alphabet;
     },
     getVariableString(state) {
       let result = " ";

@@ -55,19 +55,20 @@ const router = useRouter();
 var ranId = () => Math.floor(Math.random() * 1000);
 const id = ranId();
 
-let ConvertedAutomatData = {
-  id: id,
-  name: "",
-  type: "NEA",
-  automat: {
-    alphabet: "[a,b]",
-    nodes: [],
-    edges: [],
-  },
-};
+let ConvertedAutomatData;
 
 //Hinzufügen von einem neuen Automat EVENTUELL auslagern nach OverView
 function newAutomata() {
+  ConvertedAutomatData = {
+    id: id,
+    name: "converted " + table.getName,
+    type: "NEA",
+    automat: {
+      alphabet: table.getAlphabetString,
+      nodes: [],
+      edges: [],
+    },
+  };
   ConvertedAutomatData = convertGrammarToAutomat();
   automat.addAutomat(ConvertedAutomatData);
 
