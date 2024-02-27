@@ -1,10 +1,19 @@
 <template>
   <div>
     <div style="height: 500px">
-      <VueFlow :nodes="Anodes" :edges="Aedges" connection-mode="strict">
+      <VueFlow
+        :nodes="Anodes"
+        :edges="Aedges"
+        :connection-radius="30"
+        auto-connect
+        connection-mode="strict"
+      >
         <Background gap="10" variant="lines"></Background>
         <vueFlowControlsComponent></vueFlowControlsComponent>
-
+        <template #connection-line="edgeProps">
+          />
+          <connectionLine v-bind="edgeProps"></connectionLine>
+        </template>
         <template #node-normal="defaultNodeProps">
           <automatNormalNode v-bind="defaultNodeProps"></automatNormalNode>
         </template>
@@ -15,7 +24,7 @@
             style="position: absolute; right: 60px; bottom: 15px"
           ></i>
           <automatStartNode v-bind="startNodeProps"></automatStartNode>
-        </template> 
+        </template>
         <template #node-startend="startendNodeProps">
           <i
             class="fa-solid fa-arrow-right-long"
@@ -47,6 +56,7 @@ import automatStartNode from "./nodes/automatStartNode.vue";
 import automatStartEndNode from "./nodes/automatStartEndNode.vue";
 import automatEndNode from "./nodes/automatEndNode.vue";
 import automataArrowEdge from "./edges/automataArrowEdge.vue";
+import connectionLine from "./connectionLine/snappableConnectionLine.vue"
 
 const { findAutomataById } = storageHooks();
 const route = useRoute();

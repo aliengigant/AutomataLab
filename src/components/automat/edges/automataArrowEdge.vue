@@ -112,7 +112,7 @@ watch(
 
 const edgePath = computed(() => {
   if (props.source !== props.target && edgeParams.value.sx) {
-    return getStraightPath({
+    const path = getStraightPath({
       sourceX: edgeParams.value.sx,
       sourceY: edgeParams.value.sy,
       targetX: edgeParams.value.tx,
@@ -120,12 +120,14 @@ const edgePath = computed(() => {
       sourcePosition: edgeParams.value.sourcePos,
       targetPosition: edgeParams.value.targetPos,
     });
+    console.log(path);
+    return path;
   } else if (props.source === props.target) {
     const { sourceX, sourceY, targetX, targetY } = props;
     const radiusX = (sourceX - targetX) * 0.6;
     const radiusY = 50;
     const edgePath1 = `M ${sourceX} ${sourceY} A ${radiusX} ${radiusY} 0 1 0 ${targetX} ${targetY}`;
-
+    console.log(edgePath1);
     return edgePath1;
   } else {
     return "";
