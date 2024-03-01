@@ -4,17 +4,35 @@
     @click="togglePopupVisibility()"
     :id="id"
     :style="style"
-    :path="source !== target ? edgePath[0] : edgePath"
+    :path="source != target ? edgePath[0] : edgePath"
     :marker-end="markerEnd"
   />
 
   <!-- Use the `EdgeLabelRenderer` to escape the SVG world of edges and render your own custom label in a `<div>` ctx -->
-  <EdgeLabelRenderer>
+  <EdgeLabelRenderer v-if="source != target">
     <div
       :style="{
         pointerEvents: 'all',
         position: 'absolute',
         transform: `translate(-50%, -90%) translate(${edgePath[1]}px,${edgePath[2]}px)`,
+      }"
+      class="nodrag nopan"
+    >
+      <a>{{ edge.label }}</a>
+      <automataPopUpComponent
+        v-if="showPopup"
+        @closePopup="closePopup"
+        :edge-id="id"
+        :edgeLabel="label"
+      ></automataPopUpComponent>
+    </div>
+  </EdgeLabelRenderer>
+  <EdgeLabelRenderer v-else>
+    <div
+      :style="{
+        pointerEvents: 'all',
+        position: 'absolute',
+        transform: 'translate(120px, 12px)',
       }"
       class="nodrag nopan"
     >
@@ -120,14 +138,14 @@ const edgePath = computed(() => {
       sourcePosition: edgeParams.value.sourcePos,
       targetPosition: edgeParams.value.targetPos,
     });
-    console.log(path);
+    // console.log(path);
     return path;
   } else if (props.source === props.target) {
     const { sourceX, sourceY, targetX, targetY } = props;
     const radiusX = (sourceX - targetX) * 0.6;
     const radiusY = 50;
     const edgePath1 = `M ${sourceX} ${sourceY} A ${radiusX} ${radiusY} 0 1 0 ${targetX} ${targetY}`;
-    console.log(edgePath1);
+    // console.log(edgePath1);
     return edgePath1;
   } else {
     return "";

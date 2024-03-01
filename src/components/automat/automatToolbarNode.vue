@@ -5,8 +5,8 @@
   >
     <h5 class="h5">KnotenTyp:</h5>
     <button class="btn btn-success" @click="makeStart()">Start</button>
-    <button class="btn btn-info" @click="makeNormal()">Normal</button>
-    <button class="btn btn-danger" @click="makeEnd()">Ende</button><br />
+    <button class="btn btn-light" @click="makeNormal()">Normal</button>
+    <button class="btn btn-warning" @click="makeEnd()">Ende</button>
     <button class="btn btn-danger" @click="deleteNode()">Delete Node</button>
   </NodeToolbar>
 </template>

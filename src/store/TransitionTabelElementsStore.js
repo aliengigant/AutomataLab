@@ -242,22 +242,41 @@ export const usetransitionTableElementsStore = defineStore({
       return "kein wert";
     },
     getNeaArray(state) {
-      const grammarRow = state.getGrammarRowArray;
-      console.log(grammarRow);
-      let result = new Map();
-      for (const { variable, targetLabel } of grammarRow) {
-        if (!result.has(variable)) {
-          result.set(variable, []);
+      const result = [];
+      const alphabet = state.getAlphabet;
+
+      for (const sta of state.getNodes) {
+        const staId = sta.state_id;
+        // Falls die `sta_id` noch nicht im Resultat existiert, erstelle ein leeres Array für sie
+        if (!result[staId]) {
+          result[staId] = [];
         }
-        result.get(variable).push(targetLabel);
+        const stateTransitions = [];
+        for (const a of alphabet) {
+          const transition = [];
+          for (const trans of sta.transitions) {
+            if (trans.transition_label === a.value) {
+              stateTransitions.push(trans);
+            }
+          }
+          stateTransitions.push(transition); // Die Alphabet-Übergänge werden zum Zustand hinzugefügt
+        }
+        result[staId] = stateTransitions; // Zustand wird zum Ergebnis hinzugefügt
       }
-      console.log(result);
-      // Erweitern der Regeln für jede Variable
-      const consolidatedEntries = [];
-      for (const [variable, rules] of result) {
-        consolidatedEntries.push({ variable, rule: rules });
+      console.log(result[0][1].values);
+      return result;
+    },
+    getConvertedNeaToDea(state) {
+      const NeaArray = state.getNeaArray;
+      console.log(NeaArray);
+      var newNodes = [];
+      newNodes.push(state.getStart.state_label);
+      for (const n of NeaArray) {
+        if (newNodes.find((element) => element.label == n.label)) {
+          console.log(n.label + " Existiert schon");
+        } else {
+        }
       }
-      console.log(consolidatedEntries);
     },
   },
   actions: {
@@ -271,7 +290,10 @@ export const usetransitionTableElementsStore = defineStore({
         //Gehe vom jeden Node die Transitionen durch
         for (const transition of state.transitions) {
           //Wenn mehr als nur ein Label in dieser Transition ist, spalte es in die Anzahl der Labelanzahl
-          if (transition.transition_label.length > 0) {
+          if (
+            transition.transition_label.length &&
+            transition.transition_label.length > 0
+          ) {
             for (let i = 0; i < transition.transition_label.length; i++) {
               transitionsTMP.push({
                 id: transition.id + transition.transition_label[i],

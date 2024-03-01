@@ -272,7 +272,7 @@ function saveTransTable() {
   );
 }
 function convertToDea() {
-  transitionTablle.getNeaArray;
+  transitionTablle.getConvertedNeaToDea;
 }
 
 function checkAutomatView() {
