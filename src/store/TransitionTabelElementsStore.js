@@ -139,7 +139,6 @@ export const usetransitionTableElementsStore = defineStore({
           start = node.state_label;
         }
       }
-      console.log(nodes);
       return start;
     },
     getEnds(state) {
@@ -188,6 +187,7 @@ export const usetransitionTableElementsStore = defineStore({
                   id: r.id,
                   rule: Translabel,
                   end: true,
+                  sourceLabel: s.state_label,
                   targetLabel: "end",
                   transitionVar: Translabel.charAt(0, 1),
                 };
@@ -196,6 +196,7 @@ export const usetransitionTableElementsStore = defineStore({
                   id: r.id,
                   rule: Translabel + target_label,
                   end: false,
+                  sourceLabel: s.state_label,
                   targetLabel: target_label,
                   transitionVar: r.transition_label.charAt(0, 1),
                 };
@@ -211,6 +212,7 @@ export const usetransitionTableElementsStore = defineStore({
               variable: s.state_label,
               rule: r.rule,
               end: r.end,
+              sourceLabel: s.state_label,
               targetLabel: r.targetLabel,
               transitionVar: r.transitionVar,
             });
@@ -232,6 +234,7 @@ export const usetransitionTableElementsStore = defineStore({
               variable: r.variable,
               rule: transitionVar,
               end: true,
+              sourceLabel: r.sourceLabel,
               targetLabel: r.targetLabel,
               transitionVar: r.transitionVar,
             });
@@ -242,41 +245,159 @@ export const usetransitionTableElementsStore = defineStore({
       return "kein wert";
     },
     getNeaArray(state) {
-      const result = [];
-      const alphabet = state.getAlphabet;
+      // Transitionstabelle mit leerständen
+      const transTable = state.getTransitionTable;
+      // Result Array
+      const NeaToDeaArray = [];
+      let id = 0;
+      const firstState = transTable.find((e) => e.type == "start");
 
-      for (const sta of state.getNodes) {
-        const staId = sta.state_id;
-        // Falls die `sta_id` noch nicht im Resultat existiert, erstelle ein leeres Array für sie
-        if (!result[staId]) {
-          result[staId] = [];
+      //1. Trage den Startzustand an erste Position des Resultsarray ein
+      NeaToDeaArray.push({ state_id: id, ...firstState });
+      id++;
+      // console.log(transTable);
+      //2. Ich durchlaufe den NeaToDeaArray und dieser wird im laufe des Prozesse weiter befüllt
+      for (const node of NeaToDeaArray) {
+        console.log(node.state_label);
+        //  2.1 Durchlaufen der einzelnen Transitionen des Nodes
+        for (const NodeTransition of node.transition) {
+          // 3. Überprüfe ob der State-Label schon im Resultarray existieren
+          //  3.1 Wenn ja, überspring den hinzufüge Prozess
+          if (
+            NeaToDeaArray.find(
+              (e) => NodeTransition.transition_label == e.state_label
+            )
+          ) {
+            console.log("Übersprungen: " + NodeTransition.transition_label);
+            continue;
+          }
+
+          //  3.2 Wenn nein, geh in das hinzufüge Prozess
+          else {
+            //Festlegen des neuen State Labels
+            const stateLabel = NodeTransition.transition_label;
+            const transitions = [];
+            const alphabet = this.getAlphabet;
+            for (const a of alphabet) {
+              transitions.push(
+                this.getTransitionForNeaToDea(
+                  transTable,
+                  NodeTransition.transition_array,
+                  a.value
+                )
+              );
+            }
+            //Es kann sein, dass ein Transition 1 Übergang hat aber auch mehrere, das heißt, ich muss alle werte im TransitionArray durchlaufen und einen Ausnahmefall für [] machen
+            NeaToDeaArray.push({
+              state_id: id,
+              state_label: stateLabel,
+              transition: transitions,
+            });
+            id++;
+          }
+          console.log(NeaToDeaArray);
         }
-        const stateTransitions = [];
+      }
+      //Vorgehen:
+      // 1. Trage den Startzustand an erste Position des Resultsarray ein
+      // 2. Ich durchlaufe den Resultarray und dieser wird im laufe des Prozesse weiter befüllt
+      //  2.1 Durchlaufen der einzelnen Transitionen des Nodes
+      //  2.2 Hinzugefügt werden : id, state_label, transitionen
+      // 3. Überprüfe ob der State-Label schon im Resultarray existieren
+      //  3.1 Wenn ja, überspring den hinzufüge Prozess
+      //  3.2 Wenn nein, geh in das hinzufüge Prozess
+      // Hinzufüge Prozess:
+
+      return NeaToDeaArray;
+    },
+    getConvertedNeaToDea() {
+      const a = this.getNeaArray;
+      console.log(a);
+      return a;
+    },
+    //Gibt die Transition mit leerständen aus(sind nach Alphabet IDs eingeteilt)
+    getTransitionTable(state) {
+      const grammarRowArray = state.getNodes;
+      // Neues Array
+      const transTable = [];
+      for (const node of grammarRowArray) {
+        transTable.push({
+          state_label: node.state_label,
+          transition: state.getTransitionTableForConvert(node.state_label),
+          type: node.state_type,
+        });
+      }
+      return transTable;
+    },
+    //Pro State werden die Übergänge zusammengefasst und auch leerstände angezeigt
+    getTransitionTableForConvert(state) {
+      //erstellt ein String mit Kombinierten zustands Übergänge aber auch array an Zuständen
+      // index = Alphabet ID
+      return function (nodeLabel) {
+        const transition = [];
+        const alphabet = state.getAlphabet;
+        const startNode = state.getNodes.find(
+          (element) => element.state_label == nodeLabel
+        );
+        // console.log(nodeLabel);
+        //Durchlaufen jeder Alphabet
         for (const a of alphabet) {
-          const transition = [];
-          for (const trans of sta.transitions) {
-            if (trans.transition_label === a.value) {
-              stateTransitions.push(trans);
+          let combinedTransition = [];
+          //Erkenne jede Transition für ein Node und fasse sie Zusammen
+          for (const nt of startNode.transitions) {
+            if (nt.transition_label == a.value) {
+              combinedTransition.push(nt.target_label);
             }
           }
-          stateTransitions.push(transition); // Die Alphabet-Übergänge werden zum Zustand hinzugefügt
+          //Leere einträge werden ignoriert und Verhindere DupNodes
+          if (combinedTransition != "") {
+            transition.push({
+              transition_label: combinedTransition.join(","),
+              transition_array: combinedTransition,
+            });
+          } else {
+            transition.push([]);
+          }
         }
-        result[staId] = stateTransitions; // Zustand wird zum Ergebnis hinzugefügt
-      }
-      console.log(result[0][1].values);
-      return result;
+        return transition;
+      };
     },
-    getConvertedNeaToDea(state) {
-      const NeaArray = state.getNeaArray;
-      console.log(NeaArray);
-      var newNodes = [];
-      newNodes.push(state.getStart.state_label);
-      for (const n of NeaArray) {
-        if (newNodes.find((element) => element.label == n.label)) {
-          console.log(n.label + " Existiert schon");
-        } else {
+    //Pro State werden die Übergänge zusammengefasst und auch leerstände angezeigt
+    getTransitionForNeaToDea() {
+      //erstellt ein String mit Kombinierten zustands Übergänge aber auch array an Zuständen
+      // index = Alphabet ID
+      return function (array, nodeTransitions, alphabetIndex) {
+        let transition;
+        let combinedTransition = [];
+        //Erkenne jede Transition für ein Node und fasse sie Zusammen
+        for (const nt of nodeTransitions) {
+          const startNode = array.find((element) => element.state_label == nt);
+
+          combinedTransition.push(
+            startNode.transition[alphabetIndex].transition_array
+          );
         }
-      }
+        //Leere einträge werden ignoriert und Verhindere DupNodes
+        if (combinedTransition != "") {
+          let resTran = [];
+          for (const res of combinedTransition) {
+            if (res) {
+              if (res.length > 1) {
+                resTran.push(...res.map((item) => item.split(",")));
+              } else {
+                resTran.push(res);
+              }
+            }
+          }
+          transition = {
+            transition_label: resTran.join(","),
+            transition_array: resTran,
+          };
+        } else {
+          transition = [];
+        }
+        return transition;
+      };
     },
   },
   actions: {

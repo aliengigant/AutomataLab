@@ -69,7 +69,7 @@
               Export Automat</a
             >
           </li>
-          <li class="nav-item ml-2" @click="convertToDea">
+          <li class="nav-item ml-2">
             <popUpComponent
               :modal-type="'#Prolog'"
               :buttonLabel="'Prolog'"
@@ -207,6 +207,7 @@
 
 <script setup>
 import { storageHooks } from "@/hooks/automatStorageHook";
+import { useAutomataElementsStore } from "@/store/automataElementsStore";
 import popUpComponent from "../popUpComponent.vue";
 import { useVueFlow } from "@vue-flow/core";
 import { ref, onMounted, watch } from "vue";
@@ -220,6 +221,7 @@ const { findAutomataById, makeArray, exportLocalStorage } = storageHooks();
 const automatID = route.params.id || null;
 const transitionTablle = usetransitionTableElementsStore();
 const automat = ref(null);
+const automat2 = useAutomataElementsStore();
 let automataAlphabet = ref([]);
 const CheckText = ref("");
 const CheckTextArray = ref([]);
@@ -247,17 +249,16 @@ if (automatID) {
   // Behandle den Fall, wenn route.params.id nicht definiert ist
   console.error("Route ID not defined");
 }
-const { getEdges, getNodes, getElements } = useVueFlow();
-const nodes = ref(getNodes);
-const edges = ref(getEdges);
+const uF1 = useVueFlow();
+const nodes = ref(uF1.getNodes);
+const edges = ref(uF1.getEdges);
 
 onMounted(() => {
   saveTransTable();
 });
-watch([() => getNodes.value, () => getEdges.value], () => {
+watch([() => uF1.getNodes.value, () => uF1.getEdges.value], () => {
   // Call saveTransTable with the updated values
   saveTransTable();
-  console.log(getElements);
 });
 function saveTransTable() {
   //State speichern
@@ -272,7 +273,89 @@ function saveTransTable() {
   );
 }
 function convertToDea() {
-  transitionTablle.getConvertedNeaToDea;
+  const transTableNea = transitionTablle.getConvertedNeaToDea;
+  let x = 200;
+  const id = 10000;
+  const endNodes = transitionTablle.getEnds;
+  let ConvertedAutomatData = {
+    id: id,
+    name: "converted NEA",
+    type: "DEA",
+    automat: {
+      alphabet: transitionTablle.getAlphabetString,
+      nodes: [],
+      edges: [],
+    },
+  };
+  for (const state of transTableNea) {
+    let type = null;
+    const parts = state.state_label.split(",");
+    if (state.state_id != 0 && parts.some((part) => endNodes.includes(part))) {
+      type = "end";
+    } else if (state.state_id == 0) {
+      type = "start";
+    } else {
+      type = "normal";
+    }
+
+    ConvertedAutomatData.automat.nodes.push({
+      id: state.state_id,
+      label: state.state_label,
+      type: type,
+      position: { x: x, y: 100 },
+    });
+    x += 200;
+  }
+  console.log(transTableNea);
+  const alphabet = transitionTablle.getAlphabet;
+  for (const transition of transTableNea) {
+    let label;
+    let sourceId = transition.state_id;
+    let targetId = "";
+    let transID = "";
+    let alphabetIndex = 0;
+    for (const innerTransition of transition.transition) {
+      label = alphabet.find((e) => e.id == alphabetIndex);
+      const target = transTableNea.find(
+        (e) => innerTransition.transition_label == e.state_label
+      );
+      targetId = target.state_id;
+      transID = sourceId + "to" + targetId;
+      ConvertedAutomatData.automat.edges.push({
+        id: transID,
+        label: label.value,
+        source: sourceId,
+        target: targetId,
+        type: "arrow",
+        markerEnd: {
+          type: "arrowclosed",
+          color: "black",
+          width: 100,
+          height: 40,
+        },
+      });
+      alphabetIndex++;
+    }
+  }
+  console.log(ConvertedAutomatData);
+  
+  const uF2 = useVueFlow();
+  uF2.addNodes(ConvertedAutomatData.automat.nodes);
+  uF2.addEdges(ConvertedAutomatData.automat.edges);
+  ConvertedAutomatData.automat.edges = uF2.getEdges.value;
+  ConvertedAutomatData.automat.nodes = uF2.getNodes.value;
+
+  automat2.addAutomat(ConvertedAutomatData);
+
+  // console.log("Importierte Daten:", ConvertedAutomatData);
+  // //öffne die Automaten seite
+  // route.push({
+  //   path: "/automat",
+  //   name: "automatPage",
+  //   params: { id: id },
+  // });
+  // automat2.getData();
+  // alert("Neuer Automat wurde erstellt!");
 }
 
 function checkAutomatView() {
