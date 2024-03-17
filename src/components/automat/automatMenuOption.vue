@@ -211,11 +211,12 @@ import { useAutomataElementsStore } from "@/store/automataElementsStore";
 import popUpComponent from "../popUpComponent.vue";
 import { useVueFlow } from "@vue-flow/core";
 import { ref, onMounted, watch } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { Offcanvas } from "bootstrap";
 
 import { usetransitionTableElementsStore } from "@/store/TransitionTabelElementsStore";
 const route = useRoute();
+const router = useRouter();
 const { findAutomataById, makeArray, exportLocalStorage } = storageHooks();
 
 const automatID = route.params.id || null;
@@ -275,11 +276,12 @@ function saveTransTable() {
 function convertToDea() {
   const transTableNea = transitionTablle.getConvertedNeaToDea;
   let x = 200;
-  const id = 10000;
+  var ranId = () => Math.floor(Math.random() * 1000);
+  const id = ranId();
   const endNodes = transitionTablle.getEnds;
   let ConvertedAutomatData = {
     id: id,
-    name: "converted NEA",
+    name: "converted NEA from " + transitionTablle.getName,
     type: "DEA",
     automat: {
       alphabet: transitionTablle.getAlphabetString,
@@ -361,23 +363,21 @@ function convertToDea() {
 
   const uF2 = useVueFlow();
   uF2.setNodes(ConvertedAutomatData.automat.nodes);
-  // uF2.addEdges(ConvertedAutomatData.automat.edges);
-  // ConvertedAutomatData.automat.edges = uF2.getEdges.value;
+  uF2.addEdges(ConvertedAutomatData.automat.edges);
+  ConvertedAutomatData.automat.edges = uF2.getEdges.value;
   ConvertedAutomatData.automat.nodes = uF2.getNodes.value;
 
-  console.log(ConvertedAutomatData);
-  // console.log(uF1.getEdges.value);
   automat2.addAutomat(ConvertedAutomatData);
 
-  // console.log("Importierte Daten:", ConvertedAutomatData);
-  // //öffne die Automaten seite
-  // route.push({
-  //   path: "/automat",
-  //   name: "automatPage",
-  //   params: { id: id },
-  // });
-  // automat2.getData();
-  // alert("Neuer Automat wurde erstellt!");
+  console.log("Importierte Daten:", ConvertedAutomatData);
+  //öffne die Automaten seite
+  router.push({
+    path: "/automat",
+    name: "automatPage",
+    params: { id: id },
+  });
+  automat2.getData();
+  alert("Neuer Automat wurde erstellt!");
 }
 
 function checkAutomatView() {
