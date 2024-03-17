@@ -132,7 +132,6 @@ function convertGrammarToAutomat() {
     }
 
     let transitions = [];
-    console.log(transitions);
     for (const a of alphabet) {
       transitions.push({
         id: a.id,
@@ -158,9 +157,6 @@ function convertGrammarToAutomat() {
           t.flag = true;
         }
       }
-      console.log(sourceId);
-      console.log(targetId);
-      console.log(label);
       automato.automat.edges.push({
         data: {
           transitions: transitionTMP,
@@ -181,7 +177,6 @@ function convertGrammarToAutomat() {
   }
   addNodes(automato.automat.nodes);
   addEdges(automato.automat.edges);
-
   automato.automat.nodes = getNodes.value;
   automato.automat.edges = getEdges.value;
   return automato;

@@ -308,6 +308,7 @@ function convertToDea() {
   }
   console.log(transTableNea);
   const alphabet = transitionTablle.getAlphabet;
+
   for (const transition of transTableNea) {
     let label;
     let sourceId = transition.state_id;
@@ -315,17 +316,36 @@ function convertToDea() {
     let transID = "";
     let alphabetIndex = 0;
     for (const innerTransition of transition.transition) {
+      let dataTransitions = [];
+      for (const a of alphabet) {
+        dataTransitions.push({
+          id: a.id,
+          value: a.value,
+          flag: false,
+        });
+      }
+      console.log(dataTransitions);
       label = alphabet.find((e) => e.id == alphabetIndex);
       const target = transTableNea.find(
         (e) => innerTransition.transition_label == e.state_label
       );
       targetId = target.state_id;
       transID = sourceId + "to" + targetId;
+
+      let transitionTMP = dataTransitions;
+      for (const t of transitionTMP) {
+        if (t.value == label.value) {
+          t.flag = true;
+        }
+      }
       ConvertedAutomatData.automat.edges.push({
+        data: { transitions: transitionTMP },
         id: transID,
         label: label.value,
-        source: sourceId,
-        target: targetId,
+        source: String(sourceId),
+        sourceHandle: sourceId + "__handle-right",
+        target: String(targetId),
+        targetHandle: targetId + "__handle-left",
         type: "arrow",
         markerEnd: {
           type: "arrowclosed",
@@ -337,14 +357,16 @@ function convertToDea() {
       alphabetIndex++;
     }
   }
-  console.log(ConvertedAutomatData);
-  
+  console.log(transTableNea);
+
   const uF2 = useVueFlow();
-  uF2.addNodes(ConvertedAutomatData.automat.nodes);
-  uF2.addEdges(ConvertedAutomatData.automat.edges);
-  ConvertedAutomatData.automat.edges = uF2.getEdges.value;
+  uF2.setNodes(ConvertedAutomatData.automat.nodes);
+  // uF2.addEdges(ConvertedAutomatData.automat.edges);
+  // ConvertedAutomatData.automat.edges = uF2.getEdges.value;
   ConvertedAutomatData.automat.nodes = uF2.getNodes.value;
 
+  console.log(ConvertedAutomatData);
+  // console.log(uF1.getEdges.value);
   automat2.addAutomat(ConvertedAutomatData);
 
   // console.log("Importierte Daten:", ConvertedAutomatData);

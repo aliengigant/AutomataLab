@@ -60,11 +60,13 @@ import connectionLine from "./connectionLine/snappableConnectionLine.vue";
 
 const { findAutomataById } = storageHooks();
 const route = useRoute();
-const { addEdges, onConnectStart, onConnect, onConnectEnd } = useVueFlow();
+const { onConnectStart, onConnect, onConnectEnd, addEdges } = useVueFlow();
 const automat = findAutomataById(parseInt(route.params.id));
 const Anodes = ref(automat.automat.nodes);
 const Aedges = ref(automat.automat.edges);
 const Aalphabet = ref([automat.automat.alphabet]);
+
+
 onConnectStart((params) => {
   console.log(params.nodeId);
 });
