@@ -4,7 +4,9 @@
     @click="togglePopupVisibility()"
     :id="id"
     :style="style"
-    :path="source != target ? edgePath[0] : edgePath"
+    :path="
+      source != target ? (doubleTransition ? edgePath : edgePath[0]) : edgePath
+    "
     :marker-end="markerEnd"
   />
 
@@ -128,8 +130,23 @@ watch(
   { deep: true }
 );
 
+const doubleTransition = computed(() => {
+  console.log(props.source);
+  console.log(props.target);
+  const allEdges = instance.getEdges;
+  for (const edge of allEdges.value) {
+    console.log(edge);
+    if (edge.source == props.target && edge.target == props.source) {
+      console.log("Gefunden");
+      return true;
+    }
+  }
+  return false;
+});
+
 const edgePath = computed(() => {
-  if (props.source !== props.target && edgeParams.value.sx) {
+  if (!doubleTransition.value && props.source !== props.target && edgeParams.value.sx) {
+    console.log(doubleTransition);
     const path = getStraightPath({
       sourceX: edgeParams.value.sx,
       sourceY: edgeParams.value.sy,
@@ -138,7 +155,7 @@ const edgePath = computed(() => {
       sourcePosition: edgeParams.value.sourcePos,
       targetPosition: edgeParams.value.targetPos,
     });
-    // console.log(path);
+    // console.log(edgePath1);
     return path;
   } else if (props.source === props.target) {
     const { sourceX, sourceY, targetX, targetY } = props;
@@ -147,6 +164,12 @@ const edgePath = computed(() => {
     const edgePath1 = `M ${sourceX} ${sourceY} A ${radiusX} ${radiusY} 0 1 0 ${targetX} ${targetY}`;
     // console.log(edgePath1);
     return edgePath1;
+  } else if (doubleTransition.value) {
+    const radiusX = (edgeParams.value.sx - edgeParams.value.tx) * 0.6;
+    const radiusY = 100;
+    const path2 = `M ${edgeParams.value.sx} ${edgeParams.value.sy} A ${radiusX} ${radiusY} 0 0 0 ${edgeParams.value.tx} ${edgeParams.value.ty}`;
+    // console.log(edgePath1);
+    return path2;
   } else {
     return "";
   }
