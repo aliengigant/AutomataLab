@@ -11,7 +11,7 @@
   />
 
   <!-- Use the `EdgeLabelRenderer` to escape the SVG world of edges and render your own custom label in a `<div>` ctx -->
-  <EdgeLabelRenderer v-if="source != target">
+  <EdgeLabelRenderer v-if="source != target && !doubleTransition">
     <div
       :style="{
         pointerEvents: 'all',
@@ -34,7 +34,7 @@
       :style="{
         pointerEvents: 'all',
         position: 'absolute',
-        transform: 'translate(120px, 12px)',
+        transform: `translate(-50%, -90%) translate(${midPoints[0]}px,${midPoints[1]}px)`,
       }"
       class="nodrag nopan"
     >
@@ -144,8 +144,16 @@ const doubleTransition = computed(() => {
   return false;
 });
 
+const midPoints = computed(() => [
+  (edgeParams.value.sx + edgeParams.value.tx) / 2,
+  (edgeParams.value.sy + edgeParams.value.ty) / 2,
+]);
 const edgePath = computed(() => {
-  if (!doubleTransition.value && props.source !== props.target && edgeParams.value.sx) {
+  if (
+    !doubleTransition.value &&
+    props.source !== props.target &&
+    edgeParams.value.sx
+  ) {
     console.log(doubleTransition);
     const path = getStraightPath({
       sourceX: edgeParams.value.sx,
