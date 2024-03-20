@@ -1,5 +1,5 @@
 <template>
-  <div v-if="visible" class="card border-5 bg-dark text-light">
+  <div v-if="visible" class="card border-5">
     <div class="dropdown m-2">
       <button
         class="float-right btn btn-outline-secondary btn-circle btn-circle-sm"
@@ -19,11 +19,13 @@
         </li>
       </ul>
     </div>
-    <img src="@/assets/logo.png" class="card-img-top" alt="..." />
-    <div class="card-body">
-      <p v-if="fromAutomat">Vom Automat:</p>
-      <h5 class="card-title">{{ props.name }}</h5>
-    </div>
+    <a href="#" @click="openGrammar">
+      <img src="@/assets/logo.png" class="card-img-top" alt="..." />
+      <div class="card-body">
+        <p v-if="fromAutomat">Vom Automat:</p>
+        <h5 class="card-title">{{ props.name }}</h5>
+      </div>
+    </a>
   </div>
 </template>
 
@@ -76,4 +78,20 @@ function deleteGrammar() {
 }
 </script>
 
-<style></style>
+<style scoped>
+.card {
+  /* transition: box-shadow 0.3s; */
+  transition: 0.3s;
+}
+.card:hover {
+  transform: translate(-12px, -12px);
+  box-shadow: 12px 12px 10px rgba(0, 0, 0, 0.35);
+}
+a,
+a:hover,
+a:visited,
+a:active {
+  color: inherit;
+  text-decoration: none;
+}
+</style>

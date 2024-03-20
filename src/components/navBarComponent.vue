@@ -1,7 +1,7 @@
 <template>
-  <nav class="navbar navbar-expand-lg">
+  <nav class="navbar navbar-expand-lg bg-primary">
     <div class="container-fluid">
-      <h1 class="h1">{{ props.title }}</h1>
+      <h1 class="h1" style="color: aliceblue">{{ props.title }}</h1>
       <button
         class="navbar-toggler"
         type="button"
@@ -13,10 +13,10 @@
       >
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
+      <div class="collapse navbar-collapse p-3" id="navbarNav">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/">Home</a>
+            <a class="nav-link" aria-current="page" href="/">Home</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/automatOverview">Automaten</a>
@@ -24,13 +24,13 @@
           <li class="nav-item">
             <a class="nav-link" href="/grammatikOverview">Grammatik</a>
           </li>
-          <li class="nav-item">
+          <!-- <li class="nav-item">
             <a class="nav-link" href="/regAusdruck">Regulärer Ausdrücke</a>
-          </li>
+          </li> -->
         </ul>
 
         <!--ToDo: Beispielsammlung etc. -->
-        <a class="nav-link" href="#">Beispiele</a>
+        <!-- <a class="nav-link" href="#">Beispiele</a> -->
       </div>
     </div>
   </nav>
@@ -54,7 +54,7 @@
     <div class="offcanvas-body">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/">Home</a>
+          <a class="nav-link" aria-current="page" href="/">Home</a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/automat">Automaten</a>
@@ -78,4 +78,8 @@ const props = defineProps({
 });
 </script>
 
-<style></style>
+<style scoped>
+.nav-link {
+  color: aliceblue;
+}
+</style>

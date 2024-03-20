@@ -1,25 +1,38 @@
 <template>
-  <modulLayout>
-    <template #content>
-      <div class="container">
-        <popUpComponent :modal-type="'#newGrammatik'"></popUpComponent>
-        <div class="row justify-content-evenly">
-          <div
-            v-for="(table, index) in tables"
-            :key="index"
-            style="width: 15rem"
-          >
-            <grammarOverviewCard
-              :id="table.id"
-              :name="table.name"
-              :type="table.type"
-              :from-automat="table.automat_id"
-            ></grammarOverviewCard>
+  <div class="bg-darkblue">
+    <modulLayout>
+      <template #content>
+        <div class="container">
+          <popUpComponent :modal-type="'#newGrammatik'"></popUpComponent>
+          <div v-if="tables.length == 0">
+            <h2
+              class="display-2"
+              style="
+                text-align: center;
+                color: rgba(0, 0, 0, 0.4);
+              "
+            >
+              Erstelle eine neue Grammatik indem du auf den Plus klickst
+            </h2>
+          </div>
+          <div v-else class="row justify-content-evenly">
+            <div
+              v-for="(table, index) in tables"
+              :key="index"
+              style="width: 15rem"
+            >
+              <grammarOverviewCard
+                :id="table.id"
+                :name="table.name"
+                :type="table.type"
+                :from-automat="table.automat_id"
+              ></grammarOverviewCard>
+            </div>
           </div>
         </div>
-      </div>
-    </template>
-  </modulLayout>
+      </template>
+    </modulLayout>
+  </div>
 </template>
 
 <script setup>
@@ -40,7 +53,6 @@ onMounted(() => {
   //Wenn diese Componente aufgerufen wird, ändere den Namen im Store auf: Automat Übersicht
   modalStore.changeModalName("Grammatik Übersicht");
 });
-
 </script>
 
 <style scoped>

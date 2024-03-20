@@ -1,4 +1,6 @@
 <template>
+  
+  <div class="bg-darkblue">
   <modulLayout>
     <template #content>
       <div class="container">
@@ -19,6 +21,7 @@
       </div>
     </template>
   </modulLayout>
+  </div>
 </template>
 
 <script setup>
