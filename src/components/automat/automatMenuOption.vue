@@ -41,7 +41,7 @@
               <i class="fa-solid fa-play"></i> Simulieren</a
             >
           </li>
-          <li class="nav-item ml-2" @click="saveTransTable">
+          <li class="nav-item ml-2">
             <!--ÜbergangsTabelle-->
             <popUpComponent
               :modal-type="'#Übergangstabelle'"
@@ -275,6 +275,7 @@ function saveTransTable() {
 }
 function convertToDea() {
   const transTableNea = transitionTablle.getConvertedNeaToDea;
+  console.log(transTableNea)
   let x = 200;
   var ranId = () => Math.floor(Math.random() * 1000);
   const id = ranId();
@@ -302,7 +303,7 @@ function convertToDea() {
 
     ConvertedAutomatData.automat.nodes.push({
       id: state.state_id,
-      label: state.state_label,
+      label: `{${state.state_label}}`,
       type: type,
       position: { x: x, y: 100 },
     });

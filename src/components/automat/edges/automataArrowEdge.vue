@@ -41,7 +41,7 @@
       <a>{{ edge.label }}</a>
       <automataPopUpComponent
         v-if="showPopup"
-        @closePopup="closePopup"
+        @closePopup="closePopUp"
         :edge-id="id"
         :edgeLabel="label"
       ></automataPopUpComponent>
@@ -131,13 +131,13 @@ watch(
 );
 
 const doubleTransition = computed(() => {
-  console.log(props.source);
-  console.log(props.target);
+  // console.log(props.source);
+  // console.log(props.target);
   const allEdges = instance.getEdges;
   for (const edge of allEdges.value) {
-    console.log(edge);
+    // console.log(edge);
     if (edge.source == props.target && edge.target == props.source) {
-      console.log("Gefunden");
+      // console.log("Gefunden");
       return true;
     }
   }
@@ -154,7 +154,7 @@ const edgePath = computed(() => {
     props.source !== props.target &&
     edgeParams.value.sx
   ) {
-    console.log(doubleTransition);
+    // console.log(doubleTransition);
     const path = getStraightPath({
       sourceX: edgeParams.value.sx,
       sourceY: edgeParams.value.sy,
@@ -263,6 +263,9 @@ onEdgeClick(({ edge }) => {
     showPopup.value = !showPopup.value;
   }
 });
+function closePopUp() {
+  showPopup.value = false;
+}
 </script>
 
 <style scoped>

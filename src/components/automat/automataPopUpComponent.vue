@@ -23,9 +23,9 @@
         </div>
       </div>
       <div class="card-footer text-muted">
-        <a href="#" class="btn btn-danger" @click="removeEdges(props.edgeId)"
-          >Übergang löschen</a
-        ><button type="button" class="btn btn-secondary">x</button>
+        <a href="#" class="btn btn-danger" @click="removeEdges(props.edgeId)">
+          <i class="fa fa-trash" aria-hidden="true"></i
+        ></a>
       </div>
     </div>
   </div>
@@ -63,9 +63,8 @@ function checkBoxChange(id, event) {
     console.log("Kein Edge");
   }
 }
+
 function getCheck(id) {
   return edge.data.transitions[id].flag;
 }
 </script>
-
-<style scoped></style>
