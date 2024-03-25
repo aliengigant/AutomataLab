@@ -12,7 +12,7 @@
           :variable="variablen.variable"
         ></GrammarVariable>
       </p>
-      <button class="btn" @click="newState">
+      <button v-if="!props.automate" class="btn" @click="newState">
         <i class="fa fa-plus-circle" aria-hidden="true"></i>
       </button>
       <div class="display-6">} ,E,{{ startState }})</div>
@@ -30,6 +30,7 @@
           ></grammarInputComponent>
         </div>
         <popUpComponent
+          v-if="!props.automate"
           :modal-type="'#newRuleGrammatik'"
           :buttonLabel="'neue Regel'"
         ></popUpComponent>
@@ -43,11 +44,15 @@
 <script setup>
 import { storageHooksTrans } from "@/hooks/transitionTableStorageHook";
 import { usetransitionTableElementsStore } from "@/store/TransitionTabelElementsStore";
-import { computed, onMounted, watch } from "vue";
+import { computed, onMounted, watch, defineProps } from "vue";
 import popUpComponent from "../popUpComponent.vue";
 import { useRoute } from "vue-router";
 import grammarInputComponent from "./grammarInputComponent.vue";
 import GrammarVariable from "./grammarVariable.vue";
+
+const props = defineProps({
+  automate: { type: Boolean, default: false },
+});
 
 const { SaveTransitionTable } = storageHooksTrans();
 

@@ -276,7 +276,7 @@
         <div class="modal-body">
           <div class="container"></div>
           <!--Tabelle mit Übergängen-->
-          <grammar-component></grammar-component>
+          <grammar-component :automate="true"></grammar-component>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-primary" @click="saveGrammar">
