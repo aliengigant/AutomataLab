@@ -35,7 +35,6 @@
           </tr>
         </tbody>
       </table>
-      <button @click="saveStorage">Save</button>
     </div>
   </div>
 </template>
@@ -51,7 +50,7 @@ import { useVueFlow } from "@vue-flow/core";
 const transitionTablle = usetransitionTableElementsStore();
 
 const { getEdges, findNode } = useVueFlow();
-const nodes = ref(transitionTablle.getNodes);
+// const nodes = ref(transitionTablle.getNodes);
 
 const route = useRoute();
 const { findAutomataById, makeArray } = storageHooks();
@@ -125,32 +124,32 @@ function getTransition(nodeID, wordValue) {
   // console.log(edge(nodeID));
   // console.log(edgesFromSource.value);
 }
-function saveStorage() {
-  //State speichern
-  transitionTablle.addTransitionTable(
-    automat.value.name,
-    automat.value.type,
-    automat.value.id,
-    automat.value.automat.alphabet,
-    nodes.value,
-    transitionForm(getEdges.value)
-  );
-  console.log(transitionTablle.getId);
-}
-function transitionForm(edges) {
-  let result = [];
-  for (const edge of edges) {
-    let tmp = [];
-    tmp.push = {
-      id: edge.id,
-      targe: edge.targe,
-      target_label: edge.target_label,
-      transition_label: edge.transition_label,
-    };
-    result.push = tmp;
-  }
-  return result;
-}
+// function saveStorage() {
+//   //State speichern
+//   transitionTablle.addTransitionTable(
+//     automat.value.name,
+//     automat.value.type,
+//     automat.value.id,
+//     automat.value.automat.alphabet,
+//     nodes.value,
+//     transitionForm(getEdges.value)
+//   );
+//   console.log(transitionTablle.getId);
+// }
+// function transitionForm(edges) {
+//   let result = [];
+//   for (const edge of edges) {
+//     let tmp = [];
+//     tmp.push = {
+//       id: edge.id,
+//       targe: edge.targe,
+//       target_label: edge.target_label,
+//       transition_label: edge.transition_label,
+//     };
+//     result.push = tmp;
+//   }
+//   return result;
+// }
 </script>
 
 <style scoped></style>
