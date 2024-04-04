@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="container w-auto">
     <div class="list-group list-group-horizontal">
       <div class="display-6">G= ( {</div>
       <p
@@ -17,7 +17,7 @@
       </button>
       <div class="display-6">} ,E,{{ startState }})</div>
     </div>
-    <div class="card" style="width: 30rem">
+    <div class="card">
       <div class="card-header">
         <h1 class="display-6">P =</h1>
       </div>
@@ -34,6 +34,21 @@
           :modal-type="'#newRuleGrammatik'"
           :buttonLabel="'neue Regel'"
         ></popUpComponent>
+        <button class="btn btn-secondary" @click="changeAbleitung">
+          Ableitung
+        </button>
+        <div class="form-check form-switch">
+          <input
+            class="form-check-input"
+            type="checkbox"
+            id="flexSwitchCheckChecked"
+            disabled
+            v-model="Ableitung"
+          />
+          <label class="form-check-label" for="flexSwitchCheckChecked"
+            >Linksseitig</label
+          >
+        </div>
         <!-- 
       <button @click="addRow" class="btn btn-primary">Hinzufügen</button>
       <button @click="showStore" class="btn btn-secondary">show store</button> -->
@@ -80,6 +95,9 @@ const variablenString = computed(
   () => transitionTablle.getVariableStringForGrammarAsArray
 );
 const rows = computed(() => transitionTablle.getGrammarRowArray);
+const Ableitung = computed(() =>
+  transitionTablle.getAbleitung == "links" ? true : false
+);
 const startState = computed(() => getStartState());
 // Watcher für Änderungen im Store
 watch(
@@ -89,6 +107,7 @@ watch(
     rows.value = transitionTablle.getGrammarRowArray;
   }
 );
+
 
 function getStartState() {
   if (
@@ -115,15 +134,24 @@ function getStartState() {
 }
 function newState() {
   console.log("neue Regel");
+  let newState;
   const id = transitionTablle.elements.states.length;
-  let newState = {
+  newState = {
     state_id: id,
     state_label: "q" + id,
     state_type: "normal",
     transitions: [],
   };
+
   transitionTablle.elements.states.push(newState);
   SaveTransitionTable(transitionTablle.getElements);
+}
+function changeAbleitung() {
+  console.log(transitionTablle.getAbleitung)
+  transitionTablle.toggleAbleitung();
+  if (transitionTablle.getAbleitung == "rechts") {
+    console.log("lol");
+  }
 }
 // const addRow = () => {
 //   const id = instance.getNodes.value.length - 1;

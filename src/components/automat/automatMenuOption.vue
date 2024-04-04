@@ -59,6 +59,11 @@
               ><i class="fa-solid fa-arrows-spin"></i> NEA zu DEA</a
             >
           </li>
+          <li class="nav-item ml-2" @click="DEAtoMinimalDEA">
+            <a v-if="automat.type == 'DEA'" class="nav-link" href="#"
+              ><i class="fa-solid fa-arrows-spin"></i>DEA Minimieren</a
+            >
+          </li>
           <li
             @click="exportLocalStorage(route.params.id)"
             class="nav-item ml-2"
@@ -275,7 +280,7 @@ function saveTransTable() {
 }
 function convertToDea() {
   const transTableNea = transitionTablle.getConvertedNeaToDea;
-  console.log(transTableNea)
+  console.log(transTableNea);
   let x = 200;
   var ranId = () => Math.floor(Math.random() * 1000);
   const id = ranId();
@@ -734,6 +739,238 @@ function deleteSelectedWord() {
   isEnd = false;
   document.getElementById("words").value = selectedWordValue.value;
 }
+
+// function DEAtoMinimalDEA() {
+//   // saveTransTable();
+//   const transTableNodes = transitionTablle.getNodes;
+
+//   console.log(transTableNodes);
+//   // Schritt 1: 2D Matrix erstellen
+//   var M = [];
+//   for (var i = 0; i < transTableNodes.length; i++) {
+//     M[i] = [];
+//   }
+
+//   // Schritt 2: Felder markieren wo genau einer von beiden ein Endzustand ist
+//   for (var j = 0; j < transTableNodes.length; j++)
+//     for (var z = 0; z < transTableNodes.length; z++) {
+//       M[j][z] = false;
+//       // die untere hälfte der Tabelle ist immer X
+//       if (z > j) {
+//         M[j][z] = true;
+//         if (
+//           transTableNodes[j].type == "end" &&
+//           transTableNodes[z].type != "end"
+//         ) {
+//           console.log(transTableNodes[j].type);
+//           M[j][z] = true;
+//         }
+//         if (
+//           transTableNodes[z].type == "end" &&
+//           transTableNodes[j].type != "end"
+//         ) {
+//           M[j][z] = true;
+//         }
+//       }
+//     }
+
+//   // Hilfsfunktion für Schritt 3
+//   function findTargetIndexForInput(state, character) {
+//     for (var i = 0; i < state.transitions.length; i++)
+//       for (var z = 0; z < state.transitions[i].Labels.length; z++)
+//         // if (state.transitions[i].Labels[z] == character)
+//         if (state.transitions[i].lable.find(character)) {
+//           // Übergang gefunden mit dem Zeichen
+//           var ID = state.transitions[i].target;
+//           // Zustandsindex bestimmten
+//           for (var w = 0; w < transTableNodes.length; w++)
+//             if (transTableNodes[w].ID == ID) return w;
+//         }
+//     return -1; // nicht gefunden
+//   }
+
+//   // Schritt 3: Für jedes unmarkierte Paar teste, ob für ein Zeichen ein gemeinsames bereits markiertes Paar existiert
+//   var changed = true;
+//   // var p = null;
+//   while (changed) {
+//     changed = false;
+//     for (var i = 0; i < transTableNodes.length; i++)
+//       for (var z = 0; z < transTableNodes.length; z++)
+//         if (z < i && M[i][z] == false) {
+//           var s1 = transTableNodes[i];
+//           var s2 = transTableNodes[z];
+//           for (var w = 0; w < automataAlphabet.value.length; w++) {
+//             var z1 = findTargetIndexForInput(s1, automataAlphabet[w]);
+//             var z2 = findTargetIndexForInput(s2, automataAlphabet[w]);
+//             if (z1 == -1 || z2 == -1) continue; // es gibt keinen Übergang mit dem Zeichen
+//             if ((z1 > z2 && M[z1][z2]) || (z1 < z2 && M[z2][z1])) {
+//               M[i][z] = true;
+//               changed = true;
+//             }
+//           }
+//         }
+//   } // Schritt 4: solange wiederholen bis changed == false
+
+//   // Schritt 5: Unmarkierte Zustände verschmelzen
+//   for (var i = 0; i < transTableNodes.length; i++)
+//     for (var z = 0; z < transTableNodes.length; z++) {
+//       if (z < i && M[i][z] == false) {
+//         // i und z verschmelzen zu i
+//         var s1 = transTableNodes[z];
+//         var s2 = transTableNodes[i];
+
+//         for (var w = 0; w < s2.transitions.length; w++) {
+//           var isThere = null;
+//           for (var t = 0; t < s1.transitions.length; t++) {
+//             if (s1.transitions[t].target == s2.transitions[w].target)
+//               isThere = s1.transitions[t];
+//           }
+//           if (isThere == null) {
+//             s2.transitions[w].Source = s1.ID;
+//             s1.transitions.push(s2.transitions[w]); // Übergang umhängen
+//             isThere = s2.transitions[w];
+//           }
+//           for (var t = 0; t < s2.transitions[w].Labels.length; t++) {
+//             var isLabel = false;
+//             for (var k = 0; k < isThere.Labels.length; k++) {
+//               if (s2.transitions[w].Labels[t] == isThere.Labels[k])
+//                 isLabel = true;
+//             }
+//             if (isLabel == false)
+//               isThere.Labels.push(s2.transitions[w].Labels[t]);
+//           }
+//         }
+//         s1.Name = s1.Name + "+" + s2.Name;
+//         if (s2.Start) s1.Start = true; // Startzustand
+
+//         for (var w = 0; w < transTableNodes.length; w++) {
+//           var isThere = null;
+//           for (var t = 0; t < transTableNodes[w].transitions.length; t++) {
+//             if (transTableNodes[w].transitions[t].target == s1.ID)
+//               isThere = transTableNodes[w].transitions[t];
+//           }
+//           for (var t = 0; t < transTableNodes[w].transitions.length; t++) {
+//             if (transTableNodes[w].transitions[t].target == s2.ID) {
+//               if (!isThere) {
+//                 transTableNodes[w].transitions[t].target = s1.ID; // einfach umbenennen das Ziel
+//               } else {
+//                 // Verbindung besteht schon, nur fehlende Labels ergänzen
+//                 for (
+//                   var x = 0;
+//                   x < transTableNodes[w].transitions[t].Labels.length;
+//                   x++
+//                 ) {
+//                   var isLabel = false;
+//                   for (var y = 0; y < isThere.Labels.length; y++)
+//                     if (
+//                       isThere.Labels[y] ==
+//                       transTableNodes[w].transitions[t].Labels[x]
+//                     )
+//                       isLabel = true;
+//                   if (!isLabel)
+//                     isThere.Labels.push(
+//                       transTableNodes[w].transitions[t].Labels[x]
+//                     );
+//                 }
+//                 transTableNodes[w].transitions.splice(t, 1);
+//                 t--;
+//               }
+//             }
+//           }
+//         }
+//         s2.ID = -1; // löschen wir später
+//       }
+//     }
+
+//   // nicht mehr benötigte Zustände entfernen
+//   for (var i = 0; i < transTableNodes.length; i++) {
+//     if (transTableNodes[i].ID == -1) {
+//       transTableNodes.splice(i, 1);
+//       i--;
+//     }
+//   }
+//   a.Alphabet.sort();
+//   transTableNodes.sort(function (a, b) {
+//     if (a.ID < b.ID) return -1;
+//     if (a.ID > b.ID) return 1;
+//     return 0;
+//   });
+
+//   // labels wieder alphabetisch ordnen, falls durcheinander
+//   for (var w = 0; w < transTableNodes.length; w++) {
+//     for (var t = 0; t < transTableNodes[w].transitions.length; t++) {
+//       transTableNodes[w].transitions[t].Labels.sort();
+//     }
+//   }
+//   // Zustände neu benennen, nach Übergängen alphabetisch geordnet,
+//   // um immer identische Benennung zu erhalten (isomorphe Automaten)
+//   if (rename) {
+//     var na = JSON.parse(JSON.stringify(a));
+//     var start = null;
+//     for (var i = 0; i < transTableNodes.length; i++) {
+//       if (transTableNodes[i].Start) start = transTableNodes[i];
+//       transTableNodes[i].transitions.sort(function (a, b) {
+//         var s1 = a.Labels.join("");
+//         var s2 = b.Labels.join("");
+//         return s1.localeCompare(s2);
+//       });
+//     }
+//     if (start) {
+//       var counter = 0;
+//       var s = {
+//         ID: counter + 1,
+//         Name: "q" + counter,
+//         transitions: [],
+//         Start: true,
+//         Final: start.Final,
+//       };
+//       transTableNodes = [s];
+
+//       function findStateByID(a, id) {
+//         for (var i = 0; i < transTableNodes.length; i++) {
+//           if (transTableNodes[i].ID == id) return transTableNodes[i];
+//         }
+//         return null;
+//       }
+
+//       var oldNew = [];
+//       oldNew[start.ID] = s.ID;
+
+//       function replaceTransitions(from) {
+//         var newStatesCreated = false;
+//         for (var i = 0; i < from.transitions.length; i++) {
+//           var ts = findStateByID(a, from.transitions[i].target);
+//           if (!oldNew[ts.ID]) {
+//             counter++;
+//             var ns = {
+//               ID: counter + 1,
+//               Name: "q" + counter,
+//               transitions: [],
+//               Final: ts.Final,
+//             };
+//             transTableNodes.push(ns);
+//             oldNew[ts.ID] = ns.ID;
+//             newStatesCreated = true;
+//             replaceTransitions(ts);
+//           }
+//           var tt = findStateByID(na, oldNew[from.ID]);
+//           var t = {
+//             Source: tt.ID,
+//             target: oldNew[ts.ID],
+//             Labels: from.transitions[i].Labels,
+//           };
+//           tt.transitions.push(t);
+//         }
+//       }
+//       replaceTransitions(start);
+
+//       // neuen Automat verwenden
+//       a = na;
+//     }
+//   }
+//   console.log(M);
+//   return { result: "OK", automaton: a };
+// }
 </script>
 
 <style scoped></style>

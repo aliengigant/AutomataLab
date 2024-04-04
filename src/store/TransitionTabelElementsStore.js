@@ -8,13 +8,14 @@ import { defineStore } from "pinia";
 import { storageHooksTrans } from "@/hooks/transitionTableStorageHook";
 const { SaveTransitionTable } = storageHooksTrans();
 class transitionTable {
-  constructor(id, name, type, automat_id, alphabet, nodes) {
+  constructor(id, name, type, automat_id, alphabet, nodes, ableitung) {
     this.id = id;
     this.name = name;
     this.type = type;
     this.automat_id = automat_id;
     this.alphabet = alphabet;
     this.states = nodes;
+    this.ableitung = ableitung;
   }
 }
 
@@ -25,6 +26,7 @@ export const usetransitionTableElementsStore = defineStore({
       id: null,
       name: null,
       type: null,
+      ableitung: null,
       automat_id: null,
       alphabet: null,
       states: [
@@ -49,6 +51,9 @@ export const usetransitionTableElementsStore = defineStore({
     },
     getAlphabetString(state) {
       return state.elements.alphabet;
+    },
+    getAbleitung(state) {
+      return state.elements.ableitung;
     },
     getVariableString(state) {
       let result = " ";
@@ -182,30 +187,73 @@ export const usetransitionTableElementsStore = defineStore({
             ruleTmp = s.transitions.map((r) => {
               const Translabel = r.transition_label;
               let target_label = r.target_label;
-              if (target_label == "End") {
-                return {
-                  id: r.id,
-                  rule: Translabel,
-                  end: true,
-                  sourceLabel: s.state_label,
-                  targetLabel: "end",
-                  transitionVar: Translabel.charAt(0, 1),
-                };
+              if (state.getAbleitung == "rechts") {
+                if (target_label == "End") {
+                  return {
+                    id: r.id,
+                    rule: Translabel,
+                    end: true,
+                    sourceLabel: s.state_label,
+                    targetLabel: "end",
+                    transitionVar: Translabel.charAt(0, 1),
+                  };
+                } else {
+                  return {
+                    id: r.id,
+                    rule: Translabel + target_label,
+                    end: false,
+                    sourceLabel: s.state_label,
+                    targetLabel: target_label,
+                    transitionVar: r.transition_label.charAt(0, 1),
+                  };
+                }
+              } else if (state.getAbleitung == "links") {
+                if (target_label == "End") {
+                  return {
+                    id: r.id,
+                    rule: Translabel,
+                    end: true,
+                    sourceLabel: s.state_label,
+                    targetLabel: "end",
+                    transitionVar: Translabel.charAt(0, 1),
+                  };
+                } else {
+                  return {
+                    id: r.id,
+                    rule: target_label + Translabel,
+                    end: false,
+                    sourceLabel: s.state_label,
+                    targetLabel: target_label,
+                    transitionVar: r.transition_label.charAt(0, 1),
+                  };
+                }
               } else {
-                return {
-                  id: r.id,
-                  rule: Translabel + target_label,
-                  end: false,
-                  sourceLabel: s.state_label,
-                  targetLabel: target_label,
-                  transitionVar: r.transition_label.charAt(0, 1),
-                };
+                if (target_label == "End") {
+                  return {
+                    id: r.id,
+                    rule: Translabel,
+                    end: true,
+                    sourceLabel: s.state_label,
+                    targetLabel: "end",
+                    transitionVar: Translabel.charAt(0, 1),
+                  };
+                } else {
+                  return {
+                    id: r.id,
+                    rule: Translabel + target_label,
+                    end: false,
+                    sourceLabel: s.state_label,
+                    targetLabel: target_label,
+                    transitionVar: r.transition_label.charAt(0, 1),
+                  };
+                }
               }
             });
             // for (const r of ruletmp) {
             //   rule.push(r);
             // }
           }
+          console.log(ruleTmp);
           for (const r of ruleTmp) {
             row.push({
               transitionID: r.id,
@@ -484,7 +532,8 @@ export const usetransitionTableElementsStore = defineStore({
           data.type,
           data.automat_id,
           data.alphabet,
-          data.states
+          data.states,
+          data.ableitung
         );
         this.elements;
         this.elements = newTable;
@@ -566,6 +615,17 @@ export const usetransitionTableElementsStore = defineStore({
       } else {
         console.log("Es gibt keine State!");
       }
+    },
+    toggleAbleitung() {
+      if (this.elements.ableitung == "rechts") {
+        this.elements.ableitung = "links";
+      } else if (this.elements.ableitung == "links") {
+        this.elements.ableitung = "rechts";
+      } else {
+        console.log("KEINE ABLEITUNG");
+      }
+      console.log(this.getElements);
+      this.saveToStorage();
     },
   },
 });
