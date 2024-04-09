@@ -91,14 +91,7 @@ function convertGrammarToAutomat() {
   let x = 200;
 
   //Einfügen der Nodes
-  //Einfügen eines EndStates
-  automato.automat.nodes.push({
-    data: { state: "end" },
-    id: "-1",
-    label: "End",
-    type: "end",
-    position: { x: 300, y: 200 },
-  });
+
   // Benutze addEdges und AddNodes
   for (const state of states) {
     automato.automat.nodes.push({
@@ -179,7 +172,28 @@ function convertGrammarToAutomat() {
   addEdges(automato.automat.edges);
   automato.automat.nodes = getNodes.value;
   automato.automat.edges = getEdges.value;
+  console.log(findEnds(automato))
+  if (findEnds(automato).length<1) {
+    //Einfügen eines EndStates
+    automato.automat.nodes.push({
+      data: { state: "end" },
+      id: "-1",
+      label: "End",
+      type: "end",
+      position: { x: 300, y: 200 },
+    });
+  }
   return automato;
+}
+
+function findEnds(automat) {
+  let ends = [];
+  for (const n of automat.automat.nodes) {
+    if (n.type == "end") {
+      ends.push(n);
+    }
+  }
+  return ends;
 }
 </script>
 

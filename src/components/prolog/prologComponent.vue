@@ -20,7 +20,7 @@
     <div>
       end(
       <a v-for="(e, index) in end" :key="index">
-        {{ e }}
+        {{ e }},
       </a>
       ).
     </div>

@@ -740,237 +740,377 @@ function deleteSelectedWord() {
   document.getElementById("words").value = selectedWordValue.value;
 }
 
-// function DEAtoMinimalDEA() {
-//   // saveTransTable();
-//   const transTableNodes = transitionTablle.getNodes;
+function DEAtoMinimalDEA() {
+  // saveTransTable();
+  const transTableNodes = transitionTablle.getNodes;
 
-//   console.log(transTableNodes);
-//   // Schritt 1: 2D Matrix erstellen
-//   var M = [];
-//   for (var i = 0; i < transTableNodes.length; i++) {
-//     M[i] = [];
-//   }
+  console.log(transTableNodes);
+  // Schritt 1: 2D Matrix erstellen
+  var M = [];
+  for (let i = 0; i < transTableNodes.length; i++) {
+    M[i] = [];
+  }
 
-//   // Schritt 2: Felder markieren wo genau einer von beiden ein Endzustand ist
-//   for (var j = 0; j < transTableNodes.length; j++)
-//     for (var z = 0; z < transTableNodes.length; z++) {
-//       M[j][z] = false;
-//       // die untere hälfte der Tabelle ist immer X
-//       if (z > j) {
-//         M[j][z] = true;
-//         if (
-//           transTableNodes[j].type == "end" &&
-//           transTableNodes[z].type != "end"
-//         ) {
-//           console.log(transTableNodes[j].type);
-//           M[j][z] = true;
-//         }
-//         if (
-//           transTableNodes[z].type == "end" &&
-//           transTableNodes[j].type != "end"
-//         ) {
-//           M[j][z] = true;
-//         }
-//       }
-//     }
+  // Schritt 2: Felder markieren wo genau einer von beiden ein Endzustand ist
+  for (let i = 0; i < transTableNodes.length; i++) {
+    for (let z = 0; z < transTableNodes.length; z++) {
+      M[i][z] = false;
+      // die untere hälfte der Tabelle ist immer X
+      if (z > i) {
+        M[i][z] = true;
+      }
+      if (transTableNodes[i].state_type == "end") {
+        if (transTableNodes[z].state_type != "end") {
+          M[i][z] = true;
+        }
+      }
+      if (transTableNodes[z].state_type == "end") {
+        if (transTableNodes[i].state_type != "end") {
+          M[i][z] = true;
+        }
+      }
+    }
+  }
 
-//   // Hilfsfunktion für Schritt 3
-//   function findTargetIndexForInput(state, character) {
-//     for (var i = 0; i < state.transitions.length; i++)
-//       for (var z = 0; z < state.transitions[i].Labels.length; z++)
-//         // if (state.transitions[i].Labels[z] == character)
-//         if (state.transitions[i].lable.find(character)) {
-//           // Übergang gefunden mit dem Zeichen
-//           var ID = state.transitions[i].target;
-//           // Zustandsindex bestimmten
-//           for (var w = 0; w < transTableNodes.length; w++)
-//             if (transTableNodes[w].ID == ID) return w;
-//         }
-//     return -1; // nicht gefunden
-//   }
+  // Hilfsfunktion für Schritt 3
+  function findTargetIndexForInput(state, character) {
+    for (let i = 0; i < state.transitions.length; i++) {
+      // if (state.transitions[i].Labels[z] == character)
+      if (state.transitions[i].transition_label == character) {
+        // Übergang gefunden mit dem Zeichen
+        var ID = state.transitions[i].target;
+        // Zustandsindex bestimmten
+        for (let w = 0; w < transTableNodes.length; w++) {
+          if (transTableNodes[w].state_id == ID) {
+            return w;
+          }
+        }
+      }
+    }
+    return -1; // nicht gefunden
+  }
 
-//   // Schritt 3: Für jedes unmarkierte Paar teste, ob für ein Zeichen ein gemeinsames bereits markiertes Paar existiert
-//   var changed = true;
-//   // var p = null;
-//   while (changed) {
-//     changed = false;
-//     for (var i = 0; i < transTableNodes.length; i++)
-//       for (var z = 0; z < transTableNodes.length; z++)
-//         if (z < i && M[i][z] == false) {
-//           var s1 = transTableNodes[i];
-//           var s2 = transTableNodes[z];
-//           for (var w = 0; w < automataAlphabet.value.length; w++) {
-//             var z1 = findTargetIndexForInput(s1, automataAlphabet[w]);
-//             var z2 = findTargetIndexForInput(s2, automataAlphabet[w]);
-//             if (z1 == -1 || z2 == -1) continue; // es gibt keinen Übergang mit dem Zeichen
-//             if ((z1 > z2 && M[z1][z2]) || (z1 < z2 && M[z2][z1])) {
-//               M[i][z] = true;
-//               changed = true;
-//             }
-//           }
-//         }
-//   } // Schritt 4: solange wiederholen bis changed == false
+  // Schritt 3: Für jedes unmarkierte Paar teste, ob für ein Zeichen ein gemeinsames bereits markiertes Paar existiert
+  var changed = true;
+  // let i = 0;
+  // var p = null;
+  while (changed) {
+    // i++;
+    changed = false;
+    for (let i = 0; i < transTableNodes.length; i++) {
+      for (let z = 0; z < transTableNodes.length; z++) {
+        if (z < i && M[i][z] == false) {
+          // console.log("=======================");
+          // console.log("i: " + i);
+          // console.log("z: " + z);
+          let s1 = transTableNodes[i];
+          let s2 = transTableNodes[z];
+          for (let w = 0; w < automataAlphabet.value.length; w++) {
+            let z1 = findTargetIndexForInput(
+              s1,
+              automataAlphabet.value[w].value
+            );
+            let z2 = findTargetIndexForInput(
+              s2,
+              automataAlphabet.value[w].value
+            );
+            // es gibt keinen Übergang mit dem Zeichen}
+            if (z1 == -1 || z2 == -1) {
+              console.log("KEIN ÜBERGANG");
+              continue;
+            }
+            if (z1 > z2) {
+              if (M[z1][z2]) {
+                M[i][z] = true;
+                changed = true;
+              }
+            } else if (z1 < z2) {
+              if (M[z2][z1]) {
+                M[i][z] = true;
+                changed = true;
+              }
+            }
+            // console.log("z1: " + z1);
+            // console.log("z2: " + z2);
+            // console.log("M[" + z1 + "][" + z2 + "]: " + M[z1][z2]);
+          }
+        }
+      }
+    }
+    // console.log(M);
+    // console.log("Integer: " + i);
+  } // Schritt 4: solange wiederholen bis changed == false
 
-//   // Schritt 5: Unmarkierte Zustände verschmelzen
-//   for (var i = 0; i < transTableNodes.length; i++)
-//     for (var z = 0; z < transTableNodes.length; z++) {
-//       if (z < i && M[i][z] == false) {
-//         // i und z verschmelzen zu i
-//         var s1 = transTableNodes[z];
-//         var s2 = transTableNodes[i];
+  // Schritt 5: Unmarkierte Zustände verschmelzen
+  for (let i = 0; i < transTableNodes.length; i++)
+    for (let z = 0; z < transTableNodes.length; z++) {
+      if (z < i && M[i][z] == false) {
+        // i und z verschmelzen zu i
+        let s1 = transTableNodes[z];
+        let s2 = transTableNodes[i];
 
-//         for (var w = 0; w < s2.transitions.length; w++) {
-//           var isThere = null;
-//           for (var t = 0; t < s1.transitions.length; t++) {
-//             if (s1.transitions[t].target == s2.transitions[w].target)
-//               isThere = s1.transitions[t];
-//           }
-//           if (isThere == null) {
-//             s2.transitions[w].Source = s1.ID;
-//             s1.transitions.push(s2.transitions[w]); // Übergang umhängen
-//             isThere = s2.transitions[w];
-//           }
-//           for (var t = 0; t < s2.transitions[w].Labels.length; t++) {
-//             var isLabel = false;
-//             for (var k = 0; k < isThere.Labels.length; k++) {
-//               if (s2.transitions[w].Labels[t] == isThere.Labels[k])
-//                 isLabel = true;
-//             }
-//             if (isLabel == false)
-//               isThere.Labels.push(s2.transitions[w].Labels[t]);
-//           }
-//         }
-//         s1.Name = s1.Name + "+" + s2.Name;
-//         if (s2.Start) s1.Start = true; // Startzustand
+        for (let w = 0; w < s2.transitions.length; w++) {
+          let isThere = null;
+          for (let t = 0; t < s1.transitions.length; t++) {
+            if (s1.transitions[t].target == s2.transitions[w].target) {
+              isThere = s1.transitions[t];
+            }
+          }
+          if (isThere == null) {
+            s2.transitions[w].source = s1.state_id;
+            s1.transitions.push(s2.transitions[w]); // Übergang umhängen
+            isThere = s2.transitions[w];
+          }
+          
+          let isLabel = false;
+          if (s2.transitions[w].transition_label == isThere.transition_label) {
+            isLabel = true;
+          }
 
-//         for (var w = 0; w < transTableNodes.length; w++) {
-//           var isThere = null;
-//           for (var t = 0; t < transTableNodes[w].transitions.length; t++) {
-//             if (transTableNodes[w].transitions[t].target == s1.ID)
-//               isThere = transTableNodes[w].transitions[t];
-//           }
-//           for (var t = 0; t < transTableNodes[w].transitions.length; t++) {
-//             if (transTableNodes[w].transitions[t].target == s2.ID) {
-//               if (!isThere) {
-//                 transTableNodes[w].transitions[t].target = s1.ID; // einfach umbenennen das Ziel
-//               } else {
-//                 // Verbindung besteht schon, nur fehlende Labels ergänzen
-//                 for (
-//                   var x = 0;
-//                   x < transTableNodes[w].transitions[t].Labels.length;
-//                   x++
-//                 ) {
-//                   var isLabel = false;
-//                   for (var y = 0; y < isThere.Labels.length; y++)
-//                     if (
-//                       isThere.Labels[y] ==
-//                       transTableNodes[w].transitions[t].Labels[x]
-//                     )
-//                       isLabel = true;
-//                   if (!isLabel)
-//                     isThere.Labels.push(
-//                       transTableNodes[w].transitions[t].Labels[x]
-//                     );
-//                 }
-//                 transTableNodes[w].transitions.splice(t, 1);
-//                 t--;
-//               }
-//             }
-//           }
-//         }
-//         s2.ID = -1; // löschen wir später
-//       }
-//     }
+          if (isLabel == false) {
+            isThere.transition_label.push(s2.transitions[w].transition_label);
+          }
+        }
+        s1.state_label = s1.state_label + "+" + s2.state_label;
+        if (s2.state_type == "start") {
+          s1.state_type = "start";
+        } // Startzustand
 
-//   // nicht mehr benötigte Zustände entfernen
-//   for (var i = 0; i < transTableNodes.length; i++) {
-//     if (transTableNodes[i].ID == -1) {
-//       transTableNodes.splice(i, 1);
-//       i--;
-//     }
-//   }
-//   a.Alphabet.sort();
-//   transTableNodes.sort(function (a, b) {
-//     if (a.ID < b.ID) return -1;
-//     if (a.ID > b.ID) return 1;
-//     return 0;
-//   });
+        for (let w = 0; w < transTableNodes.length; w++) {
+          var isThere = null;
 
-//   // labels wieder alphabetisch ordnen, falls durcheinander
-//   for (var w = 0; w < transTableNodes.length; w++) {
-//     for (var t = 0; t < transTableNodes[w].transitions.length; t++) {
-//       transTableNodes[w].transitions[t].Labels.sort();
-//     }
-//   }
-//   // Zustände neu benennen, nach Übergängen alphabetisch geordnet,
-//   // um immer identische Benennung zu erhalten (isomorphe Automaten)
-//   if (rename) {
-//     var na = JSON.parse(JSON.stringify(a));
-//     var start = null;
-//     for (var i = 0; i < transTableNodes.length; i++) {
-//       if (transTableNodes[i].Start) start = transTableNodes[i];
-//       transTableNodes[i].transitions.sort(function (a, b) {
-//         var s1 = a.Labels.join("");
-//         var s2 = b.Labels.join("");
-//         return s1.localeCompare(s2);
-//       });
-//     }
-//     if (start) {
-//       var counter = 0;
-//       var s = {
-//         ID: counter + 1,
-//         Name: "q" + counter,
-//         transitions: [],
-//         Start: true,
-//         Final: start.Final,
-//       };
-//       transTableNodes = [s];
+          for (var t = 0; t < transTableNodes[w].transitions.length; t++) {
+            if (transTableNodes[w].transitions[t].target == s1.state_id) {
+              isThere = transTableNodes[w].transitions[t];
+            }
+          }
 
-//       function findStateByID(a, id) {
-//         for (var i = 0; i < transTableNodes.length; i++) {
-//           if (transTableNodes[i].ID == id) return transTableNodes[i];
-//         }
-//         return null;
-//       }
+          if (transTableNodes[w].transitions.target == s2.state_id) {
+            if (!isThere) {
+              transTableNodes[w].transitions.target = s1.state_id; // einfach umbenennen das Ziel
+            } else {
+              // Verbindung besteht schon, nur fehlende Labels ergänzen
 
-//       var oldNew = [];
-//       oldNew[start.ID] = s.ID;
+              let isLabel = false;
+              if (
+                isThere.transition_label ==
+                transTableNodes[w].transitions[t].transition_label
+              ) {
+                isLabel = true;
+              }
+              if (!isLabel) {
+                isThere.Labels.push(
+                  transTableNodes[w].transitions[t].transition_label
+                );
+              }
 
-//       function replaceTransitions(from) {
-//         var newStatesCreated = false;
-//         for (var i = 0; i < from.transitions.length; i++) {
-//           var ts = findStateByID(a, from.transitions[i].target);
-//           if (!oldNew[ts.ID]) {
-//             counter++;
-//             var ns = {
-//               ID: counter + 1,
-//               Name: "q" + counter,
-//               transitions: [],
-//               Final: ts.Final,
-//             };
-//             transTableNodes.push(ns);
-//             oldNew[ts.ID] = ns.ID;
-//             newStatesCreated = true;
-//             replaceTransitions(ts);
-//           }
-//           var tt = findStateByID(na, oldNew[from.ID]);
-//           var t = {
-//             Source: tt.ID,
-//             target: oldNew[ts.ID],
-//             Labels: from.transitions[i].Labels,
-//           };
-//           tt.transitions.push(t);
-//         }
-//       }
-//       replaceTransitions(start);
+              transTableNodes[w].transitions.splice(t, 1);
+              t--;
+            }
+          }
+        }
+        s2.state_id = -2; // löschen wir später
+      }
+    }
 
-//       // neuen Automat verwenden
-//       a = na;
-//     }
-//   }
-//   console.log(M);
-//   return { result: "OK", automaton: a };
-// }
+  // nicht mehr benötigte Zustände entfernen
+  for (let i = 0; i < transTableNodes.length; i++) {
+    if (transTableNodes[i].state_id == -2) {
+      transTableNodes.splice(i, 1);
+      i--;
+    }
+  }
+  automataAlphabet.value.sort();
+  transTableNodes.sort(function (a, b) {
+    if (a.state_id < b.state_id) {
+      return -1;
+    }
+    if (a.state_id > b.state_id) {
+      return 1;
+    }
+    return 0;
+  });
+
+  // labels wieder alphabetisch ordnen, falls durcheinander
+  // for (let w = 0; w < transTableNodes.length; w++) {
+  //   for (let t = 0; t < transTableNodes[w].transitions.length; t++) {
+  //     transTableNodes[w].transitions[t].transition_label.sort();
+  //   }
+  //   // }
+  //   // // Zustände neu benennen, nach Übergängen alphabetisch geordnet,
+  //   // // um immer identische Benennung zu erhalten (isomorphe Automaten)
+  //   // if (rename) {
+  //   //   let na = JSON.parse(JSON.stringify(a));
+  //   //   let start = null;
+  //   //   for (let i = 0; i < transTableNodes.length; i++) {
+  //   //     if (transTableNodes[i].Start) {
+  //   //       start = transTableNodes[i];
+  //   //     }
+  //   //     transTableNodes[i].transitions.sort(function (a, b) {
+  //   //       let s1 = a.Labels.join("");
+  //   //       let s2 = b.Labels.join("");
+  //   //       return s1.localeCompare(s2);
+  //   //     });
+  //   //   }
+  //   //   if (start) {
+  //   //     var counter = 0;
+  //   //     var s = {
+  //   //       ID: counter + 1,
+  //   //       Name: "q" + counter,
+  //   //       transitions: [],
+  //   //       Start: true,
+  //   //       Final: start.Final,
+  //   //     };
+  //   //     transTableNodes = [s];
+
+  //   //     function findStateByID(a, id) {
+  //   //       for (let i = 0; i < transTableNodes.length; i++) {
+  //   //         if (transTableNodes[i].ID == id) {
+  //   //           return transTableNodes[i];
+  //   //         }
+  //   //       }
+  //   //       return null;
+  //   //     }
+
+  //   //     let oldNew = [];
+  //   //     oldNew[start.ID] = s.ID;
+
+  //   //     function replaceTransitions(from) {
+  //   //       let newStatesCreated = false;
+  //   //       for (let i = 0; i < from.transitions.length; i++) {
+  //   //         let ts = findStateByID(a, from.transitions[i].target);
+  //   //         if (!oldNew[ts.ID]) {
+  //   //           counter++;
+  //   //           var ns = {
+  //   //             ID: counter + 1,
+  //   //             Name: "q" + counter,
+  //   //             transitions: [],
+  //   //             Final: ts.Final,
+  //   //           };
+  //   //           transTableNodes.push(ns);
+  //   //           oldNew[ts.ID] = ns.ID;
+  //   //           newStatesCreated = true;
+  //   //           replaceTransitions(ts);
+  //   //         }
+  //   //         let tt = findStateByID(na, oldNew[from.ID]);
+  //   //         let t = {
+  //   //           Source: tt.ID,
+  //   //           target: oldNew[ts.ID],
+  //   //           Labels: from.transitions[i].transition_label,
+  //   //         };
+  //   //         tt.transitions.push(t);
+  //   //       }
+  //   //     }
+  //   //     replaceTransitions(start);
+
+  //   //     // neuen Automat verwenden
+  //   //     a = na;
+  //   //   }
+  // }
+  console.log(transTableNodes);
+  let x = 200;
+  var ranId = () => Math.floor(Math.random() * 1000);
+  const id = ranId();
+  const endNodes = transitionTablle.getEnds;
+  let ConvertedAutomatData = {
+    id: id,
+    name: "Minimal DEA from " + transitionTablle.getName,
+    type: "DEA",
+    automat: {
+      alphabet: transitionTablle.getAlphabetString,
+      nodes: [],
+      edges: [],
+    },
+  };
+  for (const state of transTableNodes) {
+    let type = null;
+    const parts = state.state_label.split(",");
+    if (state.state_id != 0 && parts.some((part) => endNodes.includes(part))) {
+      type = "end";
+    } else if (state.state_id == 0) {
+      type = "start";
+    } else {
+      type = "normal";
+    }
+
+    ConvertedAutomatData.automat.nodes.push({
+      id: state.state_id,
+      label: `{${state.state_label}}`,
+      type: type,
+      position: { x: x, y: 100 },
+    });
+    x += 200;
+  }
+
+  const alphabet = transitionTablle.getAlphabet;
+
+  for (const transition of transTableNodes) {
+    let label;
+    let sourceId = transition.state_id;
+    let targetId = "";
+    let transID = "";
+    // let alphabetIndex = 0;
+    for (const innerTransition of transition.transitions) {
+      let dataTransitions = [];
+      for (const a of alphabet) {
+        dataTransitions.push({
+          id: a.id,
+          value: a.value,
+          flag: false,
+        });
+      }
+      label = "1";
+      const target = transTableNodes.find(
+        (e) => innerTransition.source == e.state_id
+      );
+      targetId = target.state_id;
+      transID = sourceId + "to" + targetId;
+
+      let transitionTMP = dataTransitions;
+      // for (const t of transitionTMP) {
+      //   if (t.value == label.value) {
+      //     t.flag = true;
+      //   }
+      // }
+      ConvertedAutomatData.automat.edges.push({
+        data: { transitions: transitionTMP },
+        id: transID,
+        label: label,
+        source: String(sourceId),
+        sourceHandle: sourceId + "__handle-right",
+        target: String(targetId),
+        targetHandle: targetId + "__handle-left",
+        type: "arrow",
+        markerEnd: {
+          type: "arrowclosed",
+          color: "black",
+          width: 100,
+          height: 40,
+        },
+      });
+      // alphabetIndex++;
+    }
+  }
+  console.log(ConvertedAutomatData);
+
+  const uF2 = useVueFlow();
+  uF2.setNodes(ConvertedAutomatData.automat.nodes);
+  uF2.addEdges(ConvertedAutomatData.automat.edges);
+  ConvertedAutomatData.automat.edges = uF2.getEdges.value;
+  ConvertedAutomatData.automat.nodes = uF2.getNodes.value;
+
+  automat2.addAutomat(ConvertedAutomatData);
+
+  console.log("Importierte Daten:", ConvertedAutomatData);
+  //öffne die Automaten seite
+  router.push({
+    path: "/automat",
+    name: "automatPage",
+    params: { id: id },
+  });
+  automat2.getData();
+  alert("Neuer Automat wurde erstellt!");
+}
 </script>
 
 <style scoped></style>

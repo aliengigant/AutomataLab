@@ -466,6 +466,7 @@ export const usetransitionTableElementsStore = defineStore({
             for (let i = 0; i < transition.transition_label.length; i++) {
               transitionsTMP.push({
                 id: transition.id + transition.transition_label[i],
+                source: transition.id.charAt(0),
                 target: transition.target,
                 target_label: transition.target_label,
                 transition_label: transition.transition_label[i],
