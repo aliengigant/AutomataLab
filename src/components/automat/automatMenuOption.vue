@@ -742,7 +742,7 @@ function deleteSelectedWord() {
 
 function DEAtoMinimalDEA() {
   // saveTransTable();
-  const transTableNodes = transitionTablle.getNodes;
+  let transTableNodes = transitionTablle.getNodes;
 
   console.log(transTableNodes);
   // Schritt 1: 2D Matrix erstellen
@@ -800,9 +800,6 @@ function DEAtoMinimalDEA() {
     for (let i = 0; i < transTableNodes.length; i++) {
       for (let z = 0; z < transTableNodes.length; z++) {
         if (z < i && M[i][z] == false) {
-          // console.log("=======================");
-          // console.log("i: " + i);
-          // console.log("z: " + z);
           let s1 = transTableNodes[i];
           let s2 = transTableNodes[z];
           for (let w = 0; w < automataAlphabet.value.length; w++) {
@@ -837,31 +834,33 @@ function DEAtoMinimalDEA() {
         }
       }
     }
-    // console.log(M);
+    console.log(transitionTablle.getElements);
     // console.log("Integer: " + i);
   } // Schritt 4: solange wiederholen bis changed == false
 
   // Schritt 5: Unmarkierte Zustände verschmelzen
-  for (let i = 0; i < transTableNodes.length; i++)
+  for (let i = 0; i < transTableNodes.length; i++) {
     for (let z = 0; z < transTableNodes.length; z++) {
       if (z < i && M[i][z] == false) {
         // i und z verschmelzen zu i
         let s1 = transTableNodes[z];
         let s2 = transTableNodes[i];
-
         for (let w = 0; w < s2.transitions.length; w++) {
           let isThere = null;
           for (let t = 0; t < s1.transitions.length; t++) {
+            //Suche nach einer Transition, welches beide den selben Target teilen
             if (s1.transitions[t].target == s2.transitions[w].target) {
               isThere = s1.transitions[t];
             }
           }
+          //Wenn kein Übergang mit dem gleichen Target existiert, soll der Source von s2.transition die Id von s1 bekommen
+          // und dann soll die Transition von s2 zu s1 hinzugefügt werden
           if (isThere == null) {
             s2.transitions[w].source = s1.state_id;
             s1.transitions.push(s2.transitions[w]); // Übergang umhängen
             isThere = s2.transitions[w];
           }
-          
+
           let isLabel = false;
           if (s2.transitions[w].transition_label == isThere.transition_label) {
             isLabel = true;
@@ -871,7 +870,9 @@ function DEAtoMinimalDEA() {
             isThere.transition_label.push(s2.transitions[w].transition_label);
           }
         }
+        //Ändern der State-Label zum gepaarten s2
         s1.state_label = s1.state_label + "+" + s2.state_label;
+        //Übernehme, wenn zustimmt, den Start-Type von s2
         if (s2.state_type == "start") {
           s1.state_type = "start";
         } // Startzustand
@@ -879,39 +880,43 @@ function DEAtoMinimalDEA() {
         for (let w = 0; w < transTableNodes.length; w++) {
           var isThere = null;
 
-          for (var t = 0; t < transTableNodes[w].transitions.length; t++) {
+          for (let t = 0; t < transTableNodes[w].transitions.length; t++) {
+            //Suche nach Target, welches s1 beinhaltet
             if (transTableNodes[w].transitions[t].target == s1.state_id) {
               isThere = transTableNodes[w].transitions[t];
             }
           }
+          for (let t = 0; t < transTableNodes[w].transitions.length; t++) {
+            //Suche auch nach Target, welche s2 beinhaltet
+            if (transTableNodes[w].transitions[t].target == s2.state_id) {
+              //Wenn für s1 KEIN übergange gefunden wurde,
+              // Soll der für s2 gefundene Node nun auf s1 zeigen
+              if (!isThere) {
+                transTableNodes[w].transitions.target = s1.state_id; // einfach umbenennen das Ziel
+              } else {
+                // Verbindung besteht schon, nur fehlende Labels ergänzen
 
-          if (transTableNodes[w].transitions.target == s2.state_id) {
-            if (!isThere) {
-              transTableNodes[w].transitions.target = s1.state_id; // einfach umbenennen das Ziel
-            } else {
-              // Verbindung besteht schon, nur fehlende Labels ergänzen
-
-              let isLabel = false;
-              if (
-                isThere.transition_label ==
-                transTableNodes[w].transitions[t].transition_label
-              ) {
-                isLabel = true;
-              }
-              if (!isLabel) {
-                isThere.Labels.push(
+                let isLabel = false;
+                if (
+                  isThere.transition_label ==
                   transTableNodes[w].transitions[t].transition_label
-                );
+                ) {
+                  isLabel = true;
+                }
+                if (!isLabel) {
+                  isThere.transitions[t] =
+                    transTableNodes[w].transitions[t].transition_label;
+                }
+                transTableNodes[w].transitions.splice(t, 1);
+                t--;
               }
-
-              transTableNodes[w].transitions.splice(t, 1);
-              t--;
             }
           }
         }
         s2.state_id = -2; // löschen wir später
       }
     }
+  }
 
   // nicht mehr benötigte Zustände entfernen
   for (let i = 0; i < transTableNodes.length; i++) {
@@ -1007,6 +1012,83 @@ function DEAtoMinimalDEA() {
   //   //     a = na;
   //   //   }
   // }
+
+  // Zustände neu benennen, nach Übergängen alphabetisch geordnet,
+  // um immer identische Benennung zu erhalten (isomorphe Automaten)
+  // if(rename){
+  let na = JSON.parse(JSON.stringify(transTableNodes));
+  let start = null;
+  let counter = 0;
+  for (let i = 0; i < transTableNodes.length; i++) {
+    if (transTableNodes[i].state_type == "start") {
+      start = transTableNodes[i];
+    }
+    // transTableNodes[i].transitions.sort(function (a, b) {
+    //   var s1 = a.transition_label.join("");
+    //   var s2 = b.transition_label.join("");
+    //   return s1.localeCompare(s2);
+    // });
+  }
+  if (start) {
+    let s = {
+      state_id: counter + 1,
+      state_label: "q" + counter,
+      transitions: [],
+      state_type: "start",
+      // Final: start.Final,
+    };
+    na = [s];
+
+    function findStateByID(a, id) {
+      for (let i = 0; i < a.length; i++) {
+        if (a[i].state_id == id) {
+          return a[i];
+        }
+      }
+      return null;
+    }
+
+    var oldNew = [];
+    oldNew[start.state_id] = s.state_id;
+
+    function replaceTransitions(from) {
+      // let newStatesCreated = false;
+      for (var i = 0; i < from.transitions.length; i++) {
+        // console.log(from);
+        var ts = findStateByID(transTableNodes, from.transitions[i].target);
+        if (!oldNew[ts.state_id]) {
+          counter++;
+          var ns = {
+            state_id: counter + 1,
+            state_label: "q" + counter,
+            transitions: [],
+            state_type: "normal",
+            // Final: ts.Final,
+          };
+          na.push(ns);
+          oldNew[ts.state_id] = ns.state_id;
+          // newStatesCreated = true;
+          replaceTransitions(ts);
+        }
+        var tt = findStateByID(transitionTablle, oldNew[from.state_id]);
+        var t = {
+          source: tt.state_id,
+          target: oldNew[ts.state_id],
+          state_label: from.transitions[i].state_label,
+        };
+        tt.transitions.push(t);
+      }
+    }
+    console.log(start);
+    console.log(transTableNodes);
+    console.log(na);
+    replaceTransitions(start);
+
+    // neuen Automat verwenden
+    // transTableNodes = na;
+  }
+  // }
+
   console.log(transTableNodes);
   let x = 200;
   var ranId = () => Math.floor(Math.random() * 1000);
@@ -1059,7 +1141,7 @@ function DEAtoMinimalDEA() {
           flag: false,
         });
       }
-      label = "1";
+      label = " ";
       const target = transTableNodes.find(
         (e) => innerTransition.source == e.state_id
       );
@@ -1093,23 +1175,23 @@ function DEAtoMinimalDEA() {
   }
   console.log(ConvertedAutomatData);
 
-  const uF2 = useVueFlow();
-  uF2.setNodes(ConvertedAutomatData.automat.nodes);
-  uF2.addEdges(ConvertedAutomatData.automat.edges);
-  ConvertedAutomatData.automat.edges = uF2.getEdges.value;
-  ConvertedAutomatData.automat.nodes = uF2.getNodes.value;
+  // const uF2 = useVueFlow();
+  // uF2.setNodes(ConvertedAutomatData.automat.nodes);
+  // uF2.addEdges(ConvertedAutomatData.automat.edges);
+  // ConvertedAutomatData.automat.edges = uF2.getEdges.value;
+  // ConvertedAutomatData.automat.nodes = uF2.getNodes.value;
 
-  automat2.addAutomat(ConvertedAutomatData);
+  // automat2.addAutomat(ConvertedAutomatData);
 
-  console.log("Importierte Daten:", ConvertedAutomatData);
-  //öffne die Automaten seite
-  router.push({
-    path: "/automat",
-    name: "automatPage",
-    params: { id: id },
-  });
-  automat2.getData();
-  alert("Neuer Automat wurde erstellt!");
+  // console.log("Importierte Daten:", ConvertedAutomatData);
+  // //öffne die Automaten seite
+  // router.push({
+  //   path: "/automat",
+  //   name: "automatPage",
+  //   params: { id: id },
+  // });
+  // automat2.getData();
+  // alert("Neuer Automat wurde erstellt!");
 }
 </script>
 
