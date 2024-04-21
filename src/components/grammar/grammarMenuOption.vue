@@ -3,7 +3,7 @@
     <div class="container-fluid">
       <a
         class="navbar-brand"
-        href="/automatOverview"
+        href="/grammatikOverview"
         data-bs-toggle="tooltip"
         title="Zurück zur Übersicht"
       >
