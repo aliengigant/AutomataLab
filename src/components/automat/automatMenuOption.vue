@@ -575,7 +575,7 @@ function automatSimulation() {
   ); // state mit dem Startzustand (In folge immer der Aktuelle zustand)
   transListSimulation.value.push({ word: "start" });
   //stack für eventuelle rücksprünge für NEA
-  let stackStates = [];
+  let stackstates = [];
   stateListSimulation.value.push({ value: state.state_label });
   alphabetListSimulation.value.push({ rest: wordList });
   //Unterscheide zwischen DEA und NEA
@@ -653,11 +653,11 @@ function automatSimulation() {
       alphabetListSimulation.value.push({ rest: wordList });
       for (const trans of state.transitions) {
         if (trans.transition_label == char) {
-          stackStates.push(trans);
+          stackstates.push(trans);
         }
       }
-      for (const trans of stackStates) {
-        console.log(stackStates.pop());
+      for (const trans of stackstates) {
+        console.log(stackstates.pop());
         if (trans.transition_label.includes(char)) {
           console.log(char + " ist drin " + state.state_label);
           if (state.state_id == trans.target) {
@@ -740,34 +740,585 @@ function deleteSelectedWord() {
   document.getElementById("words").value = selectedWordValue.value;
 }
 
-function DEAtoMinimalDEA() {
-  // saveTransTable();
-  let transTableNodes = transitionTablle.getNodes;
+// function DEAtoMinimalDEA() {
+//   // saveTransTable();
+//   let transTableNodes = transitionTablle.getNodes;
 
-  console.log(transTableNodes);
+//   console.log(transTableNodes);
+//   // Schritt 1: 2D Matrix erstellen
+//   var M = [];
+//   for (let i = 0; i < transTableNodes.length; i++) {
+//     M[i] = [];
+//   }
+
+//   // Schritt 2: Felder markieren wo genau einer von beiden ein Endzustand ist
+//   for (let i = 0; i < transTableNodes.length; i++) {
+//     for (let z = 0; z < transTableNodes.length; z++) {
+//       M[i][z] = false;
+//       // die untere hälfte der Tabelle ist immer X
+//       if (z > i) {
+//         M[i][z] = true;
+//       }
+//       if (transTableNodes[i].state_type == "end") {
+//         if (transTableNodes[z].state_type != "end") {
+//           M[i][z] = true;
+//         }
+//       }
+//       if (transTableNodes[z].state_type == "end") {
+//         if (transTableNodes[i].state_type != "end") {
+//           M[i][z] = true;
+//         }
+//       }
+//     }
+//   }
+
+//   // Hilfsfunktion für Schritt 3
+//   function findTargetIndexForInput(state, character) {
+//     for (let i = 0; i < state.transitions.length; i++) {
+//       // if (state.transitions[i].Labels[z] == character)
+//       if (state.transitions[i].transition_label == character) {
+//         // Übergang gefunden mit dem Zeichen
+//         var ID = state.transitions[i].target;
+//         // Zustandsindex bestimmten
+//         for (let w = 0; w < transTableNodes.length; w++) {
+//           if (transTableNodes[w].state_id == ID) {
+//             return w;
+//           }
+//         }
+//       }
+//     }
+//     return -1; // nicht gefunden
+//   }
+
+//   // Schritt 3: Für jedes unmarkierte Paar teste, ob für ein Zeichen ein gemeinsames bereits markiertes Paar existiert
+//   var changed = true;
+//   // let i = 0;
+//   // var p = null;
+//   while (changed) {
+//     // i++;
+//     changed = false;
+//     for (let i = 0; i < transTableNodes.length; i++) {
+//       for (let z = 0; z < transTableNodes.length; z++) {
+//         if (z < i && M[i][z] == false) {
+//           let s1 = transTableNodes[i];
+//           let s2 = transTableNodes[z];
+//           for (let w = 0; w < automataAlphabet.value.length; w++) {
+//             let z1 = findTargetIndexForInput(
+//               s1,
+//               automataAlphabet.value[w].value
+//             );
+//             let z2 = findTargetIndexForInput(
+//               s2,
+//               automataAlphabet.value[w].value
+//             );
+//             // es gibt keinen Übergang mit dem Zeichen}
+//             if (z1 == -1 || z2 == -1) {
+//               console.log("KEIN ÜBERGANG");
+//               continue;
+//             }
+//             if (z1 > z2) {
+//               if (M[z1][z2]) {
+//                 M[i][z] = true;
+//                 changed = true;
+//               }
+//             } else if (z1 < z2) {
+//               if (M[z2][z1]) {
+//                 M[i][z] = true;
+//                 changed = true;
+//               }
+//             }
+//             // console.log("z1: " + z1);
+//             // console.log("z2: " + z2);
+//             // console.log("M[" + z1 + "][" + z2 + "]: " + M[z1][z2]);
+//           }
+//         }
+//       }
+//     }
+//     // console.log(transitionTablle.getElements);
+//     // console.log("Integer: " + i);
+//   } // Schritt 4: solange wiederholen bis changed == false
+
+//   // Schritt 5: Unmarkierte Zustände verschmelzen
+//   for (let i = 0; i < transTableNodes.length; i++) {
+//     for (let z = 0; z < transTableNodes.length; z++) {
+//       if (z < i && M[i][z] == false) {
+//         // i und z verschmelzen zu i
+//         let s1 = transTableNodes[z];
+//         let s2 = transTableNodes[i];
+//         for (let w = 0; w < s2.transitions.length; w++) {
+//           let isThere = null;
+//           for (let t = 0; t < s1.transitions.length; t++) {
+//             //Suche nach einer Transition, welches beide den selben Target teilen
+//             if (s1.transitions[t].target == s2.transitions[w].target) {
+//               isThere = s1.transitions[t];
+//             }
+//           }
+//           //Wenn kein Übergang mit dem gleichen Target existiert, soll der Source von s2.transition die Id von s1 bekommen
+//           // und dann soll die Transition von s2 zu s1 hinzugefügt werden
+//           if (isThere == null) {
+//             s2.transitions[w].source = s1.state_id;
+//             s1.transitions.push(s2.transitions[w]); // Übergang umhängen
+//             isThere = s2.transitions[w];
+//           }
+
+//           let isLabel = false;
+//           if (s2.transitions[w].transition_label == isThere.transition_label) {
+//             isLabel = true;
+//           }
+
+//           if (isLabel == false) {
+//             isThere.transition_label.push(s2.transitions[w].transition_label);
+//           }
+//         }
+//         //Ändern der State-Label zum gepaarten s2
+//         s1.state_label = s1.state_label + "+" + s2.state_label;
+//         //Übernehme, wenn zustimmt, den Start-Type von s2
+//         if (s2.state_type == "start") {
+//           s1.state_type = "start";
+//         } // Startzustand
+
+//         for (let w = 0; w < transTableNodes.length; w++) {
+//           var isThere = null;
+
+//           for (let t = 0; t < transTableNodes[w].transitions.length; t++) {
+//             //Suche nach Target, welches s1 beinhaltet
+//             if (transTableNodes[w].transitions[t].target == s1.state_id) {
+//               isThere = transTableNodes[w].transitions[t];
+//             }
+//           }
+//           for (let t = 0; t < transTableNodes[w].transitions.length; t++) {
+//             //Suche auch nach Target, welche s2 beinhaltet
+//             if (transTableNodes[w].transitions[t].target == s2.state_id) {
+//               //Wenn für s1 KEIN übergange gefunden wurde,
+//               // Soll der für s2 gefundene Node nun auf s1 zeigen
+//               if (!isThere) {
+//                 transTableNodes[w].transitions.target = s1.state_id; // einfach umbenennen das Ziel
+//               } else {
+//                 // Verbindung besteht schon, nur fehlende Labels ergänzen
+
+//                 let isLabel = false;
+//                 if (
+//                   isThere.transition_label ==
+//                   transTableNodes[w].transitions[t].transition_label
+//                 ) {
+//                   isLabel = true;
+//                 }
+//                 if (!isLabel) {
+//                   isThere.transitions[t] =
+//                     transTableNodes[w].transitions[t].transition_label;
+//                 }
+//                 transTableNodes[w].transitions.splice(t, 1);
+//                 t--;
+//               }
+//             }
+//           }
+//         }
+//         s2.state_id = -2; // löschen wir später
+//       }
+//     }
+//   }
+//   console.log(transTableNodes);
+
+//   // nicht mehr benötigte Zustände entfernen
+//   for (let i = 0; i < transTableNodes.length; i++) {
+//     if (transTableNodes[i].state_id == -2) {
+//       transTableNodes.splice(i, 1);
+//       i--;
+//     }
+//   }
+//   automataAlphabet.value.sort();
+//   transTableNodes.sort(function (a, b) {
+//     if (a.state_id < b.state_id) {
+//       return -1;
+//     }
+//     if (a.state_id > b.state_id) {
+//       return 1;
+//     }
+//     return 0;
+//   });
+
+//   // labels wieder alphabetisch ordnen, falls durcheinander
+//   // for (let w = 0; w < transTableNodes.length; w++) {
+//   //   for (let t = 0; t < transTableNodes[w].transitions.length; t++) {
+//   //     transTableNodes[w].transitions[t].transition_label.sort();
+//   //   }
+//   //   // }
+//   //   // // Zustände neu benennen, nach Übergängen alphabetisch geordnet,
+//   //   // // um immer identische Benennung zu erhalten (isomorphe Automaten)
+//   //   // if (rename) {
+//   //   //   let na = JSON.parse(JSON.stringify(a));
+//   //   //   let start = null;
+//   //   //   for (let i = 0; i < transTableNodes.length; i++) {
+//   //   //     if (transTableNodes[i].Start) {
+//   //   //       start = transTableNodes[i];
+//   //   //     }
+//   //   //     transTableNodes[i].transitions.sort(function (a, b) {
+//   //   //       let s1 = a.Labels.join("");
+//   //   //       let s2 = b.Labels.join("");
+//   //   //       return s1.localeCompare(s2);
+//   //   //     });
+//   //   //   }
+//   //   //   if (start) {
+//   //   //     var counter = 0;
+//   //   //     var s = {
+//   //   //       ID: counter + 1,
+//   //   //       Name: "q" + counter,
+//   //   //       transitions: [],
+//   //   //       Start: true,
+//   //   //       Final: start.Final,
+//   //   //     };
+//   //   //     transTableNodes = [s];
+
+//   //   //     function findStateByID(a, id) {
+//   //   //       for (let i = 0; i < transTableNodes.length; i++) {
+//   //   //         if (transTableNodes[i].ID == id) {
+//   //   //           return transTableNodes[i];
+//   //   //         }
+//   //   //       }
+//   //   //       return null;
+//   //   //     }
+
+//   //   //     let oldNew = [];
+//   //   //     oldNew[start.ID] = s.ID;
+
+//   //   //     function replaceTransitions(from) {
+//   //   //       let newStatesCreated = false;
+//   //   //       for (let i = 0; i < from.transitions.length; i++) {
+//   //   //         let ts = findStateByID(a, from.transitions[i].target);
+//   //   //         if (!oldNew[ts.ID]) {
+//   //   //           counter++;
+//   //   //           var ns = {
+//   //   //             ID: counter + 1,
+//   //   //             Name: "q" + counter,
+//   //   //             transitions: [],
+//   //   //             Final: ts.Final,
+//   //   //           };
+//   //   //           transTableNodes.push(ns);
+//   //   //           oldNew[ts.ID] = ns.ID;
+//   //   //           newStatesCreated = true;
+//   //   //           replaceTransitions(ts);
+//   //   //         }
+//   //   //         let tt = findStateByID(na, oldNew[from.ID]);
+//   //   //         let t = {
+//   //   //           Source: tt.ID,
+//   //   //           target: oldNew[ts.ID],
+//   //   //           Labels: from.transitions[i].transition_label,
+//   //   //         };
+//   //   //         tt.transitions.push(t);
+//   //   //       }
+//   //   //     }
+//   //   //     replaceTransitions(start);
+
+//   //   //     // neuen Automat verwenden
+//   //   //     a = na;
+//   //   //   }
+//   // }
+
+//   // Zustände neu benennen, nach Übergängen alphabetisch geordnet,
+//   // um immer identische Benennung zu erhalten (isomorphe Automaten)
+//   // if(rename){
+//   let na = JSON.parse(JSON.stringify(transTableNodes));
+//   let start = null;
+//   let counter = 0;
+//   for (let i = 0; i < transTableNodes.length; i++) {
+//     if (transTableNodes[i].state_type == "start") {
+//       start = transTableNodes[i];
+//     }
+//     // transTableNodes[i].transitions.sort(function (a, b) {
+//     //   var s1 = a.transition_label.join("");
+//     //   var s2 = b.transition_label.join("");
+//     //   return s1.localeCompare(s2);
+//     // });
+//   }
+//   if (start) {
+//     let s = {
+//       state_id: counter + 1,
+//       state_label: "q" + counter,
+//       transitions: [],
+//       state_type: "start",
+//       // Final: start.Final,
+//     };
+//     na = [s];
+
+//     function findStateByID(a, id) {
+//       for (let i = 0; i < a.length; i++) {
+//         if (a[i].state_id == id) {
+//           return a[i];
+//         }
+//       }
+//       return null;
+//     }
+
+//     var oldNew = [];
+//     oldNew[start.state_id] = s.state_id;
+
+//     function replaceTransitions(from) {
+//       // let newStatesCreated = false;
+//       for (var i = 0; i < from.transitions.length; i++) {
+//         // console.log(from);
+//         var ts = findStateByID(transTableNodes, from.transitions[i].target);
+//         if (!oldNew[ts.state_id]) {
+//           counter++;
+//           var ns = {
+//             state_id: counter + 1,
+//             state_label: "q" + counter,
+//             transitions: [],
+//             state_type: "normal",
+//             // Final: ts.Final,
+//           };
+//           na.push(ns);
+//           oldNew[ts.state_id] = ns.state_id;
+//           // newStatesCreated = true;
+//           replaceTransitions(ts);
+//         }
+//         var tt = findStateByID(transitionTablle, oldNew[from.state_id]);
+//         var t = {
+//           source: tt.state_id,
+//           target: oldNew[ts.state_id],
+//           state_label: from.transitions[i].state_label,
+//         };
+//         tt.transitions.push(t);
+//       }
+//     }
+//     console.log(start);
+//     console.log(transTableNodes);
+//     console.log(na);
+//     replaceTransitions(start);
+
+//     // neuen Automat verwenden
+//     // transTableNodes = na;
+//   }
+//   // }
+
+//   console.log(transTableNodes);
+//   // let x = 200;
+//   // var ranId = () => Math.floor(Math.random() * 1000);
+//   // const id = ranId();
+//   // const endNodes = transitionTablle.getEnds;
+//   // let ConvertedAutomatData = {
+//   //   id: id,
+//   //   name: "Minimal DEA from " + transitionTablle.getName,
+//   //   type: "DEA",
+//   //   automat: {
+//   //     alphabet: transitionTablle.getAlphabetString,
+//   //     nodes: [],
+//   //     edges: [],
+//   //   },
+//   // };
+//   // for (const state of transTableNodes) {
+//   //   let type = null;
+//   //   const parts = state.state_label.split(",");
+//   //   if (state.state_id != 0 && parts.some((part) => endNodes.includes(part))) {
+//   //     type = "end";
+//   //   } else if (state.state_id == 0) {
+//   //     type = "start";
+//   //   } else {
+//   //     type = "normal";
+//   //   }
+
+//   //   ConvertedAutomatData.automat.nodes.push({
+//   //     id: state.state_id,
+//   //     label: `{${state.state_label}}`,
+//   //     type: type,
+//   //     position: { x: x, y: 100 },
+//   //   });
+//   //   x += 200;
+//   // }
+
+//   // const alphabet = transitionTablle.getAlphabet;
+
+//   // for (const transition of transTableNodes) {
+//   //   let label;
+//   //   let sourceId = transition.state_id;
+//   //   let targetId = "";
+//   //   let transID = "";
+//   //   // let alphabetIndex = 0;
+//   //   for (const innerTransition of transition.transitions) {
+//   //     let dataTransitions = [];
+//   //     for (const a of alphabet) {
+//   //       dataTransitions.push({
+//   //         id: a.id,
+//   //         value: a.value,
+//   //         flag: false,
+//   //       });
+//   //     }
+//   //     label = " ";
+//   //     const target = transTableNodes.find(
+//   //       (e) => innerTransition.source == e.state_id
+//   //     );
+//   //     targetId = target.state_id;
+//   //     transID = sourceId + "to" + targetId;
+
+//   //     let transitionTMP = dataTransitions;
+//   //     // for (const t of transitionTMP) {
+//   //     //   if (t.value == label.value) {
+//   //     //     t.flag = true;
+//   //     //   }
+//   //     // }
+//   //     ConvertedAutomatData.automat.edges.push({
+//   //       data: { transitions: transitionTMP },
+//   //       id: transID,
+//   //       label: label,
+//   //       source: String(sourceId),
+//   //       sourceHandle: sourceId + "__handle-right",
+//   //       target: String(targetId),
+//   //       targetHandle: targetId + "__handle-left",
+//   //       type: "arrow",
+//   //       markerEnd: {
+//   //         type: "arrowclosed",
+//   //         color: "black",
+//   //         width: 100,
+//   //         height: 40,
+//   //       },
+//   //     });
+//   //     // alphabetIndex++;
+//   //   }
+//   // }
+//   // console.log(ConvertedAutomatData);
+
+//   // // const uF2 = useVueFlow();
+//   // // uF2.setNodes(ConvertedAutomatData.automat.nodes);
+//   // // uF2.addEdges(ConvertedAutomatData.automat.edges);
+//   // // ConvertedAutomatData.automat.edges = uF2.getEdges.value;
+//   // // ConvertedAutomatData.automat.nodes = uF2.getNodes.value;
+
+//   // // automat2.addAutomat(ConvertedAutomatData);
+
+//   // // console.log("Importierte Daten:", ConvertedAutomatData);
+//   // // //öffne die Automaten seite
+//   // // router.push({
+//   // //   path: "/automat",
+//   // //   name: "automatPage",
+//   // //   params: { id: id },
+//   // // });
+//   // // automat2.getData();
+//   // // alert("Neuer Automat wurde erstellt!");//   // let x = 200;
+//   // var ranId = () => Math.floor(Math.random() * 1000);
+//   // const id = ranId();
+//   // const endNodes = transitionTablle.getEnds;
+//   // let ConvertedAutomatData = {
+//   //   id: id,
+//   //   name: "Minimal DEA from " + transitionTablle.getName,
+//   //   type: "DEA",
+//   //   automat: {
+//   //     alphabet: transitionTablle.getAlphabetString,
+//   //     nodes: [],
+//   //     edges: [],
+//   //   },
+//   // };
+//   // for (const state of transTableNodes) {
+//   //   let type = null;
+//   //   const parts = state.state_label.split(",");
+//   //   if (state.state_id != 0 && parts.some((part) => endNodes.includes(part))) {
+//   //     type = "end";
+//   //   } else if (state.state_id == 0) {
+//   //     type = "start";
+//   //   } else {
+//   //     type = "normal";
+//   //   }
+
+//   //   ConvertedAutomatData.automat.nodes.push({
+//   //     id: state.state_id,
+//   //     label: `{${state.state_label}}`,
+//   //     type: type,
+//   //     position: { x: x, y: 100 },
+//   //   });
+//   //   x += 200;
+//   // }
+
+//   // const alphabet = transitionTablle.getAlphabet;
+
+//   // for (const transition of transTableNodes) {
+//   //   let label;
+//   //   let sourceId = transition.state_id;
+//   //   let targetId = "";
+//   //   let transID = "";
+//   //   // let alphabetIndex = 0;
+//   //   for (const innerTransition of transition.transitions) {
+//   //     let dataTransitions = [];
+//   //     for (const a of alphabet) {
+//   //       dataTransitions.push({
+//   //         id: a.id,
+//   //         value: a.value,
+//   //         flag: false,
+//   //       });
+//   //     }
+//   //     label = " ";
+//   //     const target = transTableNodes.find(
+//   //       (e) => innerTransition.source == e.state_id
+//   //     );
+//   //     targetId = target.state_id;
+//   //     transID = sourceId + "to" + targetId;
+
+//   //     let transitionTMP = dataTransitions;
+//   //     // for (const t of transitionTMP) {
+//   //     //   if (t.value == label.value) {
+//   //     //     t.flag = true;
+//   //     //   }
+//   //     // }
+//   //     ConvertedAutomatData.automat.edges.push({
+//   //       data: { transitions: transitionTMP },
+//   //       id: transID,
+//   //       label: label,
+//   //       source: String(sourceId),
+//   //       sourceHandle: sourceId + "__handle-right",
+//   //       target: String(targetId),
+//   //       targetHandle: targetId + "__handle-left",
+//   //       type: "arrow",
+//   //       markerEnd: {
+//   //         type: "arrowclosed",
+//   //         color: "black",
+//   //         width: 100,
+//   //         height: 40,
+//   //       },
+//   //     });
+//   //     // alphabetIndex++;
+//   //   }
+//   // }
+//   // console.log(ConvertedAutomatData);
+
+//   // // const uF2 = useVueFlow();
+//   // // uF2.setNodes(ConvertedAutomatData.automat.nodes);
+//   // // uF2.addEdges(ConvertedAutomatData.automat.edges);
+//   // // ConvertedAutomatData.automat.edges = uF2.getEdges.value;
+//   // // ConvertedAutomatData.automat.nodes = uF2.getNodes.value;
+
+//   // // automat2.addAutomat(ConvertedAutomatData);
+
+//   // // console.log("Importierte Daten:", ConvertedAutomatData);
+//   // // //öffne die Automaten seite
+//   // // router.push({
+//   // //   path: "/automat",
+//   // //   name: "automatPage",
+//   // //   params: { id: id },
+//   // // });
+//   // // automat2.getData();
+//   // // alert("Neuer Automat wurde erstellt!");
+// }
+
+function DEAtoMinimalDEA() {
+  let a = transitionTablle.getElements;
+  // removeUnusedAutomatonStates(a);
+
   // Schritt 1: 2D Matrix erstellen
-  var M = [];
-  for (let i = 0; i < transTableNodes.length; i++) {
+  let M = [];
+  for (let i = 0; i < a.states.length; i++) {
     M[i] = [];
   }
 
   // Schritt 2: Felder markieren wo genau einer von beiden ein Endzustand ist
-  for (let i = 0; i < transTableNodes.length; i++) {
-    for (let z = 0; z < transTableNodes.length; z++) {
+  for (let i = 0; i < a.states.length; i++) {
+    for (let z = 0; z < a.states.length; z++) {
       M[i][z] = false;
       // die untere hälfte der Tabelle ist immer X
       if (z > i) {
         M[i][z] = true;
       }
-      if (transTableNodes[i].state_type == "end") {
-        if (transTableNodes[z].state_type != "end") {
-          M[i][z] = true;
-        }
+      if (a.states[i].state_type == "end" && a.states[z].state_type != "end") {
+        M[i][z] = true;
       }
-      if (transTableNodes[z].state_type == "end") {
-        if (transTableNodes[i].state_type != "end") {
-          M[i][z] = true;
-        }
+      if (a.states[z].state_type == "end" && a.states[i].state_type != "end") {
+        M[i][z] = true;
       }
     }
   }
@@ -775,33 +1326,32 @@ function DEAtoMinimalDEA() {
   // Hilfsfunktion für Schritt 3
   function findTargetIndexForInput(state, character) {
     for (let i = 0; i < state.transitions.length; i++) {
-      // if (state.transitions[i].Labels[z] == character)
+      // for (let z = 0; z < state.transitions[i].Labels.length; z++) {
       if (state.transitions[i].transition_label == character) {
         // Übergang gefunden mit dem Zeichen
-        var ID = state.transitions[i].target;
+        let ID = state.transitions[i].target;
         // Zustandsindex bestimmten
-        for (let w = 0; w < transTableNodes.length; w++) {
-          if (transTableNodes[w].state_id == ID) {
+        for (let w = 0; w < a.states.length; w++) {
+          if (a.states[w].state_id == ID) {
             return w;
           }
         }
       }
+      // }
     }
     return -1; // nicht gefunden
   }
 
   // Schritt 3: Für jedes unmarkierte Paar teste, ob für ein Zeichen ein gemeinsames bereits markiertes Paar existiert
-  var changed = true;
-  // let i = 0;
-  // var p = null;
+  let changed = true;
+  // let p = null;
   while (changed) {
-    // i++;
     changed = false;
-    for (let i = 0; i < transTableNodes.length; i++) {
-      for (let z = 0; z < transTableNodes.length; z++) {
+    for (let i = 0; i < a.states.length; i++) {
+      for (let z = 0; z < a.states.length; z++) {
         if (z < i && M[i][z] == false) {
-          let s1 = transTableNodes[i];
-          let s2 = transTableNodes[z];
+          let s1 = a.states[i];
+          let s2 = a.states[z];
           for (let w = 0; w < automataAlphabet.value.length; w++) {
             let z1 = findTargetIndexForInput(
               s1,
@@ -811,289 +1361,193 @@ function DEAtoMinimalDEA() {
               s2,
               automataAlphabet.value[w].value
             );
-            // es gibt keinen Übergang mit dem Zeichen}
             if (z1 == -1 || z2 == -1) {
-              console.log("KEIN ÜBERGANG");
               continue;
+            } // es gibt keinen Übergang mit dem Zeichen
+            if ((z1 > z2 && M[z1][z2]) || (z1 < z2 && M[z2][z1])) {
+              M[i][z] = true;
+              changed = true;
             }
-            if (z1 > z2) {
-              if (M[z1][z2]) {
-                M[i][z] = true;
-                changed = true;
-              }
-            } else if (z1 < z2) {
-              if (M[z2][z1]) {
-                M[i][z] = true;
-                changed = true;
-              }
-            }
-            // console.log("z1: " + z1);
-            // console.log("z2: " + z2);
-            // console.log("M[" + z1 + "][" + z2 + "]: " + M[z1][z2]);
           }
         }
       }
     }
-    console.log(transitionTablle.getElements);
-    // console.log("Integer: " + i);
-  } // Schritt 4: solange wiederholen bis changed == false
+  }
+  // Schritt 4: solange wiederholen bis changed == false
 
   // Schritt 5: Unmarkierte Zustände verschmelzen
-  for (let i = 0; i < transTableNodes.length; i++) {
-    for (let z = 0; z < transTableNodes.length; z++) {
+  for (let i = 0; i < a.states.length; i++) {
+    for (let z = 0; z < a.states.length; z++) {
       if (z < i && M[i][z] == false) {
         // i und z verschmelzen zu i
-        let s1 = transTableNodes[z];
-        let s2 = transTableNodes[i];
+        let s1 = a.states[z];
+        let s2 = a.states[i];
+
         for (let w = 0; w < s2.transitions.length; w++) {
           let isThere = null;
           for (let t = 0; t < s1.transitions.length; t++) {
-            //Suche nach einer Transition, welches beide den selben Target teilen
-            if (s1.transitions[t].target == s2.transitions[w].target) {
+            if (s1.transitions[t].target == s2.transitions[w].target)
               isThere = s1.transitions[t];
-            }
           }
-          //Wenn kein Übergang mit dem gleichen Target existiert, soll der Source von s2.transition die Id von s1 bekommen
-          // und dann soll die Transition von s2 zu s1 hinzugefügt werden
           if (isThere == null) {
             s2.transitions[w].source = s1.state_id;
             s1.transitions.push(s2.transitions[w]); // Übergang umhängen
             isThere = s2.transitions[w];
           }
-
+          // for (let t = 0; t < s2.transitions[w].Labels.length; t++) {
           let isLabel = false;
+          // for (let k = 0; k < isThere.state_label.length; k++) {
           if (s2.transitions[w].transition_label == isThere.transition_label) {
             isLabel = true;
           }
-
+          // }
           if (isLabel == false) {
-            isThere.transition_label.push(s2.transitions[w].transition_label);
+            isThere.transition_label = s2.transitions[w].transition_label;
           }
+          // }
         }
-        //Ändern der State-Label zum gepaarten s2
         s1.state_label = s1.state_label + "+" + s2.state_label;
-        //Übernehme, wenn zustimmt, den Start-Type von s2
         if (s2.state_type == "start") {
           s1.state_type = "start";
         } // Startzustand
 
-        for (let w = 0; w < transTableNodes.length; w++) {
-          var isThere = null;
-
-          for (let t = 0; t < transTableNodes[w].transitions.length; t++) {
-            //Suche nach Target, welches s1 beinhaltet
-            if (transTableNodes[w].transitions[t].target == s1.state_id) {
-              isThere = transTableNodes[w].transitions[t];
+        for (let w = 0; w < a.states.length; w++) {
+          let isThere = null;
+          for (let t = 0; t < a.states[w].transitions.length; t++) {
+            if (a.states[w].transitions[t].target == s1.state_id) {
+              isThere = a.states[w].transitions[t];
             }
           }
-          for (let t = 0; t < transTableNodes[w].transitions.length; t++) {
-            //Suche auch nach Target, welche s2 beinhaltet
-            if (transTableNodes[w].transitions[t].target == s2.state_id) {
-              //Wenn für s1 KEIN übergange gefunden wurde,
-              // Soll der für s2 gefundene Node nun auf s1 zeigen
+          for (let t = 0; t < a.states[w].transitions.length; t++) {
+            if (a.states[w].transitions[t].target == s2.state_id) {
               if (!isThere) {
-                transTableNodes[w].transitions.target = s1.state_id; // einfach umbenennen das Ziel
+                a.states[w].transitions[t].target = s1.state_id; // einfach umbenennen das Ziel
               } else {
                 // Verbindung besteht schon, nur fehlende Labels ergänzen
-
+                // for (
+                //   let x = 0;
+                //   x < a.states[w].transitions[t].Labels.length;
+                //   x++
+                // ) {
                 let isLabel = false;
+                // for (let y = 0; y < isThere.Labels.length; y++)
                 if (
                   isThere.transition_label ==
-                  transTableNodes[w].transitions[t].transition_label
+                  a.states[w].transitions[t].transition_label
                 ) {
                   isLabel = true;
                 }
                 if (!isLabel) {
-                  isThere.transitions[t] =
-                    transTableNodes[w].transitions[t].transition_label;
+                  isThere.transition_label =
+                    a.states[w].transitions[t].transition_label;
                 }
-                transTableNodes[w].transitions.splice(t, 1);
+                // }
+                a.states[w].transitions.splice(t, 1);
                 t--;
               }
             }
           }
         }
-        s2.state_id = -2; // löschen wir später
+        s2.state_id = -1; // löschen wir später
       }
     }
   }
-
-  // nicht mehr benötigte Zustände entfernen
-  for (let i = 0; i < transTableNodes.length; i++) {
-    if (transTableNodes[i].state_id == -2) {
-      transTableNodes.splice(i, 1);
+  // // nicht mehr benötigte Zustände entfernen
+  for (let i = 0; i < a.states.length; i++) {
+    if (a.states[i].state_id == -1) {
+      a.states.splice(i, 1);
       i--;
     }
   }
-  automataAlphabet.value.sort();
-  transTableNodes.sort(function (a, b) {
-    if (a.state_id < b.state_id) {
-      return -1;
-    }
-    if (a.state_id > b.state_id) {
-      return 1;
-    }
-    return 0;
-  });
+  // a.Alphabet.sort();
+  // a.states.sort(function (a, b) {
+  //   if (a.ID < b.ID) return -1;
+  //   if (a.ID > b.ID) return 1;
+  //   return 0;
+  // });
 
-  // labels wieder alphabetisch ordnen, falls durcheinander
-  // for (let w = 0; w < transTableNodes.length; w++) {
-  //   for (let t = 0; t < transTableNodes[w].transitions.length; t++) {
-  //     transTableNodes[w].transitions[t].transition_label.sort();
+  // // labels wieder alphabetisch ordnen, falls durcheinander
+  // for (let w = 0; w < a.states.length; w++) {
+  //   for (let t = 0; t < a.states[w].transitions.length; t++) {
+  //     a.states[w].transitions[t].Labels.sort();
   //   }
-  //   // }
-  //   // // Zustände neu benennen, nach Übergängen alphabetisch geordnet,
-  //   // // um immer identische Benennung zu erhalten (isomorphe Automaten)
-  //   // if (rename) {
-  //   //   let na = JSON.parse(JSON.stringify(a));
-  //   //   let start = null;
-  //   //   for (let i = 0; i < transTableNodes.length; i++) {
-  //   //     if (transTableNodes[i].Start) {
-  //   //       start = transTableNodes[i];
-  //   //     }
-  //   //     transTableNodes[i].transitions.sort(function (a, b) {
-  //   //       let s1 = a.Labels.join("");
-  //   //       let s2 = b.Labels.join("");
-  //   //       return s1.localeCompare(s2);
-  //   //     });
-  //   //   }
-  //   //   if (start) {
-  //   //     var counter = 0;
-  //   //     var s = {
-  //   //       ID: counter + 1,
-  //   //       Name: "q" + counter,
-  //   //       transitions: [],
-  //   //       Start: true,
-  //   //       Final: start.Final,
-  //   //     };
-  //   //     transTableNodes = [s];
-
-  //   //     function findStateByID(a, id) {
-  //   //       for (let i = 0; i < transTableNodes.length; i++) {
-  //   //         if (transTableNodes[i].ID == id) {
-  //   //           return transTableNodes[i];
-  //   //         }
-  //   //       }
-  //   //       return null;
-  //   //     }
-
-  //   //     let oldNew = [];
-  //   //     oldNew[start.ID] = s.ID;
-
-  //   //     function replaceTransitions(from) {
-  //   //       let newStatesCreated = false;
-  //   //       for (let i = 0; i < from.transitions.length; i++) {
-  //   //         let ts = findStateByID(a, from.transitions[i].target);
-  //   //         if (!oldNew[ts.ID]) {
-  //   //           counter++;
-  //   //           var ns = {
-  //   //             ID: counter + 1,
-  //   //             Name: "q" + counter,
-  //   //             transitions: [],
-  //   //             Final: ts.Final,
-  //   //           };
-  //   //           transTableNodes.push(ns);
-  //   //           oldNew[ts.ID] = ns.ID;
-  //   //           newStatesCreated = true;
-  //   //           replaceTransitions(ts);
-  //   //         }
-  //   //         let tt = findStateByID(na, oldNew[from.ID]);
-  //   //         let t = {
-  //   //           Source: tt.ID,
-  //   //           target: oldNew[ts.ID],
-  //   //           Labels: from.transitions[i].transition_label,
-  //   //         };
-  //   //         tt.transitions.push(t);
-  //   //       }
-  //   //     }
-  //   //     replaceTransitions(start);
-
-  //   //     // neuen Automat verwenden
-  //   //     a = na;
-  //   //   }
   // }
-
   // Zustände neu benennen, nach Übergängen alphabetisch geordnet,
   // um immer identische Benennung zu erhalten (isomorphe Automaten)
-  // if(rename){
-  let na = JSON.parse(JSON.stringify(transTableNodes));
+  // if (rename) {
+  let na = JSON.parse(JSON.stringify(a));
   let start = null;
-  let counter = 0;
-  for (let i = 0; i < transTableNodes.length; i++) {
-    if (transTableNodes[i].state_type == "start") {
-      start = transTableNodes[i];
+  for (let i = 0; i < a.states.length; i++) {
+    if (a.states[i].state_type == "start") {
+      start = a.states[i];
     }
-    // transTableNodes[i].transitions.sort(function (a, b) {
-    //   var s1 = a.transition_label.join("");
-    //   var s2 = b.transition_label.join("");
+    // a.states[i].transitions.sort(function (a, b) {
+    //   let s1 = a.state_label.join("");
+    //   let s2 = b.state_label.join("");
     //   return s1.localeCompare(s2);
     // });
   }
   if (start) {
+    let counter = 0;
     let s = {
       state_id: counter + 1,
       state_label: "q" + counter,
       transitions: [],
       state_type: "start",
+      // Start: true,
       // Final: start.Final,
     };
-    na = [s];
+    na.states = [s];
 
     function findStateByID(a, id) {
-      for (let i = 0; i < a.length; i++) {
-        if (a[i].state_id == id) {
-          return a[i];
+      for (let i = 0; i < a.states.length; i++) {
+        if (a.states[i].state_id == id) {
+          return a.states[i];
         }
       }
       return null;
     }
 
-    var oldNew = [];
+    let oldNew = [];
     oldNew[start.state_id] = s.state_id;
 
     function replaceTransitions(from) {
-      // let newStatesCreated = false;
-      for (var i = 0; i < from.transitions.length; i++) {
-        // console.log(from);
-        var ts = findStateByID(transTableNodes, from.transitions[i].target);
+      // let newstatesCreated = false;
+      for (let i = 0; i < from.transitions.length; i++) {
+        let ts = findStateByID(a, from.transitions[i].target);
         if (!oldNew[ts.state_id]) {
           counter++;
-          var ns = {
+          let ns = {
             state_id: counter + 1,
             state_label: "q" + counter,
             transitions: [],
-            state_type: "normal",
-            // Final: ts.Final,
+            state_type: ts.state_type,
           };
-          na.push(ns);
+          na.states.push(ns);
           oldNew[ts.state_id] = ns.state_id;
-          // newStatesCreated = true;
+          // newstatesCreated = true;
           replaceTransitions(ts);
         }
-        var tt = findStateByID(transitionTablle, oldNew[from.state_id]);
-        var t = {
+        let tt = findStateByID(na, oldNew[from.state_id]);
+        let t = {
           source: tt.state_id,
           target: oldNew[ts.state_id],
-          state_label: from.transitions[i].state_label,
+          transition_label: from.transitions[i].transition_label,
         };
         tt.transitions.push(t);
       }
     }
-    console.log(start);
-    console.log(transTableNodes);
-    console.log(na);
     replaceTransitions(start);
 
     // neuen Automat verwenden
-    // transTableNodes = na;
+    a = na;
   }
   // }
-
-  console.log(transTableNodes);
+  console.log(a);
   let x = 200;
   var ranId = () => Math.floor(Math.random() * 1000);
   const id = ranId();
-  const endNodes = transitionTablle.getEnds;
+  // const endNodes = transitionTablle.getEnds;
   let ConvertedAutomatData = {
     id: id,
     name: "Minimal DEA from " + transitionTablle.getName,
@@ -1104,16 +1558,17 @@ function DEAtoMinimalDEA() {
       edges: [],
     },
   };
-  for (const state of transTableNodes) {
-    let type = null;
-    const parts = state.state_label.split(",");
-    if (state.state_id != 0 && parts.some((part) => endNodes.includes(part))) {
-      type = "end";
-    } else if (state.state_id == 0) {
-      type = "start";
-    } else {
-      type = "normal";
-    }
+  for (const state of a.states) {
+    console.log(state);
+    let type = state.state_type;
+    // const parts = state.state_label.split(",");
+    // if (state.state_type=="start") {
+    //   type = "start";
+    // } else if (state.state_type=="end") {
+    //   type = "end";
+    // } else {
+    //   type = "normal";
+    // }
 
     ConvertedAutomatData.automat.nodes.push({
       id: state.state_id,
@@ -1126,12 +1581,12 @@ function DEAtoMinimalDEA() {
 
   const alphabet = transitionTablle.getAlphabet;
 
-  for (const transition of transTableNodes) {
+  for (const transition of a.states) {
     let label;
     let sourceId = transition.state_id;
     let targetId = "";
     let transID = "";
-    // let alphabetIndex = 0;
+    let alphabetIndex = 0;
     for (const innerTransition of transition.transitions) {
       let dataTransitions = [];
       for (const a of alphabet) {
@@ -1141,23 +1596,22 @@ function DEAtoMinimalDEA() {
           flag: false,
         });
       }
-      label = " ";
-      const target = transTableNodes.find(
-        (e) => innerTransition.source == e.state_id
-      );
+      console.log(innerTransition);
+      label = alphabet.find((e) => e.id == alphabetIndex);
+      const target = a.states.find((e) => innerTransition.target == e.state_id);
       targetId = target.state_id;
       transID = sourceId + "to" + targetId;
 
       let transitionTMP = dataTransitions;
-      // for (const t of transitionTMP) {
-      //   if (t.value == label.value) {
-      //     t.flag = true;
-      //   }
-      // }
+      for (const t of transitionTMP) {
+        if (t.value == label.value) {
+          t.flag = true;
+        }
+      }
       ConvertedAutomatData.automat.edges.push({
         data: { transitions: transitionTMP },
         id: transID,
-        label: label,
+        label: label.value,
         source: String(sourceId),
         sourceHandle: sourceId + "__handle-right",
         target: String(targetId),
@@ -1170,28 +1624,32 @@ function DEAtoMinimalDEA() {
           height: 40,
         },
       });
-      // alphabetIndex++;
+      alphabetIndex++;
     }
   }
+  // console.log(ConvertedAutomatData);
+
+  const uF2 = useVueFlow();
+  uF2.setNodes(ConvertedAutomatData.automat.nodes);
+  uF2.addEdges(ConvertedAutomatData.automat.edges);
+  ConvertedAutomatData.automat.edges = uF2.getEdges.value;
+  ConvertedAutomatData.automat.nodes = uF2.getNodes.value;
+
+  automat2.addAutomat(ConvertedAutomatData);
+
+  console.log("Importierte Daten:", ConvertedAutomatData);
+  //öffne die Automaten seite
+  router.push({
+    path: "/automat",
+    name: "automatPage",
+    params: { id: id },
+  });
+  automat2.getData();
+  alert("Neuer Automat wurde erstellt!");
+
+  // console.log(a);
   console.log(ConvertedAutomatData);
-
-  // const uF2 = useVueFlow();
-  // uF2.setNodes(ConvertedAutomatData.automat.nodes);
-  // uF2.addEdges(ConvertedAutomatData.automat.edges);
-  // ConvertedAutomatData.automat.edges = uF2.getEdges.value;
-  // ConvertedAutomatData.automat.nodes = uF2.getNodes.value;
-
-  // automat2.addAutomat(ConvertedAutomatData);
-
-  // console.log("Importierte Daten:", ConvertedAutomatData);
-  // //öffne die Automaten seite
-  // router.push({
-  //   path: "/automat",
-  //   name: "automatPage",
-  //   params: { id: id },
-  // });
-  // automat2.getData();
-  // alert("Neuer Automat wurde erstellt!");
+  return { result: "OK", automaton: a };
 }
 </script>
 
