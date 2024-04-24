@@ -1,26 +1,25 @@
 <template>
-  
   <div class="bg-darkblue">
-  <modulLayout>
-    <template #content>
-      <div class="container">
-        <popUpComponent :modal-type="'#newAutomata'"></popUpComponent>
-        <div class="row justify-content-evenly">
-          <div
-            v-for="(automat, index) in automata"
-            :key="index"
-            style="width: 15rem"
-          >
-            <automataOverviewCard
-              :id="automat.id"
-              :name="automat.name"
-              :type="automat.type"
-            ></automataOverviewCard>
+    <modulLayout>
+      <template #content>
+        <div class="container">
+          <popUpComponent :modal-type="'#newAutomata'"></popUpComponent>
+          <div class="row justify-content-evenly">
+            <div
+              v-for="(automat, index) in automata"
+              :key="index"
+              style="width: 15rem"
+            >
+              <automataOverviewCard
+                :id="automat.id"
+                :name="automat.name"
+                :type="automat.type"
+              ></automataOverviewCard>
+            </div>
           </div>
         </div>
-      </div>
-    </template>
-  </modulLayout>
+      </template>
+    </modulLayout>
   </div>
 </template>
 
@@ -42,7 +41,6 @@ onMounted(() => {
   //Wenn diese Componente aufgerufen wird, ändere den Namen im Store auf: Automat Übersicht
   modalStore.changeModalName("Automat Übersicht");
 });
-
 </script>
 
 <style scoped>

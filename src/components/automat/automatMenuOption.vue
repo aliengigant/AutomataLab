@@ -1,4 +1,87 @@
 <template>
+  <!-- Export Message Fenster -->
+  <div
+    class="modal fade"
+    id="ExportModal"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="ExportModal"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="ExportModal">Löschen</h5>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Wollen Sie wirklich diesen Automaten Exportieren wollen ?
+        </div>
+        <div class="modal-footer">
+          <button
+            @click="exportLocalStorage(route.params.id)"
+            type="button"
+            class="btn btn-success"
+            data-dismiss="modal"
+          >
+            Ja
+          </button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Nein
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- DEA Minimieren Message Fenster -->
+  <div
+    class="modal fade"
+    id="DeaMinModal"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="DeaMinModal"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="DeaMinModal">Löschen</h5>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Wollen Sie wirklich diesen Automaten minimieren ?
+        </div>
+        <div class="modal-footer">
+          <button
+            @click="DEAtoMinimalDEA"
+            type="button"
+            class="btn btn-success"
+            data-dismiss="modal"
+          >
+            Ja
+          </button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Nein
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <nav class="navbar navbar-expand-sm bg-light">
     <div class="container-fluid">
       <a
@@ -59,13 +142,15 @@
               ><i class="fa-solid fa-arrows-spin"></i> NEA zu DEA</a
             >
           </li>
-          <li class="nav-item ml-2" @click="DEAtoMinimalDEA">
+          <li class="nav-item ml-2" data-toggle="modal"
+            :data-target="'#DeaMinModal'">
             <a v-if="automat.type == 'DEA'" class="nav-link" href="#"
               ><i class="fa-solid fa-arrows-spin"></i>DEA Minimieren</a
             >
           </li>
           <li
-            @click="exportLocalStorage(route.params.id)"
+          data-toggle="modal"
+            :data-target="'#ExportModal'"
             class="nav-item ml-2"
           >
             <!--Exportieren eines Automatens-->
@@ -817,6 +902,7 @@ function DEAtoMinimalDEA() {
       }
     }
   }
+  console.log(M)
   // Schritt 4: solange wiederholen bis changed == false
 
   // Schritt 5: Unmarkierte Zustände verschmelzen
@@ -909,6 +995,7 @@ function DEAtoMinimalDEA() {
   //   if (a.ID > b.ID) return 1;
   //   return 0;
   // });
+  console.log(a)
 
   // // labels wieder alphabetisch ordnen, falls durcheinander
   // for (let w = 0; w < a.states.length; w++) {

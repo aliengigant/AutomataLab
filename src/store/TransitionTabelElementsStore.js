@@ -253,7 +253,7 @@ export const usetransitionTableElementsStore = defineStore({
             //   rule.push(r);
             // }
           }
-          console.log(ruleTmp);
+          // console.log(ruleTmp);
           for (const r of ruleTmp) {
             row.push({
               transitionID: r.id,

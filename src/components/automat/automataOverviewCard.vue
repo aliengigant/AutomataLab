@@ -1,4 +1,46 @@
 <template>
+  <!-- Lösch Message fenster -->
+  <div
+    class="modal fade"
+    :id="'deleteModal' + props.id"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="deleteModal"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteModal">Löschen</h5>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Wollen Sie wirklich diesen Automaten unwiederuflich löschen ?
+        </div>
+        <div class="modal-footer">
+          <button
+            @click="deleteAutomat(props.id)"
+            type="button"
+            class="btn btn-danger"
+            data-dismiss="modal"
+          >
+            Ja
+          </button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Nein
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div v-if="visible" class="card border-5">
     <div class="dropdown m-2">
       <button
@@ -19,7 +61,14 @@
           >
         </li>
         <li>
-          <a class="dropdown-item" @click="deleteAutomat()" href="#">Löschen</a>
+          <a
+            class="dropdown-item"
+            data-toggle="modal"
+            :data-target="'#deleteModal' + props.id"
+            href="#"
+          >
+            Löschen</a
+          >
         </li>
       </ul>
     </div>
@@ -46,9 +95,7 @@ const props = defineProps({
   name: String,
   type: String,
 });
-
 var visible = ref(true);
-
 function openAutomat() {
   if (props.id) {
     router.push({
@@ -59,15 +106,16 @@ function openAutomat() {
     console.error("kein id");
   }
 }
-function deleteAutomat() {
+function deleteAutomat(id) {
   // Beispiel: 'localAutomata' ist der Schlüssel im Local Storage mit einem JSON als Wert
   this.visible = false;
+  console.log(id);
   const localAutomata = JSON.parse(localStorage.getItem("localAutomata")); // Abrufen des JSON-Eintrags
   let i = 0;
   let indexToDelete = -1;
   while (i < localAutomata.length) {
     const automat = localAutomata[i];
-    if (automat.id == props.id) {
+    if (automat.id == id) {
       indexToDelete = i;
       console.log(automat);
       console.log(indexToDelete);
