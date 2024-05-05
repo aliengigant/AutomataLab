@@ -29,7 +29,7 @@ const props = defineProps({
   },
 });
 
-const { getNodes, connectionStartHandle, onConnectEnd, addEdges, edges } =
+const { getNodes, connectionStartHandle, edges } =
   useVueFlow();
 
 const closest = reactive({
@@ -128,20 +128,20 @@ watch([() => props.targetY, () => props.targetX], (_, __, onCleanup) => {
 
 const path = computed(() => getBezierPath(props));
 
-onConnectEnd(() => {
-  if (closest.startHandle && closest.handle && closest.node) {
-    if (canSnap.value) {
-      addEdges([
-        {
-          sourceHandle: closest.startHandle.handleId,
-          source: closest.startHandle.nodeId,
-          target: closest.node.id,
-          targetHandle: closest.handle.id,
-        },
-      ]);
-    }
-  }
-});
+// onConnectEnd(() => {
+//   if (closest.startHandle && closest.handle && closest.node) {
+//     if (canSnap.value) {
+//       addEdges([
+//         {
+//           sourceHandle: closest.startHandle.handleId,
+//           source: closest.startHandle.nodeId,
+//           target: closest.node.id,
+//           targetHandle: closest.handle.id,
+//         },
+//       ]);
+//     }
+//   }
+// });
 
 const strokeColor = computed(() => {
   if (canSnap.value) {

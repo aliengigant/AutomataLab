@@ -11,7 +11,7 @@
   />
 
   <!-- Use the `EdgeLabelRenderer` to escape the SVG world of edges and render your own custom label in a `<div>` ctx -->
-  <EdgeLabelRenderer v-if="source != target && !doubleTransition">
+  <EdgeLabelRenderer v-if="!doubleTransition && source != target">
     <div
       :style="{
         pointerEvents: 'all',
@@ -22,8 +22,46 @@
     >
       <a>{{ edge.label }}</a>
       <automataPopUpComponent
-        v-if="showPopup"
+        v-if="edge.selected"
         @closePopup="closePopup"
+        :edge-id="id"
+        :edgeLabel="label"
+      ></automataPopUpComponent>
+    </div>
+  </EdgeLabelRenderer>
+  <!-- Selbstreferenzierter Edge -->
+  <EdgeLabelRenderer v-else-if="!doubleTransition && source == target">
+    <div
+      :style="{
+        pointerEvents: 'all',
+        position: 'absolute',
+        transform: `translate(-100%, -90%) translate(${edgePathLoopLabel[0]}px,${edgePathLoopLabel[1]}px)`,
+        height: '120px',
+      }"
+      class="nodrag nopan"
+    >
+      <a>{{ edge.label }}</a>
+      <automataPopUpComponent
+        v-if="edge.selected"
+        @closePopup="closePopUp"
+        :edge-id="id"
+        :edgeLabel="label"
+      ></automataPopUpComponent>
+    </div>
+  </EdgeLabelRenderer>
+  <EdgeLabelRenderer v-else-if="doubleTransition">
+    <div
+      :style="{
+        pointerEvents: 'all',
+        position: 'absolute',
+        transform: `translate(-50%, -90%) translate(${midPoints[0]}px,${midPoints[1]}px)`,
+      }"
+      class="nodrag nopan"
+    >
+      <a>{{ edge.label }}</a>
+      <automataPopUpComponent
+        v-if="edge.selected"
+        @closePopup="closePopUp"
         :edge-id="id"
         :edgeLabel="label"
       ></automataPopUpComponent>
@@ -40,7 +78,7 @@
     >
       <a>{{ edge.label }}</a>
       <automataPopUpComponent
-        v-if="showPopup"
+        v-if="edge.selected"
         @closePopup="closePopUp"
         :edge-id="id"
         :edgeLabel="label"
@@ -130,13 +168,18 @@ watch(
   { deep: true }
 );
 
+//Übereinanderliegende Transitionen
 const doubleTransition = computed(() => {
-  // console.log(props.source);
-  // console.log(props.target);
   const allEdges = instance.getEdges;
   for (const edge of allEdges.value) {
     // console.log(edge);
-    if (edge.source == props.target && edge.target == props.source) {
+    if (
+      props.target != props.source &&
+      edge.source == props.target &&
+      edge.target == props.source
+    ) {
+      console.log(props.source);
+      console.log(props.target);
       // console.log("Gefunden");
       return true;
     }
@@ -144,6 +187,11 @@ const doubleTransition = computed(() => {
   return false;
 });
 
+const regex = /\b\d+\b/g;
+const edgePathLoopLabel = computed(() => {
+  
+  return edgePath.value.match(regex);
+});
 const midPoints = computed(() => [
   (edgeParams.value.sx + edgeParams.value.tx) / 2,
   (edgeParams.value.sy + edgeParams.value.ty) / 2,
@@ -170,13 +218,14 @@ const edgePath = computed(() => {
     const radiusX = (sourceX - targetX) * 0.6;
     const radiusY = 50;
     const edgePath1 = `M ${sourceX} ${sourceY} A ${radiusX} ${radiusY} 0 1 0 ${targetX} ${targetY}`;
-    // console.log(edgePath1);
+
     return edgePath1;
   } else if (doubleTransition.value) {
     const radiusX = (edgeParams.value.sx - edgeParams.value.tx) * 0.6;
     const radiusY = 100;
     const path2 = `M ${edgeParams.value.sx} ${edgeParams.value.sy} A ${radiusX} ${radiusY} 0 0 0 ${edgeParams.value.tx} ${edgeParams.value.ty}`;
-    // console.log(edgePath1);
+    // console.log(props.sourceNode);
+    // console.log(path2);
     return path2;
   } else {
     return "";
@@ -192,7 +241,6 @@ function getEdgeParams(source, target) {
 
   const sourcePos = getEdgePosition(source, sourceIntersectionPoint);
   const targetPos = getEdgePosition(target, targetIntersectionPoint);
-
   return {
     sx: sourceIntersectionPoint.x,
     sy: sourceIntersectionPoint.y,

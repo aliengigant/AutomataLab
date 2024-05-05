@@ -6,7 +6,7 @@
         :edges="Aedges"
         :connection-radius="30"
         auto-connect
-        connection-mode="strict"
+        :connection-mode="strict"
       >
         <Background gap="10" variant="lines"></Background>
         <vueFlowControlsComponent></vueFlowControlsComponent>
@@ -60,17 +60,13 @@ import connectionLine from "./connectionLine/snappableConnectionLine.vue";
 
 const { findAutomataById } = storageHooks();
 const route = useRoute();
-const { onConnectStart, onConnect, onConnectEnd, addEdges } = useVueFlow();
+const { onConnect, addEdges } = useVueFlow();
 const automat = findAutomataById(parseInt(route.params.id));
 const Anodes = ref(automat.automat.nodes);
 const Aedges = ref(automat.automat.edges);
 const Aalphabet = ref([automat.automat.alphabet]);
 
-
-onConnectStart((params) => {
-  console.log(params.nodeId);
-});
-onConnect((params) =>
+onConnect((params) => {
   addEdges({
     ...params,
     id: params.source + "to" + params.target,
@@ -85,10 +81,7 @@ onConnect((params) =>
     data: {
       transitions: makeTransitionArray(Aalphabet.value.toString()),
     },
-  })
-);
-onConnectEnd((params) => {
-  console.log(params);
+  });
 });
 
 function makeTransitionArray(stringObj) {

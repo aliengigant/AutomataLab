@@ -20,8 +20,8 @@ const route = useRoute();
 const { toObject, addNodes } = useVueFlow();
 
 function onAdd() {
-  console.log(toObject());
   var RandId = toObject().nodes.length;
+  console.log(RandId);
 
   const id = RandId;
   const newNode = {

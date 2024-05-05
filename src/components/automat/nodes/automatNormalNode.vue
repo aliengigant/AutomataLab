@@ -1,7 +1,7 @@
 <template>
   <div class="vue-flow__node-normal">
     <automatToolbarNode :id="props.id" :data="props.data"></automatToolbarNode>
-    <Handle type="target" :position="Position.Left"> </Handle>
+    <Handle type="target" :position="Position.Left" > </Handle>
     <div>{{ props.label }}</div>
     <Handle type="source" :position="Position.Right" />
   </div>

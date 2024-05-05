@@ -67,4 +67,5 @@ function checkBoxChange(id, event) {
 function getCheck(id) {
   return edge.data.transitions[id].flag;
 }
+
 </script>
