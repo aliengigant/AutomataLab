@@ -6,7 +6,7 @@
         :edges="Aedges"
         :connection-radius="30"
         auto-connect
-        :connection-mode="strict"
+        connection-mode="strict"
       >
         <Background gap="10" variant="lines"></Background>
         <vueFlowControlsComponent></vueFlowControlsComponent>
