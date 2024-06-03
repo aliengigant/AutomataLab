@@ -124,6 +124,20 @@ export const usetransitionTableElementsStore = defineStore({
       }
       return null; // Oder eine Standardwert, wenn das Array leer ist
     },
+    getAlphabetWithoutValue(state) {
+      // Wenn Sie auf das Alphabet des ersten Elements im Array zugreifen möchten
+      if (state.elements.alphabet != null) {
+        const alphabetArraytmp = state.elements.alphabet
+          .slice(1, -1)
+          .split(",");
+        let alphabetArray = [];
+        for (const a of alphabetArraytmp) {
+          alphabetArray.push(a);
+        }
+        return alphabetArray;
+      }
+      return null; // Oder eine Standardwert, wenn das Array leer ist
+    },
     getNodes(state) {
       const table = state.elements;
 
@@ -326,7 +340,9 @@ export const usetransitionTableElementsStore = defineStore({
             const stateLabel = NodeTransition.transition_label;
             const transitions = [];
             const alphabet = this.getAlphabet;
+            console.log(NodeTransition);
             for (const a of alphabet) {
+              console.log(a.id);
               transitions.push(
                 this.getTransitionForNeaToDea(
                   transTable,
@@ -419,8 +435,20 @@ export const usetransitionTableElementsStore = defineStore({
         let combinedTransition = [];
         //Erkenne jede Transition für ein Node und fasse sie Zusammen
         for (const nt of nodeTransitions) {
+          console.log("Ich hänge fest !!");
+          // console.log(array);
           const startNode = array.find((element) => element.state_label == nt);
-
+          // console.log(startNode);
+          // console.log(startNode.transition);
+          // console.log(alphabetIndex);
+          // if (startNode.transition[alphabetIndex].length < 0) {
+          //   startNode.transition[alphabetIndex] = [
+          //     {
+          //       transition_label: "test",
+          //       transition_array: ["test"],
+          //     },
+          //   ];
+          // }
           combinedTransition.push(
             startNode.transition[alphabetIndex].transition_array
           );
@@ -442,7 +470,7 @@ export const usetransitionTableElementsStore = defineStore({
             transition_array: resTran,
           };
         } else {
-          transition = [];
+          transition = ["lol"];
         }
         return transition;
       };
