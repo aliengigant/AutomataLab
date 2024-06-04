@@ -676,7 +676,7 @@ function linkEA(a) {
   }
   var result = {
     // The result object
-    Alphabet: a.alphabet, // The alphabet-array
+    Alphabet: transitionTablle.getAlphabetWithoutValue.slice(), // The alphabet-array
     States: new Map(), // Map of states per state-ID for fast search
     Start: undefined, // start state
   };
@@ -745,7 +745,7 @@ function completeDEA(automaton) {
   }
   // we have a trap state now, create all transitions with missing labels to it
   for (let i = 0; i < a.States.length; i++) {
-    var labels = transitionTablle.getAlphabetWithoutValue; // copy entire alphabet array
+    var labels = transitionTablle.getAlphabetWithoutValue.slice(); // copy entire alphabet array
     // remove already used characters
     for (let z = 0; z < a.States[i].Transitions.length; z++) {
       for (var x = 0; x < a.States[i].Transitions[z].Labels.length; x++) {
@@ -879,14 +879,14 @@ function unlinkEA(linked, keepTraps, keepUnreachable) {
     markReachables(linked.Start); // start at start state
   var result = {
     // The result object
-    Alphabet: linked.Alphabet,
+    Alphabet: transitionTablle.getAlphabetWithoutValue.slice(),
     States: [],
   };
   for (var state of linked.States.values()) {
     appendState(result, state);
   }
 
-  // removeUnusedAutomatonStates(result);
+  removeUnusedAutomatonStates(result);
 
   return result;
 }
@@ -1237,7 +1237,7 @@ function NEAtoDEA() {
     },
   };
   for (const state of r.automaton.States) {
-    console.log(state);
+    // console.log(state);
     let type = "normal";
     // const parts = state.state_label.split(",");
     if (state.Start) {
@@ -1279,7 +1279,7 @@ function NEAtoDEA() {
           flag: false,
         });
       }
-      console.log(innerTransition);
+      // console.log(innerTransition);
       label = alphabet.find((e) => e.id == alphabetIndex);
       const target = r.automaton.States.find(
         (e) => innerTransition.Target == e.ID
