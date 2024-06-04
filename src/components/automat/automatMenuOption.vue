@@ -474,7 +474,39 @@ function convertToDea() {
   //   automat2.getData();
   //   alert("Neuer Automat wurde erstellt!");
 }
-
+function removeUnusedAutomatonStates(a) {
+  // remove unused states
+  for (var i = 0; i < a.States.length; i++) {
+    if (a.States[i].Final) {
+      continue;
+    }
+    var hasUsedTransitions = false;
+    for (var z = 0; z < a.States[i].Transitions.length; z++) {
+      if (a.States[i].Transitions[z].Target != a.States[i].ID) {
+        hasUsedTransitions = true;
+        break;
+      }
+    }
+    for (var x = 0; x < a.States.length; x++) {
+      if (x == i) {
+        continue;
+      } // skip self
+      for (let z = 0; z < a.States[x].Transitions.length; z++) {
+        if (a.States[x].Transitions[z].Target == a.States[i].ID) {
+          hasUsedTransitions = true;
+          break;
+        }
+      }
+      if (hasUsedTransitions) {
+        break;
+      }
+    }
+    if (!hasUsedTransitions) {
+      a.States.splice(i, 1);
+      i--;
+    }
+  }
+}
 // function NEAtoDEA() {
 //   var a = transitionTablle.getElements;
 //   console.log(a)
@@ -594,7 +626,7 @@ function convertToDea() {
 //   // return { result: "OK", automaton: b };
 // }
 function linkEA(a) {
-  var idS = 1; // counter for new IDs
+  var idS = 0; // counter for new IDs
   var gotStates = {}; // temporary dictionary for processed states
   function appendLinkedState(a, r, s) {
     // console.log(s)
@@ -665,7 +697,9 @@ function completeDEA(automaton) {
   var trapID = -1;
   // var trapCreated = false;
   for (var i = 0; i < a.States.length; i++) {
-    if (a.States[i].Final) continue; // trap state cannot be a final state
+    if (a.States[i].Final) {
+      continue;
+    } // trap state cannot be a final state
     if (
       a.States[i].Transitions.length == 0 ||
       (a.States[i].Transitions.length == 1 &&
@@ -711,12 +745,14 @@ function completeDEA(automaton) {
   }
   // we have a trap state now, create all transitions with missing labels to it
   for (let i = 0; i < a.States.length; i++) {
-    var labels = transitionTablle.getAlphabet; // copy entire alphabet array
+    var labels = transitionTablle.getAlphabetWithoutValue; // copy entire alphabet array
     // remove already used characters
     for (let z = 0; z < a.States[i].Transitions.length; z++) {
       for (var x = 0; x < a.States[i].Transitions[z].Labels.length; x++) {
         var p = labels.indexOf(a.States[i].Transitions[z].Labels[x]);
-        if (p != -1) labels.splice(p, 1); // remove character from the list
+        if (p != -1) {
+          labels.splice(p, 1);
+        } // remove character from the list
       }
     }
 
@@ -750,17 +786,21 @@ function completeDEA(automaton) {
   }
 
   // auto layout trap state if created this time
-  // if(trapCreated){
-  //   var r = autoLayoutAutomaton(a,false,false,trapID);
-  //   if(r.result == "OK"){
+  // if (trapCreated) {
+  //   var r = autoLayoutAutomaton(a, false, false, trapID);
+  //   if (r.result == "OK") {
   //     a = r.automaton;
   //   }
   // }
 
-  // removeUnusedAutomatonStates(a);
+  removeUnusedAutomatonStates(a);
   a.States.sort(function (a, b) {
-    if (a.ID < b.ID) return -1;
-    if (a.ID > b.ID) return 1;
+    if (a.ID < b.ID) {
+      return -1;
+    }
+    if (a.ID > b.ID) {
+      return 1;
+    }
     return 0;
   });
   return { result: "OK", automaton: a, trapID: trapID };
@@ -768,8 +808,12 @@ function completeDEA(automaton) {
 
 function unlinkEA(linked, keepTraps, keepUnreachable) {
   function appendState(r, s) {
-    if (!keepTraps && !s.NoTrap) return;
-    if (!keepUnreachable && !s.CanReach) return;
+    if (!keepTraps && !s.NoTrap) {
+      return;
+    }
+    if (!keepUnreachable && !s.CanReach) {
+      return;
+    }
     var state = {
       // create unlinked state object
       ID: s.ID,
@@ -784,8 +828,12 @@ function unlinkEA(linked, keepTraps, keepUnreachable) {
     r.States.push(state); // append to automaton
     for (var t of s.Out.values()) {
       // iterate outgoing transitions
-      if (!keepTraps && !t.Target.NoTrap) continue; // continue when removing traps, targets being traps are not appended
-      if (!keepUnreachable && !t.Target.CanReach) continue; // continue when removing unreachable, targets being unreachable are not appended
+      if (!keepTraps && !t.Target.NoTrap) {
+        continue;
+      } // continue when removing traps, targets being traps are not appended
+      if (!keepUnreachable && !t.Target.CanReach) {
+        continue;
+      } // continue when removing unreachable, targets being unreachable are not appended
       var newTransition = {
         Source: s.ID,
         Target: t.Target.ID,
@@ -798,7 +846,9 @@ function unlinkEA(linked, keepTraps, keepUnreachable) {
   }
   function markNoTrap(s) {
     // recursive marking of states being not a trap
-    if (s.NoTrap) return; // already checked
+    if (s.NoTrap) {
+      return;
+    } // already checked
     s.NoTrap = true; // not a trap
     for (var i of s.In.values()) {
       // check all incoming transitions
@@ -807,7 +857,9 @@ function unlinkEA(linked, keepTraps, keepUnreachable) {
   }
   function markReachables(s) {
     // recursive marking of states being reachable
-    if (s.CanReach) return; // already checked
+    if (s.CanReach) {
+      return;
+    } // already checked
     s.CanReach = true; // reachable
     for (var i of s.Out.values()) {
       // check all outgoing transitions
@@ -817,7 +869,9 @@ function unlinkEA(linked, keepTraps, keepUnreachable) {
   if (!keepTraps) {
     // when to remove traps, mark states being no trap
     for (var s of linked.States.values()) {
-      if (s.Final) markNoTrap(s); // start at final states
+      if (s.Final) {
+        markNoTrap(s);
+      } // start at final states
     }
   }
   if (!keepUnreachable)
@@ -828,204 +882,206 @@ function unlinkEA(linked, keepTraps, keepUnreachable) {
     Alphabet: linked.Alphabet,
     States: [],
   };
-  for (var state of linked.States.values()) appendState(result, state);
+  for (var state of linked.States.values()) {
+    appendState(result, state);
+  }
 
   // removeUnusedAutomatonStates(result);
 
   return result;
 }
-function removeEpsilonLinkedNEA(linkedEA) {
-  function removeSelfEpsilon(linkedEA) {
-    // removes self-epsilon-transitions
-    for (var s of linkedEA.States.values()) {
-      // iterate states
-      var selftrans = s.Out.get(s.ID); // find self-transitions
-      if (selftrans === undefined) continue; // no self-transition
-      selftrans.Labels.delete(""); // remove epsilon transiton
-      if (selftrans.Labels.size === 0) {
-        // no other label
-        s.Out.delete(s.ID); // remove whole
-        s.In.delete(s.ID); //  self transition
-      }
-    }
-  }
-  function createEClosure(linkedEA) {
-    // determine direct neighbor states reachable with epsilon
-    for (var s of linkedEA.States.values()) {
-      // iterate states
-      /*            for (var t of s.Out.values()) { // iterate outgoing transitions
-                if (t.Labels.get("") !== undefined) { // epsilon transition?
-                    if (s.EFollow === undefined) s.EFollow = new Map(); // initialize map with follow-states
-                    s.EFollow.set(t.Target.ID, t.Target); // add target state
-                }
-            }*/
-      for (var t of s.In.values()) {
-        // iterate incoming transitions
-        if (t.Labels.get("") !== undefined) {
-          // epsilon transition?
-          if (s.ELead === undefined) s.ELead = new Map(); // initialize map with leading-states
-          s.ELead.set(t.Source.ID, t.Source); // add source state
-        }
-      }
-    }
-  }
-  function setFinal(s, stack) {
-    // set states final that can reach an end state
-    s.Final = true; // this state is final
-    if (s.ELead === undefined) return; // no incoming epsilon transitions
-    if (stack === undefined) stack = {};
-    if (stack[s.ID] !== undefined) return;
-    stack[s.ID] = s; // "stack" to avoid endless recursion
-    // iterate all states reaching s with epsilon
-    for (var e of s.ELead.values()) setFinal(e, stack); // they are to be final too
-    delete stack[s.ID];
-  }
-  /*    function addStartState(s, startStates) { // collect states than can reach start state
-        s.Start = false; // reset
-        if (startStates.get(s.ID) !== undefined) return; // already added
-        startStates.set(s.ID, s); // add
-        if (s.ELead === undefined) return; // no incoming epsilon transitions
-        // iterate all states reaching s with epsilon
-        for (var e of s.ELead.values())
-            addStartState(e, startStates);// they are start states too
-    }*/
-  var bypass = new Map(); // find all epsilon-replacement transitions
-  /*    function getFollowTransitions(incoming, s, stack) { // redirect incoming-transitions to all epsilon-targets of s
-        if (s.EFollow === undefined) return []; // no outgoing epsilon transitions
-        if (stack === undefined) stack = {};
-        if (stack[s.ID] !== undefined) return [];
-        stack[s.ID] = s; // "stack" to avoid endless recursion
-        for (var target of s.EFollow.values()) { // iterate epsilon-transition-target-states
-            for (var t of incoming.values()) { // iterate the original incoming transitions
-                var tKey = t.Source.ID + " " + target.ID; // key for this state transition
-                var bp = bypass.get(tKey);
-                if (!bp) { // not a bypass already
-                    bp = { Source: t.Source, Target: target, Labels: new Map(t.Labels) };
-                    bypass.set(tKey, bp); // insert as a new bypass
-                }
-                else { // extend labels of bypass
-                    for (var l of t.Labels.values())
-                        bp.Labels.set(l, l);
-                }
-            }
-            // add redirected incoming-transitions to epsilon-targets of target recursively
-            getFollowTransitions(incoming, target, stack);
-        }
-        delete stack[s.ID];
-    }*/
-  function getLeadingTransitions(outgoing, s, stack) {
-    // redirect outgoing-transitions to all epsilon-sources of s
-    if (s.ELead === undefined) return []; // no incoming epsilon transitions
-    if (stack === undefined) stack = {};
-    if (stack[s.ID] !== undefined) return [];
-    stack[s.ID] = s; // "stack" to avoid endless recursion
-    for (var source of s.ELead.values()) {
-      // iterate epsilon-transition-source-states
-      for (var t of outgoing.values()) {
-        // iterate the original outgoing transitions
-        var tKey = source.ID + " " + t.Target.ID; // key for this transition
-        var bp = bypass.get(tKey);
-        if (!bp) {
-          // not a bypass already
-          bp = { Source: source, Target: t.Target, Labels: new Map(t.Labels) };
-          bypass.set(tKey, bp); // insert as a new bypass
-        } else {
-          // extend labels of bypass
-          for (var l of t.Labels.values()) bp.Labels.set(l, l);
-        }
-      }
-      // add redirected outgoing-transitions from epsilon-sources of source recursively
-      getLeadingTransitions(outgoing, source, stack);
-    }
-    delete stack[s.ID];
-  }
-  // The actual removement
-  removeSelfEpsilon(linkedEA); // remove any epsilon-self-transitions
-  createEClosure(linkedEA); // find all direct epsilon transitions of each state
-  for (let s of linkedEA.States.values()) // set all states final
-    if (s.Final) setFinal(s); // that can reach a final-state with epsilon-transitions
-  // Determine all states that can be a start state (can reach start with epsilon)
-  //    var startStates = new Map();
-  //    addStartState(linkedEA.Start, startStates);
-  for (let s of linkedEA.States.values()) {
-    // iterate states
-    /*        if (s.EFollow !== undefined) { // if there are outgoing epsilon-transitions
-            var incoming = new Map();
-            for (var t of s.In.values()) { // get incoming non-epsilon-transitions
-                if (t.Labels.size > 1 || t.Labels.get("") === undefined) {
-                    var inc = { Source: t.Source, Target: t.Target, Labels: new Map(t.Labels) };
-                    inc.Labels.delete("");
-                    incoming.set(t.Source.ID, inc);
-                }
-            }
-            if (incoming.size > 0) // non-epsilon-transitions found
-                getFollowTransitions(incoming, s); // get replacement transitions
-        }*/
-    if (s.ELead !== undefined) {
-      // if there are incoming epsilon-transitions
-      var outgoing = new Map();
-      for (var t of s.Out.values()) {
-        // get outgoing non-epsilon-transitions
-        if (t.Labels.size > 1 || t.Labels.get("") === undefined) {
-          var out = {
-            Source: t.Source,
-            Target: t.Target,
-            Labels: new Map(t.Labels),
-          };
-          out.Labels.delete("");
-          outgoing.set(t.Target.ID, out);
-        }
-      }
-      if (outgoing.size > 0)
-        // non-epsilon-transitions found
-        getLeadingTransitions(outgoing, s); // get replacement transitions
-    }
-  }
-  // append the replacement-transitions
-  for (let tb of bypass.values()) {
-    let t = tb.Source.Out.get(tb.Target.ID); // already existing Out transition to target?
-    if (t === undefined) {
-      // if not, there is also no In transition
-      tb.Source.Out.set(tb.Target.ID, tb); // both are
-      tb.Target.In.set(tb.Source.ID, tb); // added
-    } else {
-      // transition exists already
-      for (let l of tb.Labels.values()) t.Labels.set(l, l); // just append the labels
-    }
-  }
-  // remove all replaced epsilon-transitions
-  for (let s of linkedEA.States.values()) {
-    for (let t of s.Out.values()) {
-      // iterate out transitions
-      t.Labels.delete(""); // remove epsilon label
-      if (t.Labels.size === 0)
-        // no other labels
-        s.Out.delete(t.Target.ID); // remove object
-    }
-    for (let t of s.In.values()) {
-      // iterate in transitions
-      t.Labels.delete(""); // remove epsilon label
-      if (t.Labels.size === 0)
-        // no other labels
-        s.In.delete(t.Source.ID); // remove object
-    }
-  }
-  /*    var minStates = undefined;
-    var minStart = undefined;
-    for (s of startStates.values()) {
-        linkedEA.Start = s;
-        s.Start = true;
-        var opt = unlinkEA(linkedEA);
-        if (minStart == undefined || opt.States.length < minStates) {
-            minStart = s;
-            minStates = opt.States.length;
-        }
-        s.Start = false;
-    }
-    linkedEA.Start = minStart;
-    minStart.Start = true;*/
-  return linkedEA;
-}
+// function removeEpsilonLinkedNEA(linkedEA) {
+//   function removeSelfEpsilon(linkedEA) {
+//     // removes self-epsilon-transitions
+//     for (var s of linkedEA.States.values()) {
+//       // iterate states
+//       var selftrans = s.Out.get(s.ID); // find self-transitions
+//       if (selftrans === undefined) continue; // no self-transition
+//       selftrans.Labels.delete(""); // remove epsilon transiton
+//       if (selftrans.Labels.size === 0) {
+//         // no other label
+//         s.Out.delete(s.ID); // remove whole
+//         s.In.delete(s.ID); //  self transition
+//       }
+//     }
+//   }
+//   function createEClosure(linkedEA) {
+//     // determine direct neighbor states reachable with epsilon
+//     for (var s of linkedEA.States.values()) {
+//       // iterate states
+//       /*            for (var t of s.Out.values()) { // iterate outgoing transitions
+//                 if (t.Labels.get("") !== undefined) { // epsilon transition?
+//                     if (s.EFollow === undefined) s.EFollow = new Map(); // initialize map with follow-states
+//                     s.EFollow.set(t.Target.ID, t.Target); // add target state
+//                 }
+//             }*/
+//       for (var t of s.In.values()) {
+//         // iterate incoming transitions
+//         if (t.Labels.get("") !== undefined) {
+//           // epsilon transition?
+//           if (s.ELead === undefined) s.ELead = new Map(); // initialize map with leading-states
+//           s.ELead.set(t.Source.ID, t.Source); // add source state
+//         }
+//       }
+//     }
+//   }
+//   function setFinal(s, stack) {
+//     // set states final that can reach an end state
+//     s.Final = true; // this state is final
+//     if (s.ELead === undefined) return; // no incoming epsilon transitions
+//     if (stack === undefined) stack = {};
+//     if (stack[s.ID] !== undefined) return;
+//     stack[s.ID] = s; // "stack" to avoid endless recursion
+//     // iterate all states reaching s with epsilon
+//     for (var e of s.ELead.values()) setFinal(e, stack); // they are to be final too
+//     delete stack[s.ID];
+//   }
+//   /*    function addStartState(s, startStates) { // collect states than can reach start state
+//         s.Start = false; // reset
+//         if (startStates.get(s.ID) !== undefined) return; // already added
+//         startStates.set(s.ID, s); // add
+//         if (s.ELead === undefined) return; // no incoming epsilon transitions
+//         // iterate all states reaching s with epsilon
+//         for (var e of s.ELead.values())
+//             addStartState(e, startStates);// they are start states too
+//     }*/
+//   var bypass = new Map(); // find all epsilon-replacement transitions
+//   /*    function getFollowTransitions(incoming, s, stack) { // redirect incoming-transitions to all epsilon-targets of s
+//         if (s.EFollow === undefined) return []; // no outgoing epsilon transitions
+//         if (stack === undefined) stack = {};
+//         if (stack[s.ID] !== undefined) return [];
+//         stack[s.ID] = s; // "stack" to avoid endless recursion
+//         for (var target of s.EFollow.values()) { // iterate epsilon-transition-target-states
+//             for (var t of incoming.values()) { // iterate the original incoming transitions
+//                 var tKey = t.Source.ID + " " + target.ID; // key for this state transition
+//                 var bp = bypass.get(tKey);
+//                 if (!bp) { // not a bypass already
+//                     bp = { Source: t.Source, Target: target, Labels: new Map(t.Labels) };
+//                     bypass.set(tKey, bp); // insert as a new bypass
+//                 }
+//                 else { // extend labels of bypass
+//                     for (var l of t.Labels.values())
+//                         bp.Labels.set(l, l);
+//                 }
+//             }
+//             // add redirected incoming-transitions to epsilon-targets of target recursively
+//             getFollowTransitions(incoming, target, stack);
+//         }
+//         delete stack[s.ID];
+//     }*/
+//   function getLeadingTransitions(outgoing, s, stack) {
+//     // redirect outgoing-transitions to all epsilon-sources of s
+//     if (s.ELead === undefined) return []; // no incoming epsilon transitions
+//     if (stack === undefined) stack = {};
+//     if (stack[s.ID] !== undefined) return [];
+//     stack[s.ID] = s; // "stack" to avoid endless recursion
+//     for (var source of s.ELead.values()) {
+//       // iterate epsilon-transition-source-states
+//       for (var t of outgoing.values()) {
+//         // iterate the original outgoing transitions
+//         var tKey = source.ID + " " + t.Target.ID; // key for this transition
+//         var bp = bypass.get(tKey);
+//         if (!bp) {
+//           // not a bypass already
+//           bp = { Source: source, Target: t.Target, Labels: new Map(t.Labels) };
+//           bypass.set(tKey, bp); // insert as a new bypass
+//         } else {
+//           // extend labels of bypass
+//           for (var l of t.Labels.values()) bp.Labels.set(l, l);
+//         }
+//       }
+//       // add redirected outgoing-transitions from epsilon-sources of source recursively
+//       getLeadingTransitions(outgoing, source, stack);
+//     }
+//     delete stack[s.ID];
+//   }
+//   // The actual removement
+//   removeSelfEpsilon(linkedEA); // remove any epsilon-self-transitions
+//   createEClosure(linkedEA); // find all direct epsilon transitions of each state
+//   for (let s of linkedEA.States.values()) // set all states final
+//     if (s.Final) setFinal(s); // that can reach a final-state with epsilon-transitions
+//   // Determine all states that can be a start state (can reach start with epsilon)
+//   //    var startStates = new Map();
+//   //    addStartState(linkedEA.Start, startStates);
+//   for (let s of linkedEA.States.values()) {
+//     // iterate states
+//     /*        if (s.EFollow !== undefined) { // if there are outgoing epsilon-transitions
+//             var incoming = new Map();
+//             for (var t of s.In.values()) { // get incoming non-epsilon-transitions
+//                 if (t.Labels.size > 1 || t.Labels.get("") === undefined) {
+//                     var inc = { Source: t.Source, Target: t.Target, Labels: new Map(t.Labels) };
+//                     inc.Labels.delete("");
+//                     incoming.set(t.Source.ID, inc);
+//                 }
+//             }
+//             if (incoming.size > 0) // non-epsilon-transitions found
+//                 getFollowTransitions(incoming, s); // get replacement transitions
+//         }*/
+//     if (s.ELead !== undefined) {
+//       // if there are incoming epsilon-transitions
+//       var outgoing = new Map();
+//       for (var t of s.Out.values()) {
+//         // get outgoing non-epsilon-transitions
+//         if (t.Labels.size > 1 || t.Labels.get("") === undefined) {
+//           var out = {
+//             Source: t.Source,
+//             Target: t.Target,
+//             Labels: new Map(t.Labels),
+//           };
+//           out.Labels.delete("");
+//           outgoing.set(t.Target.ID, out);
+//         }
+//       }
+//       if (outgoing.size > 0)
+//         // non-epsilon-transitions found
+//         getLeadingTransitions(outgoing, s); // get replacement transitions
+//     }
+//   }
+//   // append the replacement-transitions
+//   for (let tb of bypass.values()) {
+//     let t = tb.Source.Out.get(tb.Target.ID); // already existing Out transition to target?
+//     if (t === undefined) {
+//       // if not, there is also no In transition
+//       tb.Source.Out.set(tb.Target.ID, tb); // both are
+//       tb.Target.In.set(tb.Source.ID, tb); // added
+//     } else {
+//       // transition exists already
+//       for (let l of tb.Labels.values()) t.Labels.set(l, l); // just append the labels
+//     }
+//   }
+//   // remove all replaced epsilon-transitions
+//   for (let s of linkedEA.States.values()) {
+//     for (let t of s.Out.values()) {
+//       // iterate out transitions
+//       t.Labels.delete(""); // remove epsilon label
+//       if (t.Labels.size === 0)
+//         // no other labels
+//         s.Out.delete(t.Target.ID); // remove object
+//     }
+//     for (let t of s.In.values()) {
+//       // iterate in transitions
+//       t.Labels.delete(""); // remove epsilon label
+//       if (t.Labels.size === 0)
+//         // no other labels
+//         s.In.delete(t.Source.ID); // remove object
+//     }
+//   }
+//   /*    var minStates = undefined;
+//     var minStart = undefined;
+//     for (s of startStates.values()) {
+//         linkedEA.Start = s;
+//         s.Start = true;
+//         var opt = unlinkEA(linkedEA);
+//         if (minStart == undefined || opt.States.length < minStates) {
+//             minStart = s;
+//             minStates = opt.States.length;
+//         }
+//         s.Start = false;
+//     }
+//     linkedEA.Start = minStart;
+//     minStart.Start = true;*/
+//   return linkedEA;
+// }
 
 function linkedNea2Dea(linkedEA) {
   function removeDoubles(array, comparer) {
@@ -1034,7 +1090,7 @@ function linkedNea2Dea(linkedEA) {
       if (array[i] === array[i + 1]) array.splice(i + 1, 1);
     }
   }
-  var id = 1; // counter for state-IDs
+  var id = 0; // counter for state-IDs
   function getDEAState(dea, neaStates) {
     // build DEA-state based on set of neaStates
     var statename = neaStates.reduce(
@@ -1092,7 +1148,7 @@ function linkedNea2Dea(linkedEA) {
     }
     return state; // return the existing or created DEA state
   }
-  removeEpsilonLinkedNEA(linkedEA);
+  // removeEpsilonLinkedNEA(linkedEA);
   //optimizeLinkedNEA(linkedEA);
   var dea = {
     // The result object
@@ -1152,15 +1208,130 @@ function NEAtoDEA() {
   var linkedEA = linkEA(automaton);
   console.log("linkedEA");
   console.log(linkedEA);
+
   var linkedDEA = linkedNea2Dea(linkedEA);
   console.log("linkedDEA");
   console.log(linkedDEA);
+
   var a = unlinkEA(linkedDEA, true);
   console.log("a");
   console.log(a);
+
   var r = completeDEA(a);
   console.log("r");
   console.log(r);
+
+  //Erstellen eines neuen Automaten
+  let x = 200;
+  var ranId = () => Math.floor(Math.random() * 1000);
+  const id = ranId();
+  // const endNodes = transitionTablle.getEnds;
+  let ConvertedAutomatData = {
+    id: id,
+    name: "DEA from " + transitionTablle.getName,
+    type: "DEA",
+    automat: {
+      alphabet: transitionTablle.getAlphabetString,
+      nodes: [],
+      edges: [],
+    },
+  };
+  for (const state of r.automaton.States) {
+    console.log(state);
+    let type = "normal";
+    // const parts = state.state_label.split(",");
+    if (state.Start) {
+      type = "start";
+    }
+    if (state.Final) {
+      type = "end";
+    }
+    if (state.Final && state.Start) {
+      type = "startend";
+    } else if (!state.Final && !state.Start) {
+      type = "normal";
+    }
+
+    ConvertedAutomatData.automat.nodes.push({
+      id: state.ID,
+      // label: `{${state.Name}}`,
+      label: `q` + state.ID,
+      type: type,
+      position: { x: x, y: 100 },
+    });
+    x += 200;
+  }
+
+  const alphabet = transitionTablle.getAlphabet;
+
+  for (const transition of r.automaton.States) {
+    let label;
+    let sourceId = transition.ID;
+    let targetId = "";
+    let transID = "";
+    let alphabetIndex = 0;
+    for (const innerTransition of transition.Transitions) {
+      let dataTransitions = [];
+      for (const a of alphabet) {
+        dataTransitions.push({
+          id: a.id,
+          value: a.value,
+          flag: false,
+        });
+      }
+      console.log(innerTransition);
+      label = alphabet.find((e) => e.id == alphabetIndex);
+      const target = r.automaton.States.find(
+        (e) => innerTransition.Target == e.ID
+      );
+      targetId = target.ID;
+      transID = sourceId + "to" + targetId;
+
+      let transitionTMP = dataTransitions;
+      for (const t of transitionTMP) {
+        if (t.value == label.value) {
+          t.flag = true;
+        }
+      }
+      ConvertedAutomatData.automat.edges.push({
+        data: { transitions: transitionTMP },
+        id: transID,
+        label: label.value,
+        source: String(sourceId),
+        sourceHandle: sourceId + "__handle-right",
+        target: String(targetId),
+        targetHandle: targetId + "__handle-left",
+        type: "arrow",
+        markerEnd: {
+          type: "arrowclosed",
+          color: "black",
+          width: 100,
+          height: 40,
+        },
+      });
+      alphabetIndex++;
+    }
+  }
+  console.log(ConvertedAutomatData);
+
+  const uF2 = useVueFlow();
+  uF2.setNodes(ConvertedAutomatData.automat.nodes);
+  uF2.addEdges(ConvertedAutomatData.automat.edges);
+  ConvertedAutomatData.automat.edges = uF2.getEdges.value;
+  ConvertedAutomatData.automat.nodes = uF2.getNodes.value;
+
+  automat2.addAutomat(ConvertedAutomatData);
+
+  console.log("Importierte Daten:", ConvertedAutomatData);
+  //öffne die Automaten seite
+  router.push({
+    path: "/automat",
+    name: "automatPage",
+    params: { id: id },
+  });
+  automat2.getData();
+  alert("Neuer Automat wurde erstellt!");
+
   return { result: "OK", automaton: r.automaton }; // true = keep traps when unlinking!
 }
 
