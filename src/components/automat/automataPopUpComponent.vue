@@ -2,6 +2,9 @@
   <div>
     <div class="card text-center">
       <div class="card-body">
+        <p class="blockquote-footer">
+          {{ sourceNodeLabel }} nach {{ targetNodeLabel }}
+        </p>
         <div
           class="form-check form-check-inline"
           v-for="item in automatAlphabet"
@@ -23,12 +26,12 @@
         </div>
       </div>
       <div class="card-footer text-muted">
-        <a href="#" class="btn btn-danger" @click="removeEdges(props.edgeId)">
-          <i class="fa fa-trash" aria-hidden="true"></i
-        ></a>
+        <a href="#" class="btn btn-danger btn-sm" @click="removeEdges(props.edgeId)">
+          <i class="fa fa-trash fa-xs" aria-hidden="true"></i
+            ></a>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 </template>
 
 <script setup>
@@ -44,14 +47,14 @@ const props = defineProps({
   edgeId: String,
   edgeTransitions: String,
   edgeLabel: String,
+  sourceNodeLabel: String,
+  targetNodeLabel: String,
 });
-
 const automat = ref(null);
 const automatAlphabet = ref("");
 const { removeEdges } = useVueFlow();
 const instance = useVueFlow();
 const edge = instance.findEdge(props.edgeId);
-
 automat.value = findAutomataById(parseInt(route.params.id));
 automatAlphabet.value = makeArray(automat.value.automat.alphabet);
 
@@ -67,5 +70,4 @@ function checkBoxChange(id, event) {
 function getCheck(id) {
   return edge.data.transitions[id].flag;
 }
-
 </script>

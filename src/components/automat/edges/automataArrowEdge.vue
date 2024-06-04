@@ -26,6 +26,8 @@
         @closePopup="closePopup"
         :edge-id="id"
         :edgeLabel="label"
+        :sourceNodeLabel="props.sourceNode.label"
+        :targetNodeLabel="props.targetNode.label"
       ></automataPopUpComponent>
     </div>
   </EdgeLabelRenderer>
@@ -46,6 +48,8 @@
         @closePopup="closePopUp"
         :edge-id="id"
         :edgeLabel="label"
+        :sourceNodeLabel="props.sourceNode.label"
+        :targetNodeLabel="props.targetNode.label"
       ></automataPopUpComponent>
     </div>
   </EdgeLabelRenderer>
@@ -62,6 +66,8 @@
       <automataPopUpComponent
         v-if="edge.selected"
         @closePopup="closePopUp"
+        :sourceNodeLabel="props.sourceNode.label"
+        :targetNodeLabel="props.targetNode.label"
         :edge-id="id"
         :edgeLabel="label"
       ></automataPopUpComponent>
@@ -82,6 +88,8 @@
         @closePopup="closePopUp"
         :edge-id="id"
         :edgeLabel="label"
+        :sourceNodeLabel="props.sourceNode.label"
+        :targetNodeLabel="props.targetNode.label"
       ></automataPopUpComponent>
     </div>
   </EdgeLabelRenderer>
@@ -170,6 +178,7 @@ watch(
 
 //Übereinanderliegende Transitionen
 const doubleTransition = computed(() => {
+  // console.log(props)
   const allEdges = instance.getEdges;
   for (const edge of allEdges.value) {
     // console.log(edge);
@@ -178,8 +187,8 @@ const doubleTransition = computed(() => {
       edge.source == props.target &&
       edge.target == props.source
     ) {
-      console.log(props.source);
-      console.log(props.target);
+      // console.log(props.source);
+      // console.log(props.target);
       // console.log("Gefunden");
       return true;
     }
@@ -187,10 +196,13 @@ const doubleTransition = computed(() => {
   return false;
 });
 
-const regex = /\b\d+\b/g;
+// const regex = /\b\d+\b/g;
 const edgePathLoopLabel = computed(() => {
-  
-  return edgePath.value.match(regex);
+  const x = (props.sourceX + props.targetX) / 2;
+  const y = (props.sourceY + props.targetY) / 2;
+  const path = [x, y];
+  // return edgePath.value.match(regex);
+  return path;
 });
 const midPoints = computed(() => [
   (edgeParams.value.sx + edgeParams.value.tx) / 2,
@@ -215,19 +227,21 @@ const edgePath = computed(() => {
     return path;
   } else if (props.source === props.target) {
     const { sourceX, sourceY, targetX, targetY } = props;
-    const radiusX = (sourceX - targetX) * 0.6;
+    const radiusX = (sourceX - targetX) * 0.6 ;
     const radiusY = 50;
     const edgePath1 = `M ${sourceX} ${sourceY} A ${radiusX} ${radiusY} 0 1 0 ${targetX} ${targetY}`;
 
     return edgePath1;
   } else if (doubleTransition.value) {
-    const radiusX = (edgeParams.value.sx - edgeParams.value.tx) * 0.6;
-    const radiusY = 100;
+    const radiusX = (edgeParams.value.sx - edgeParams.value.tx) * 0.8 ;
+    const radiusY = (edgeParams.value.sy - edgeParams.value.ty) * 0.8 ;
+    // const radiusY = 10;
     const path2 = `M ${edgeParams.value.sx} ${edgeParams.value.sy} A ${radiusX} ${radiusY} 0 0 0 ${edgeParams.value.tx} ${edgeParams.value.ty}`;
     // console.log(props.sourceNode);
     // console.log(path2);
     return path2;
   } else {
+    console.log("FEHLER BEI EDGE-PATH")
     return "";
   }
 });
