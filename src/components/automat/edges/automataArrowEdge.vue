@@ -204,10 +204,39 @@ const edgePathLoopLabel = computed(() => {
   // return edgePath.value.match(regex);
   return path;
 });
-const midPoints = computed(() => [
-  (edgeParams.value.sx + edgeParams.value.tx) / 2,
-  (edgeParams.value.sy + edgeParams.value.ty) / 2,
-]);
+const midPoints = computed(() => {
+  const heightFraction = 0.25;
+  // Knotenkoordinaten
+  const A = { x: edgeParams.value.sx, y: edgeParams.value.sy };
+  const B = { x: edgeParams.value.tx, y: edgeParams.value.ty };
+
+  // Berechnung der Distanz zwischen den Knoten
+  const dx = B.x - A.x;
+  const dy = B.y - A.y;
+  const distance = Math.sqrt(dx * dx + dy * dy);
+
+  // Berechnung des Mittelpunktes M
+  const Mx = (A.x + B.x) / 2;
+  const My = (A.y + B.y) / 2;
+
+  // Berechnung des Normalenvektors N
+  const Nx = -dy;
+  const Ny = dx;
+
+  // Normierung des Normalenvektors U
+  const norm = Math.sqrt(Nx * Nx + Ny * Ny);
+  const Ux = Nx / norm;
+  const Uy = Ny / norm;
+
+  // Berechnung der dynamischen Höhe
+  const height = heightFraction * distance;
+
+  // Berechnung der Textposition T
+  const Tx = Mx + height * Ux;
+  const Ty = My + height * Uy;
+
+  return [Tx, Ty];
+});
 const edgePath = computed(() => {
   if (
     !doubleTransition.value &&
@@ -227,21 +256,21 @@ const edgePath = computed(() => {
     return path;
   } else if (props.source === props.target) {
     const { sourceX, sourceY, targetX, targetY } = props;
-    const radiusX = (sourceX - targetX) * 0.6 ;
+    const radiusX = (sourceX - targetX) * 0.6;
     const radiusY = 50;
     const edgePath1 = `M ${sourceX} ${sourceY} A ${radiusX} ${radiusY} 0 1 0 ${targetX} ${targetY}`;
 
     return edgePath1;
   } else if (doubleTransition.value) {
-    const radiusX = (edgeParams.value.sx - edgeParams.value.tx) * 0.8 ;
-    const radiusY = (edgeParams.value.sy - edgeParams.value.ty) * 0.8 ;
+    const radiusX = (edgeParams.value.sx - edgeParams.value.tx) * 0.8;
+    const radiusY = (edgeParams.value.sy - edgeParams.value.ty) * 0.8;
     // const radiusY = 10;
     const path2 = `M ${edgeParams.value.sx} ${edgeParams.value.sy} A ${radiusX} ${radiusY} 0 0 0 ${edgeParams.value.tx} ${edgeParams.value.ty}`;
     // console.log(props.sourceNode);
     // console.log(path2);
     return path2;
   } else {
-    console.log("FEHLER BEI EDGE-PATH")
+    console.log("FEHLER BEI EDGE-PATH");
     return "";
   }
 });
