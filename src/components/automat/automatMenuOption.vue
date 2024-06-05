@@ -106,12 +106,12 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav">
-          <li class="nav-item ml-2">
-            <!--Off Canvas für Informationen und Hilfe-->
+          <!-- <li class="nav-item ml-2">
+            Off Canvas für Informationen und Hilfe
             <a class="nav-link" aria-current="page" href="#"
               ><i class="fa-solid fa-circle-info"></i> Hilfe</a
             >
-          </li>
+          </li> -->
           <li class="nav-item ml-2" @click="checkAutomatView()">
             <!--Überprüfen aussuchen-->
             <a class="nav-link" href="#">
@@ -1265,51 +1265,145 @@ function NEAtoDEA() {
   const alphabet = transitionTablle.getAlphabet;
 
   for (const transition of r.automaton.States) {
-    let label;
+    let TransLabel;
     let sourceId = transition.ID;
     let targetId = "";
     let transID = "";
-    let alphabetIndex = 0;
+    // let alphabetIndex = 0;
     for (const innerTransition of transition.Transitions) {
-      let dataTransitions = [];
-      for (const a of alphabet) {
-        dataTransitions.push({
-          id: a.id,
-          value: a.value,
-          flag: false,
+      // console.log()
+      TransLabel = innerTransition.Labels.toString().replace(/,/g, "");
+      if (innerTransition.Labels.length > 1) {
+        //TODO
+        let dataTransitions = [];
+        for (const a of alphabet) {
+          console.log(TransLabel.indexOf(a));
+          dataTransitions.push({
+            id: a.id,
+            value: a.value,
+            flag: TransLabel.indexOf(a),
+          });
+        }
+        // console.log(innerTransition);
+        // label = alphabet.find((e) => e.id == alphabetIndex);
+
+        const target = r.automaton.States.find(
+          (e) => innerTransition.Target == e.ID
+        );
+        targetId = target.ID;
+        transID = sourceId + "to" + targetId;
+
+        let transitionTMP = dataTransitions;
+        for (const t of transitionTMP) {
+          if (t.value == -1) {
+            t.flag = false;
+          } else {
+            t.flag = true;
+          }
+        }
+
+        ConvertedAutomatData.automat.edges.push({
+          data: { transitions: transitionTMP },
+          id: transID + TransLabel,
+          label: TransLabel,
+          source: String(sourceId),
+          sourceHandle: sourceId + "__handle-right",
+          target: String(targetId),
+          targetHandle: targetId + "__handle-left",
+          type: "arrow",
+          markerEnd: {
+            type: "arrowclosed",
+            color: "black",
+            width: 100,
+            height: 40,
+          },
+        });
+      } else {
+        let dataTransitions = [];
+        for (const a of alphabet) {
+          dataTransitions.push({
+            id: a.id,
+            value: a.value,
+            flag: false,
+          });
+        }
+        // console.log(innerTransition);
+        // label = alphabet.find((e) => e.id == alphabetIndex);
+
+        const target = r.automaton.States.find(
+          (e) => innerTransition.Target == e.ID
+        );
+        targetId = target.ID;
+        transID = sourceId + "to" + targetId;
+
+        let transitionTMP = dataTransitions;
+        for (const t of transitionTMP) {
+          if (t.value == TransLabel) {
+            t.flag = true;
+          }
+        }
+
+        ConvertedAutomatData.automat.edges.push({
+          data: { transitions: transitionTMP },
+          id: transID + TransLabel,
+          label: TransLabel,
+          source: String(sourceId),
+          sourceHandle: sourceId + "__handle-right",
+          target: String(targetId),
+          targetHandle: targetId + "__handle-left",
+          type: "arrow",
+          markerEnd: {
+            type: "arrowclosed",
+            color: "black",
+            width: 100,
+            height: 40,
+          },
         });
       }
-      // console.log(innerTransition);
-      label = alphabet.find((e) => e.id == alphabetIndex);
-      const target = r.automaton.States.find(
-        (e) => innerTransition.Target == e.ID
-      );
-      targetId = target.ID;
-      transID = sourceId + "to" + targetId;
 
-      let transitionTMP = dataTransitions;
-      for (const t of transitionTMP) {
-        if (t.value == label.value) {
-          t.flag = true;
-        }
-      }
-      ConvertedAutomatData.automat.edges.push({
-        data: { transitions: transitionTMP },
-        id: transID,
-        label: label.value,
-        source: String(sourceId),
-        sourceHandle: sourceId + "__handle-right",
-        target: String(targetId),
-        targetHandle: targetId + "__handle-left",
-        type: "arrow",
-        markerEnd: {
-          type: "arrowclosed",
-          color: "black",
-          width: 100,
-          height: 40,
-        },
-      });
-      alphabetIndex++;
+      // for (const label of innerTransition.Labels) {
+      //   let dataTransitions = [];
+      //   for (const a of alphabet) {
+      //     dataTransitions.push({
+      //       id: a.id,
+      //       value: a.value,
+      //       flag: false,
+      //     });
+      //   }
+      //   // console.log(innerTransition);
+      //   // label = alphabet.find((e) => e.id == alphabetIndex);
+      //   TransLabel = label;
+      //   const target = r.automaton.States.find(
+      //     (e) => innerTransition.Target == e.ID
+      //   );
+      //   targetId = target.ID;
+      //   transID = sourceId + "to" + targetId;
+
+      //   let transitionTMP = dataTransitions;
+      //   for (const t of transitionTMP) {
+      //     if (t.value == TransLabel) {
+      //       t.flag = true;
+      //     }
+      //   }
+
+      //   ConvertedAutomatData.automat.edges.push({
+      //     data: { transitions: transitionTMP },
+      //     id: transID + TransLabel,
+      //     label: TransLabel,
+      //     source: String(sourceId),
+      //     sourceHandle: sourceId + "__handle-right",
+      //     target: String(targetId),
+      //     targetHandle: targetId + "__handle-left",
+      //     type: "arrow",
+      //     markerEnd: {
+      //       type: "arrowclosed",
+      //       color: "black",
+      //       width: 100,
+      //       height: 40,
+      //     },
+      //   });
+      // alphabetIndex++;
+      // }
     }
   }
   console.log(ConvertedAutomatData);
@@ -1690,7 +1784,11 @@ function deleteSelectedWord() {
 }
 
 function DEAtoMinimalDEA() {
-  let a = transitionTablle.getElements;
+  // var automat = JSON.parse(JSON.stringify(transitionTablle.getElements));
+  var a = JSON.parse(JSON.stringify(transitionTablle.getElements));
+  combineTransition(a);
+  // console.log(automat)
+  console.log(a);
   // removeUnusedAutomatonStates(a);
 
   // Schritt 1: 2D Matrix erstellen
@@ -1719,18 +1817,18 @@ function DEAtoMinimalDEA() {
   // Hilfsfunktion für Schritt 3
   function findTargetIndexForInput(state, character) {
     for (let i = 0; i < state.transitions.length; i++) {
-      // for (let z = 0; z < state.transitions[i].Labels.length; z++) {
-      if (state.transitions[i].transition_label == character) {
-        // Übergang gefunden mit dem Zeichen
-        let ID = state.transitions[i].target;
-        // Zustandsindex bestimmten
-        for (let w = 0; w < a.states.length; w++) {
-          if (a.states[w].state_id == ID) {
-            return w;
+      for (let z = 0; z < state.transitions[i].transition_label.length; z++) {
+        if (state.transitions[i].transition_label[z] == character) {
+          // Übergang gefunden mit dem Zeichen
+          let ID = state.transitions[i].target;
+          // Zustandsindex bestimmten
+          for (let w = 0; w < a.states.length; w++) {
+            if (a.states[w].state_id == ID) {
+              return w;
+            }
           }
         }
       }
-      // }
     }
     return -1; // nicht gefunden
   }
@@ -1975,52 +2073,106 @@ function DEAtoMinimalDEA() {
   const alphabet = transitionTablle.getAlphabet;
 
   for (const transition of a.states) {
-    let label;
+    let TransLabel;
     let sourceId = transition.state_id;
     let targetId = "";
     let transID = "";
-    let alphabetIndex = 0;
+    // let alphabetIndex = 0;
     for (const innerTransition of transition.transitions) {
-      let dataTransitions = [];
-      for (const a of alphabet) {
-        dataTransitions.push({
-          id: a.id,
-          value: a.value,
-          flag: false,
+      // console.log()
+      TransLabel = innerTransition.transition_label.toString().replace(/,/g, "");
+      if (innerTransition.transition_label.length > 1) {
+        //TODO
+        let dataTransitions = [];
+        for (const al of alphabet) {
+          console.log(TransLabel.indexOf(al));
+          dataTransitions.push({
+            id: al.id,
+            value: al.value,
+            flag: TransLabel.indexOf(al),
+          });
+        }
+        // console.log(innerTransition);
+        // label = alphabet.find((e) => e.id == alphabetIndex);
+
+        const target = a.states.find(
+          (e) => innerTransition.target == e.state_id
+        );
+        console.log(a.states)
+        targetId = target.state_id;
+        transID = sourceId + "to" + targetId;
+
+        let transitionTMP = dataTransitions;
+        for (const t of transitionTMP) {
+          if (t.value == -1) {
+            t.flag = false;
+          } else {
+            t.flag = true;
+          }
+        }
+
+        ConvertedAutomatData.automat.edges.push({
+          data: { transitions: transitionTMP },
+          id: transID + TransLabel,
+          label: TransLabel,
+          source: String(sourceId),
+          sourceHandle: sourceId + "__handle-right",
+          target: String(targetId),
+          targetHandle: targetId + "__handle-left",
+          type: "arrow",
+          markerEnd: {
+            type: "arrowclosed",
+            color: "black",
+            width: 100,
+            height: 40,
+          },
+        });
+      } else {
+        let dataTransitions = [];
+        for (const al of alphabet) {
+          dataTransitions.push({
+            id: al.id,
+            value: al.value,
+            flag: false,
+          });
+        }
+        // console.log(innerTransition);
+        // label = alphabet.find((e) => e.id == alphabetIndex);
+
+        const target = a.states.find(
+          (e) => innerTransition.target == e.state_id
+        );
+        targetId = target.state_id;
+        transID = sourceId + "to" + targetId;
+
+        let transitionTMP = dataTransitions;
+        for (const t of transitionTMP) {
+          if (t.value == TransLabel) {
+            t.flag = true;
+          }
+        }
+
+        ConvertedAutomatData.automat.edges.push({
+          data: { transitions: transitionTMP },
+          id: transID + TransLabel,
+          label: TransLabel,
+          source: String(sourceId),
+          sourceHandle: sourceId + "__handle-right",
+          target: String(targetId),
+          targetHandle: targetId + "__handle-left",
+          type: "arrow",
+          markerEnd: {
+            type: "arrowclosed",
+            color: "black",
+            width: 100,
+            height: 40,
+          },
         });
       }
-      console.log(innerTransition);
-      label = alphabet.find((e) => e.id == alphabetIndex);
-      const target = a.states.find((e) => innerTransition.target == e.state_id);
-      targetId = target.state_id;
-      transID = sourceId + "to" + targetId;
 
-      let transitionTMP = dataTransitions;
-      for (const t of transitionTMP) {
-        if (t.value == label.value) {
-          t.flag = true;
-        }
-      }
-      ConvertedAutomatData.automat.edges.push({
-        data: { transitions: transitionTMP },
-        id: transID,
-        label: label.value,
-        source: String(sourceId),
-        sourceHandle: sourceId + "__handle-right",
-        target: String(targetId),
-        targetHandle: targetId + "__handle-left",
-        type: "arrow",
-        markerEnd: {
-          type: "arrowclosed",
-          color: "black",
-          width: 100,
-          height: 40,
-        },
-      });
-      alphabetIndex++;
     }
   }
-  // console.log(ConvertedAutomatData);
+  console.log(ConvertedAutomatData);
 
   const uF2 = useVueFlow();
   uF2.setNodes(ConvertedAutomatData.automat.nodes);

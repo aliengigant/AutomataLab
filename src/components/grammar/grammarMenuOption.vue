@@ -26,12 +26,6 @@
           <li class="nav-item ml-2">
             <!--Off Canvas für Informationen und Hilfe-->
             <a class="nav-link" aria-current="page" href="#"
-              ><i class="fa-solid fa-circle-info"></i> Hilfe</a
-            >
-          </li>
-          <li class="nav-item ml-2">
-            <!--Off Canvas für Informationen und Hilfe-->
-            <a class="nav-link" aria-current="page" href="#"
               ><i class="fa-solid fa-circle-info" @click="newAutomata"></i>
               Grammatik Konvetieren</a
             >
