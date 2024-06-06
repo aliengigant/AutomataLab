@@ -12,7 +12,7 @@
                 color: rgba(0, 0, 0, 0.4);
               "
             >
-              Erstelle eine neue Grammatik indem du auf den Plus klickst
+              Erstelle eine neue Grammatik indem du auf das Plus klickst!
             </h2>
           </div>
           <div v-else class="row justify-content-evenly">

@@ -67,7 +67,7 @@ function newAutomata() {
   automat.addAutomat(ConvertedAutomatData);
 
   console.log("Importierte Daten:", ConvertedAutomatData.value);
-  //öffne die Automaten seite
+  // // öffne die Automaten seite
   router.push({
     path: "/automat",
     name: "automatPage",
@@ -81,21 +81,48 @@ function convertGrammarToAutomat() {
   const states = table.getNodes;
   const edges = table.getGrammarRowArray;
   const alphabet = table.getAlphabet;
+  let isThereEnd = false;
+  console.log(edges);
+  //Gibt es ein Ende?
+  for (const state of states) {
+    for (const transitions of state.transitions) {
+      if (transitions.id.includes("End")) {
+        isThereEnd = true;
+        break;
+      }
+    }
+  }
 
   let x = 200;
+  let y = 100;
 
   //Einfügen der Nodes
-
+  let counter = 0;
   // Benutze addEdges und AddNodes
   for (const state of states) {
+    console.log(state.state_id)
     automato.automat.nodes.push({
       data: { state: state.state_type },
-      id: state.state_id,
-      label: state.state_label,
+      id: counter,
+      label: state.state_label.replace(/[{}]/g, ""),
       type: state.state_type,
-      position: { x: x, y: 100 },
+      position: { x: x, y: y },
     });
     x += 200;
+    if (counter % 2) {
+      y += 200;
+      x = 200;
+    }
+    counter++;
+  }
+  if (isThereEnd) {
+    automato.automat.nodes.push({
+      // data: { state: state.state_type },
+      id: -1,
+      label: "End",
+      type: "end",
+      position: { x: x, y: y },
+    });
   }
   //Pro Edge gibt es nur eine Rule
   for (const edge of edges) {
@@ -106,15 +133,15 @@ function convertGrammarToAutomat() {
     let sourceId = "";
     let targetId = "";
     let transID = "";
-    if (edge.transitionID.includes("End")) {
-      label = String(edge.rule).substring(0, 1);
-      sourceId = String(edge.variable).substring(1, 2);
+    if (edge.end) {
+      label = String(edge.rule.replace(/[{}]/g, "")).substring(0, 1);
+      sourceId = String(edge.variable.replace(/[{}]/g, "")).substring(1, 2);
       targetId = "-1";
       transID = sourceId + "to" + targetId;
     } else {
-      label = String(edge.rule).substring(0, 1);
-      sourceId = String(edge.variable).substring(1, 2);
-      targetId = String(edge.rule).substring(2, 3);
+      label = String(edge.rule.replace(/[{}]/g, "")).substring(0, 1);
+      sourceId = String(edge.variable.replace(/[{}]/g, "")).substring(1, 2);
+      targetId = String(edge.rule.replace(/[{}]/g, "")).substring(2, 3);
       transID = sourceId + "to" + targetId;
     }
 
@@ -138,15 +165,16 @@ function convertGrammarToAutomat() {
     }
     //Wenn ein neuer Transition erstellt wird, setze die ersten Attribute
     else {
-      let transitionTMP = transitions;
-      for (const t of transitionTMP) {
+      // let transitionTMP = transitions;
+      for (const t of transitions) {
         if (t.value == label) {
           t.flag = true;
         }
       }
+
       automato.automat.edges.push({
         data: {
-          transitions: transitionTMP,
+          transitions: transitions,
         },
         id: transID,
         label: label,
@@ -162,12 +190,15 @@ function convertGrammarToAutomat() {
       });
     }
   }
+
+  // console.log(automato.automat.edges);
   addNodes(automato.automat.nodes);
   addEdges(automato.automat.edges);
   automato.automat.nodes = getNodes.value;
   automato.automat.edges = getEdges.value;
-  console.log(findEnds(automato))
-  if (findEnds(automato).length<1) {
+  // console.log(automato.automat.nodes);
+  // console.log(automato.automat.edges);
+  if (findEnds(automato).length < 1) {
     //Einfügen eines EndStates
     automato.automat.nodes.push({
       data: { state: "end" },
@@ -177,6 +208,7 @@ function convertGrammarToAutomat() {
       position: { x: 300, y: 200 },
     });
   }
+  console.log(automato)
   return automato;
 }
 

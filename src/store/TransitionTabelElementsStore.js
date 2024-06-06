@@ -183,10 +183,10 @@ export const usetransitionTableElementsStore = defineStore({
       if (table.states.length > 0) {
         const states = table.states;
         let row = [];
-        let endStateVariabel = "";
+        let endStateVariabel = [];
         for (const s of states) {
           if (s.state_type == "end" || s.state_type == "startend") {
-            endStateVariabel = s.state_label;
+            endStateVariabel.push(s.state_label.replace(/[{}]/g, ""));
           }
         }
         for (const s of states) {
@@ -199,6 +199,7 @@ export const usetransitionTableElementsStore = defineStore({
           if (s.transitions.length > 0) {
             // Wenn nicht leer, die map-Funktion anwenden
             ruleTmp = s.transitions.map((r) => {
+              console.log(r);
               const Translabel = r.transition_label;
               let target_label = r.target_label;
               if (state.getAbleitung == "rechts") {
@@ -285,12 +286,12 @@ export const usetransitionTableElementsStore = defineStore({
           //TODO:
           // Untersuche die List anhand der endStateVariable und füge einen Extra Reihe ein, wenn dieser mit dorthin transitiert
 
-          const targetNode = r.rule.slice(1, 3);
-          const transitionVar = r.rule.slice(0, 1);
+          const targetNode = r.rule.replace(/[{}]/g, "").slice(1, 3);
+          const transitionVar = r.rule.replace(/[{}]/g, "").slice(0, 1);
           //TODO:
           // Neue Einträge in das GrammarRow Array wenn es ein Endzustand gibt
           //Es müssen auf TransitionsId geachtet werden aber auch die Rule
-          if (targetNode == endStateVariabel) {
+          if (endStateVariabel.includes(targetNode)) {
             row.push({
               transitionID: r.transitionID + "end",
               variable: r.variable,
