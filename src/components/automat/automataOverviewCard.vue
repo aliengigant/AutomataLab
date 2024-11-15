@@ -1,7 +1,7 @@
 <template>
   <!-- Lösch Message fenster -->
   <div
-    class="modal fade"
+    class="modal fade non-selectable"
     :id="'deleteModal' + props.id"
     tabindex="-1"
     role="dialog"
@@ -41,7 +41,7 @@
     </div>
   </div>
 
-  <div v-if="visible" class="card border-5">
+  <div v-if="visible" class="card border-5  non-selectable">
     <div class="dropdown m-2">
       <button
         class="float-right btn btn-outline-secondary btn-circle btn-circle-sm"

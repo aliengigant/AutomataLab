@@ -1,5 +1,46 @@
 <template>
-  <div v-if="visible" class="card border-5">
+  <!-- Lösch Message fenster -->
+  <div
+    class="modal fade  non-selectable"
+    :id="'deleteModal' + props.id"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="deleteModal"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteModal">Löschen</h5>
+          <button
+            type="button"
+            class="close"
+            data-dismiss="modal"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          Wollen Sie wirklich diese Grammatik unwiederuflich löschen ?
+        </div>
+        <div class="modal-footer">
+          <button
+            @click="deleteGrammar(props.id)"
+            type="button"
+            class="btn btn-danger"
+            data-dismiss="modal"
+          >
+            Ja
+          </button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Nein
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div v-if="visible" class="card border-5 non-selectable">
     <div class="dropdown m-2">
       <button
         class="float-right btn btn-outline-secondary btn-circle btn-circle-sm"
@@ -15,7 +56,13 @@
         </li>
         <li><a class="dropdown-item" href="#">Exportieren</a></li>
         <li>
-          <a class="dropdown-item" @click="deleteGrammar()" href="#">Löschen</a>
+          <a
+            class="dropdown-item"
+            data-toggle="modal"
+            :data-target="'#deleteModal' + props.id"
+            href="#"
+            >Löschen</a
+          >
         </li>
       </ul>
     </div>
