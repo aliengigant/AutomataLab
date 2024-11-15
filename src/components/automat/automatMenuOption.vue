@@ -201,9 +201,16 @@
     <div class="offcanvas-body">
       <ul class="list-group">
         <div v-for="(text, index) in CheckTextArray" :key="index">
-          <li class="list-group-item">
-            <i class="fa-regular fa-circle-xmark"></i> {{ text }}
-          </li>
+          <div v-if="text != 'Automat wurde korrekt definiert!'">
+            <li class="list-group-item list-group-item-danger">
+              <i class="fa-regular fa-circle-xmark"></i> {{ text }}
+            </li>
+          </div>
+          <div v-else>
+            <li class="list-group-item list-group-item-success">
+              <i class="fa-regular fa-circle-check"></i> {{ text }}
+            </li>
+          </div>
         </div>
       </ul>
     </div>
@@ -888,8 +895,8 @@ function combineTransition(a) {
         });
       }
     }
-    // console.log(newTransition);
     state.transitions = newTransition;
+    console.log(state.transitions);
   }
 }
 
@@ -1320,9 +1327,9 @@ function automatSimulation() {
   transListSimulation.value.push({ word: "start" });
   //stack für eventuelle rücksprünge für NEA
   // let stackstates = [];
-  alphabetListSimulation.value.push({ rest: wordList });
   //Unterscheide zwischen DEA und NEA
   if (checkAutomat() && table.type == "DEA") {
+    alphabetListSimulation.value.push({ rest: wordList });
     stateListSimulation.value.push({ value: state.state_label });
     //Gehe das Eingabewort Char für Char durch
     for (let i = 0; i < word.length; i++) {
@@ -1398,71 +1405,18 @@ function automatSimulation() {
       isEnd = false;
     }
   } else if (checkAutomat() && table.type == "NEA") {
-    const NEACHECK = NEASimulation(
+    isEnd = NEASimulation(
       word,
       state.state_label,
       transitionTablle.getGrammarRowArray,
       transitionTablle.getEnds
     );
 
-    // //Gehe das Eingabewort Char für Char durch
-    // for (let i = 0; i < word.length; i++) {
-    //   const char = word.charAt(i);
-    //   wordList = wordList.replace(char, "");
-    //   alphabetListSimulation.value.push({ rest: wordList });
-    //   for (const trans of state.transitions) {
-    //     if (trans.transition_label == char) {
-    //       // Für einen Zustand, öfters das Gleiche zeichen
-    //       stackstates.push(trans);
-    //     }
-    //   }
-    //   for (const trans of stackstates) {
-    //     stackstates.shift();
-    //     console.log(stackstates);
-    //     if (trans.transition_label.includes(char)) {
-    //       console.log(char + " ist drin " + state.state_label);
-    //       if (state.state_id == trans.target) {
-    //         console.log("Ich habe den selben Node: " + state.state_label);
-
-    //         stateListSimulation.value.push({ value: state.state_label });
-    //         transListSimulation.value.push({ word: char });
-    //         continue;
-    //       } else if (state.state_id != trans.target) {
-    //         console.log("Ich habe einen anderen Node: " + trans.target_label);
-    //         if (i < word.length && trans.target_label == "End") {
-    //           console.log("ICH KANN HIER NICHT ENDEN");
-    //           continue;
-    //         }
-    //         state = transitionTablle.getNodes.find(
-    //           (sta) => sta.state_id == trans.target
-    //         );
-    //         stateListSimulation.value.push({ value: state.state_label });
-    //         transListSimulation.value.push({ word: char });
-    //         break;
-    //       }
-    //     } else if (!trans.transition_label.includes(char)) {
-    //       console.log(
-    //         char +
-    //           " ist nicht gleich " +
-    //           trans.transition_label +
-    //           "! nächste Transition"
-    //       );
-    //       continue;
-    //     } else {
-    //       console.log(
-    //         "Es gibt keinen Übergang mit dem " +
-    //           char +
-    //           " in " +
-    //           state.state_label
-    //       );
-    //     }
-    //   }
-    // }
     ListSimulationResultat.value = stateListSimulation.value.map(
       (item, index) => {
         return {
           value: item.value,
-          word: transListSimulation.value[index]?.word|| "",
+          word: transListSimulation.value[index]?.word || "",
         };
       }
     );
@@ -1471,11 +1425,10 @@ function automatSimulation() {
         return {
           value: item.value,
           word: item.word,
-          rest: alphabetListSimulation.value[index]?.rest||"",
+          rest: alphabetListSimulation.value[index]?.rest || "",
         };
       }
     );
-    isEnd = NEACHECK;
   } else {
     alert(
       "Automate wurde nicht korrekt definiert! Bitte überprüft deinen Automaten."
@@ -1917,30 +1870,28 @@ function NEASimulation(
   currentState,
   transitions,
   acceptStates,
-  path = []
+  path = [],
+  transPath = [],
+  alphabetPath = []
 ) {
-  console.log(`Current State: ${currentState}, Remaining Word: ${word}`);
-
   // Aktuelles Zeichen und Rest des Wortes
   const currentChar = word[0];
   const remainingWord = word.slice(1);
   // Aktuellen Zustand zum Pfad hinzufügen
   path.push({ value: currentState });
-  transListSimulation.value.push({ word: currentChar });
-  alphabetListSimulation.value.push({ rest: remainingWord });
+  transPath.push({ word: currentChar });
+  alphabetPath.push({ rest: word });
   // Basisfall: Wenn das Wort leer ist
   if (word.length === 0) {
     if (acceptStates.includes(currentState)) {
       stateListSimulation.value.push(...path);
-      console.log(stateListSimulation.value);
-      console.log(transListSimulation.value);
-      console.log("Accepted Path:", path.join(" -> "));
+      transListSimulation.value.push(...transPath);
+      alphabetListSimulation.value.push(...alphabetPath);
       return true;
     } else {
-      console.log(stateListSimulation.value);
-      console.log(transListSimulation.value);
       stateListSimulation.value.push(...path);
-
+      transListSimulation.value.push(...transPath);
+      alphabetListSimulation.value.push(...alphabetPath);
       return false;
     }
   }
@@ -1951,7 +1902,7 @@ function NEASimulation(
       (t) => t.sourceLabel === currentState && t.transitionVar === currentChar
     )
     .map((t) => t.targetLabel);
-
+  console.log(nextStates);
   // Wenn keine nächsten Zustände gefunden wurden
   if (nextStates.length === 0) {
     console.log("Dead end. Path:", path.join(" -> "));
@@ -1962,9 +1913,15 @@ function NEASimulation(
   for (let i = 0; i < nextStates.length; i++) {
     const nextState = nextStates[i];
     if (
-      NEASimulation(remainingWord, nextState, transitions, acceptStates, [
-        ...path,
-      ])
+      NEASimulation(
+        remainingWord,
+        nextState,
+        transitions,
+        acceptStates,
+        [...path],
+        [...transPath],
+        [...alphabetPath]
+      )
     ) {
       return true;
     }
