@@ -20,7 +20,8 @@
     <div>
       end(
       <a v-for="(e, index) in end" :key="index">
-        {{ e }},
+        {{ e }}
+        <a v-if="index != endLength">,</a>
       </a>
       ).
     </div>
@@ -31,9 +32,9 @@
 import { usetransitionTableElementsStore } from "@/store/TransitionTabelElementsStore";
 import { computed } from "vue";
 const table = usetransitionTableElementsStore();
-
 const start = computed(() => table.getStart);
 const end = computed(() => table.getEnds);
+const endLength = computed(()=>end.value.length - 1);
 </script>
 
 <style scoped></style>

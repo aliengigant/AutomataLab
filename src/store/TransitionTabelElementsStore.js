@@ -154,7 +154,7 @@ export const usetransitionTableElementsStore = defineStore({
       const nodes = state.getNodes;
       let start = "";
       for (const node of nodes) {
-        if (node.state_type == "start") {
+        if (node.state_type == "start" || node.state_type == "startend") {
           start = node.state_label;
         }
       }
@@ -164,7 +164,7 @@ export const usetransitionTableElementsStore = defineStore({
       const nodes = state.getNodes;
       let ends = [];
       for (const node of nodes) {
-        if (node.state_type == "end") {
+        if (node.state_type == "end"|| node.state_type == "startend") {
           ends.push(node.state_label);
         }
       }
@@ -174,8 +174,11 @@ export const usetransitionTableElementsStore = defineStore({
     getGrammarRowArray(state) {
       // Unsere Array-Struktur
       // const rows = [
-      //   { transitionID: "0to01", variable: ["q0"], rule: ["1q0"] },
-      //   { transitionID: "1to01",variable: ["q1"], rule: ["aq0"] },
+      //      NormaleTransition
+      //   { transitionID: "0to1b", variable: "q0", rule: "bq1", end: false, sourceLabel: "q0", targetLabel:"q1", transitionVar: "b" },
+      //   { transitionID: "0to0a", variable: "q0", rule: "aq0", end: false, sourceLabel: "q0", targetLabel:"q0", transitionVar: "a" },
+      //      EndTransition
+      //   { transitionID: "0to2bend", variable: "q0", rule: "b", end: true, sourceLabel: "q0", targetLabel:"q2", transitionVar: "b" },
       // ];
 
       //Da nur ein element gleichzeitig erzeugt wird, greifen wir immer auf den ersten Eintrag

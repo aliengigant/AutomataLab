@@ -112,18 +112,21 @@
               ><i class="fa-solid fa-circle-info"></i> Hilfe</a
             >
           </li> -->
+          <!-- überprüfen -->
           <li class="nav-item ml-2" @click="checkAutomatView()">
             <!--Überprüfen aussuchen-->
             <a class="nav-link" href="#">
               <i class="fa-solid fa-circle-check"></i> Überprüfen</a
             >
           </li>
+          <!-- Simulation -->
           <li class="nav-item ml-2" @click="automatSimuView()">
             <!--Simulation aussuchen-->
             <a class="nav-link" href="#">
               <i class="fa-solid fa-play"></i> Simulieren</a
             >
           </li>
+          <!-- Übergangstabelle -->
           <li class="nav-item ml-2">
             <!--ÜbergangsTabelle-->
             <popUpComponent
@@ -131,17 +134,20 @@
               :buttonLabel="'Übergangstabelle'"
             ></popUpComponent>
           </li>
+          <!-- Grammatik -->
           <li @click="saveTransTable">
             <popUpComponent
               :modal-type="'#Grammatik'"
               :buttonLabel="'Grammatik'"
             ></popUpComponent>
           </li>
+          <!-- NEA zu DEA Konvetieren -->
           <li class="nav-item ml-2" @click="convertToDea">
             <a v-if="automat.type == 'NEA'" class="nav-link" href="#"
               ><i class="fa-solid fa-arrows-spin"></i> NEA zu DEA</a
             >
           </li>
+          <!-- DEA Minimieren -->
           <li
             class="nav-item ml-2"
             data-toggle="modal"
@@ -151,6 +157,7 @@
               ><i class="fa-solid fa-arrows-spin"></i>DEA Minimieren</a
             >
           </li>
+          <!-- Exportieren -->
           <li
             data-toggle="modal"
             :data-target="'#ExportModal'"
@@ -162,6 +169,7 @@
               Export Automat</a
             >
           </li>
+          <!-- Prolog -->
           <li class="nav-item ml-2">
             <popUpComponent
               :modal-type="'#Prolog'"
@@ -1161,7 +1169,8 @@ function checkAutomat() {
         CheckText.value +=
           "Es fehlen für " + element.state_label + " Übergänge!";
       } else {
-        CheckText.value += "Automat wurde nicht vollständig definiert!";
+        CheckText.value +=
+          "Für " + element.state_label + " wurden zuviele Übergänge definiert!";
       }
     }
 
@@ -1266,8 +1275,8 @@ function checkAutomat() {
     if (end_count < 1) {
       CheckText.value += "Es fehlen Endzustände";
     }
+    checkTextSplit(CheckText.value);
     if (CheckText.value.length > 0) {
-      checkTextSplit(CheckText.value);
       return false;
     } else {
       return true;
@@ -1310,27 +1319,33 @@ function automatSimulation() {
   ); // state mit dem Startzustand (In folge immer der Aktuelle zustand)
   transListSimulation.value.push({ word: "start" });
   //stack für eventuelle rücksprünge für NEA
-  let stackstates = [];
-  stateListSimulation.value.push({ value: state.state_label });
+  // let stackstates = [];
   alphabetListSimulation.value.push({ rest: wordList });
   //Unterscheide zwischen DEA und NEA
   if (checkAutomat() && table.type == "DEA") {
+    stateListSimulation.value.push({ value: state.state_label });
     //Gehe das Eingabewort Char für Char durch
     for (let i = 0; i < word.length; i++) {
       const char = word.charAt(i);
 
       wordList = wordList.replace(char, "");
       alphabetListSimulation.value.push({ rest: wordList });
+      // Durchgehen der einzelnen Übergängen des Aktuellen zustands
       for (const trans of state.transitions) {
+        // Ist im aktuellen übergang "trans" das gesuchte Symbol drin
         if (trans.transition_label.includes(char)) {
           console.log(char + " ist drin " + state.state_label);
+          // Abfragen, welcher der Nächste Zustand ist
+          // Der Nächste Zustand ist der aktuelle -> "state" bleibt gleich
           if (state.state_id == trans.target) {
             console.log("Ich habe den selben Node: " + state.state_label);
 
             stateListSimulation.value.push({ value: state.state_label });
             transListSimulation.value.push({ word: char });
             continue;
-          } else if (state.state_id != trans.target) {
+          }
+          // Der nächste Zustand ist ein Anderer -> Somit muss "state" geändert werden
+          else if (state.state_id != trans.target) {
             console.log("Ich habe einen anderen Node: " + trans.target_label);
             state = transitionTablle.getNodes.find(
               (sta) => sta.state_id == trans.target
@@ -1340,7 +1355,9 @@ function automatSimulation() {
             transListSimulation.value.push({ word: char });
             break;
           }
-        } else if (!trans.transition_label.includes(char)) {
+        }
+        // das gesuchte Symbol ist nicht in dieser Transition -> nächste Transition
+        else if (!trans.transition_label.includes(char)) {
           console.log(
             char +
               " ist nicht gleich " +
@@ -1381,57 +1398,66 @@ function automatSimulation() {
       isEnd = false;
     }
   } else if (checkAutomat() && table.type == "NEA") {
-    //Gehe das Eingabewort Char für Char durch
-    for (let i = 0; i < word.length; i++) {
-      const char = word.charAt(i);
-      wordList = wordList.replace(char, "");
-      alphabetListSimulation.value.push({ rest: wordList });
-      for (const trans of state.transitions) {
-        if (trans.transition_label == char) {
-          stackstates.push(trans);
-        }
-      }
-      for (const trans of stackstates) {
-        console.log(stackstates.pop());
-        if (trans.transition_label.includes(char)) {
-          console.log(char + " ist drin " + state.state_label);
-          if (state.state_id == trans.target) {
-            console.log("Ich habe den selben Node: " + state.state_label);
+    const NEACHECK = NEASimulation(
+      word,
+      state.state_label,
+      transitionTablle.getGrammarRowArray,
+      transitionTablle.getEnds
+    );
 
-            stateListSimulation.value.push({ value: state.state_label });
-            transListSimulation.value.push({ word: char });
-            continue;
-          } else if (state.state_id != trans.target) {
-            console.log("Ich habe einen anderen Node: " + trans.target_label);
-            if (i < word.length && trans.target_label == "End") {
-              console.log("ICH KANN HIER NICHT ENDEN");
-              continue;
-            }
-            state = transitionTablle.getNodes.find(
-              (sta) => sta.state_id == trans.target
-            );
-            stateListSimulation.value.push({ value: state.state_label });
-            transListSimulation.value.push({ word: char });
-            break;
-          }
-        } else if (!trans.transition_label.includes(char)) {
-          console.log(
-            char +
-              " ist nicht gleich " +
-              trans.transition_label +
-              "! nächste Transition"
-          );
-          continue;
-        } else {
-          console.log(
-            "Es gibt keinen Übergang mit dem " +
-              char +
-              " in " +
-              state.state_label
-          );
-        }
-      }
-    }
+    // //Gehe das Eingabewort Char für Char durch
+    // for (let i = 0; i < word.length; i++) {
+    //   const char = word.charAt(i);
+    //   wordList = wordList.replace(char, "");
+    //   alphabetListSimulation.value.push({ rest: wordList });
+    //   for (const trans of state.transitions) {
+    //     if (trans.transition_label == char) {
+    //       // Für einen Zustand, öfters das Gleiche zeichen
+    //       stackstates.push(trans);
+    //     }
+    //   }
+    //   for (const trans of stackstates) {
+    //     stackstates.shift();
+    //     console.log(stackstates);
+    //     if (trans.transition_label.includes(char)) {
+    //       console.log(char + " ist drin " + state.state_label);
+    //       if (state.state_id == trans.target) {
+    //         console.log("Ich habe den selben Node: " + state.state_label);
+
+    //         stateListSimulation.value.push({ value: state.state_label });
+    //         transListSimulation.value.push({ word: char });
+    //         continue;
+    //       } else if (state.state_id != trans.target) {
+    //         console.log("Ich habe einen anderen Node: " + trans.target_label);
+    //         if (i < word.length && trans.target_label == "End") {
+    //           console.log("ICH KANN HIER NICHT ENDEN");
+    //           continue;
+    //         }
+    //         state = transitionTablle.getNodes.find(
+    //           (sta) => sta.state_id == trans.target
+    //         );
+    //         stateListSimulation.value.push({ value: state.state_label });
+    //         transListSimulation.value.push({ word: char });
+    //         break;
+    //       }
+    //     } else if (!trans.transition_label.includes(char)) {
+    //       console.log(
+    //         char +
+    //           " ist nicht gleich " +
+    //           trans.transition_label +
+    //           "! nächste Transition"
+    //       );
+    //       continue;
+    //     } else {
+    //       console.log(
+    //         "Es gibt keinen Übergang mit dem " +
+    //           char +
+    //           " in " +
+    //           state.state_label
+    //       );
+    //     }
+    //   }
+    // }
     ListSimulationResultat.value = stateListSimulation.value.map(
       (item, index) => {
         return {
@@ -1449,11 +1475,7 @@ function automatSimulation() {
         };
       }
     );
-    if (state.state_type == "end" || state.state_type == "startend") {
-      isEnd = true;
-    } else {
-      isEnd = false;
-    }
+    isEnd = NEACHECK;
   } else {
     alert(
       "Automate wurde nicht korrekt definiert! Bitte überprüft deinen Automaten."
@@ -1888,6 +1910,67 @@ function DEAtoMinimalDEA() {
   // console.log(a);
   // console.log(ConvertedAutomatData);
   // return { result: "OK", automaton: a };
+}
+
+function NEASimulation(
+  word,
+  currentState,
+  transitions,
+  acceptStates,
+  path = []
+) {
+  console.log(`Current State: ${currentState}, Remaining Word: ${word}`);
+
+  // Aktuelles Zeichen und Rest des Wortes
+  const currentChar = word[0];
+  const remainingWord = word.slice(1);
+  // Aktuellen Zustand zum Pfad hinzufügen
+  path.push({ value: currentState });
+  transListSimulation.value.push({ word: currentChar });
+  alphabetListSimulation.value.push({ rest: remainingWord });
+  // Basisfall: Wenn das Wort leer ist
+  if (word.length === 0) {
+    if (acceptStates.includes(currentState)) {
+      stateListSimulation.value.push(...path);
+      console.log(stateListSimulation.value);
+      console.log(transListSimulation.value);
+      console.log("Accepted Path:", path.join(" -> "));
+      return true;
+    } else {
+      stateListSimulation.value.push(...path);
+
+      return false;
+    }
+  }
+
+  // Finde alle möglichen nächsten Zustände
+  const nextStates = transitions
+    .filter(
+      (t) => t.sourceLabel === currentState && t.transitionVar === currentChar
+    )
+    .map((t) => t.targetLabel);
+
+  // Wenn keine nächsten Zustände gefunden wurden
+  if (nextStates.length === 0) {
+    console.log("Dead end. Path:", path.join(" -> "));
+    return false;
+  }
+
+  // Rekursiver Fall: Überprüfe alle möglichen nächsten Zustände
+  for (let i = 0; i < nextStates.length; i++) {
+    const nextState = nextStates[i];
+    if (
+      NEASimulation(remainingWord, nextState, transitions, acceptStates, [
+        ...path,
+      ])
+    ) {
+      return true;
+    }
+  }
+
+  // Wenn kein Weg zum Akzeptanzzustand führt, gib den letzten versuchten Pfad aus
+  console.log("No accepting path. Last tried path:", path.join(" -> "));
+  return false;
 }
 </script>
 
