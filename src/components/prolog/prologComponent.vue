@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p class="lead">Bei Bedarf kannst du diesen Prolog-Code hier anpassen, bevor du ihn kopierst:</p>
+    <p class="lead non-selectable">Bei Bedarf kannst du diesen Prolog-Code hier anpassen, bevor du ihn kopierst:</p>
     <div
       contenteditable="true"
       ref="copyableContent"
@@ -83,5 +83,10 @@ function copyContent() {
 .btn:disabled {
   background-color: #4caf50;
   cursor: default;
+}
+.non-selectable {
+  user-select: none;
+  cursor: default;
+  pointer-events: none;
 }
 </style>

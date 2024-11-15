@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar navbar-expand-sm bg-light">
+  <nav class="navbar navbar-expand-sm bg-light non-selectable">
     <div class="container-fluid">
       <a
         class="navbar-brand"

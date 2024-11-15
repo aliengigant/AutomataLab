@@ -227,7 +227,7 @@
   >
     <div class="modal-dialog" role="document">
       <div class="modal-content">
-        <div class="modal-header">
+        <div class="modal-header non-selectable">
           <h5 class="modal-title" id="ModalName">Übergangstabelle</h5>
           <button
             type="button"
@@ -238,7 +238,7 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <div class="modal-body">
+        <div class="modal-body non-selectable">
           <!--Tabelle mit Übergängen-->
           <table-component></table-component>
         </div>

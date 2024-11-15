@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar navbar-expand-lg bg-primary">
+  <nav class="navbar navbar-expand-lg bg-primary non-selectable">
     <div class="container-fluid">
       <h1 class="h1" style="color: aliceblue">{{ props.title }}</h1>
       <button

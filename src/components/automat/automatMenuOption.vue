@@ -82,7 +82,7 @@
     </div>
   </div>
 
-  <nav class="navbar navbar-expand-sm bg-light">
+  <nav class="navbar navbar-expand-sm bg-light non-selectable">
     <div class="container-fluid">
       <a
         class="navbar-brand"
@@ -182,7 +182,7 @@
   </nav>
   <!--OffCanvas für Check Automat-->
   <div
-    class="offcanvas offcanvas-start"
+    class="offcanvas offcanvas-start non-selectable"
     tabindex="-1"
     id="offcanvasCheck"
     aria-labelledby="offcanvasExampleLabel"
@@ -222,7 +222,7 @@
     id="offcanvasSimulation"
     aria-labelledby="offcanvasExampleLabel"
   >
-    <div class="offcanvas-header">
+    <div class="offcanvas-header non-selectable">
       <h5 class="offcanvas-title" id="offcanvasExampleLabel">Simulation</h5>
       <button
         type="button"
@@ -232,7 +232,7 @@
       ></button>
     </div>
     <div class="offcanvas-body">
-      <p class="lead">Eingabewort:</p>
+      <p class="lead non-selectable">Eingabewort:</p>
       <div class="input-group mb-3">
         <button
           class="btn btn-outline-primary"
@@ -1933,4 +1933,10 @@ function NEASimulation(
 }
 </script>
 
-<style scoped></style>
+<style>
+.non-selectable {
+  user-select: none;
+  cursor: default;
+  /* pointer-events: none; */
+}
+</style>
