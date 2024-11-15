@@ -1462,7 +1462,7 @@ function automatSimulation() {
       (item, index) => {
         return {
           value: item.value,
-          word: transListSimulation.value[index].word,
+          word: transListSimulation.value[index]?.word|| "",
         };
       }
     );
@@ -1471,7 +1471,7 @@ function automatSimulation() {
         return {
           value: item.value,
           word: item.word,
-          rest: alphabetListSimulation.value[index].rest,
+          rest: alphabetListSimulation.value[index]?.rest||"",
         };
       }
     );
@@ -1937,6 +1937,8 @@ function NEASimulation(
       console.log("Accepted Path:", path.join(" -> "));
       return true;
     } else {
+      console.log(stateListSimulation.value);
+      console.log(transListSimulation.value);
       stateListSimulation.value.push(...path);
 
       return false;
