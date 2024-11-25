@@ -113,7 +113,7 @@ function deleteGrammar() {
   // Beispiel: 'localTransitionTable' ist der Schlüssel im Local Storage mit einem JSON als Wert
   this.visible = false;
   const localTransitionTable = JSON.parse(
-    localStorage.getItem("localTransitionTable")
+    localStorage.getItem("localTransitionTable"),
   ); // Abrufen des JSON-Eintrags
   let i = 0;
   let indexToDelete = -1;

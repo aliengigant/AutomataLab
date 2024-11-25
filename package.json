@@ -6,6 +6,8 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
+    "lint:eslint": "eslint --fix",
+    "lint:prettier": "prettier --write .",
     "electron:build": "vue-cli-service electron:build",
     "electron:serve": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
@@ -42,8 +44,11 @@
     "devextreme-themebuilder": "23.2.3",
     "electron": "^13.0.0",
     "electron-devtools-installer": "^3.1.0",
-    "eslint": "^7.32.0",
-    "eslint-plugin-vue": "^8.0.3",
+    "eslint": "^8.57.1",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-vue": "^9.31.0",
+    "prettier": "^3.3.3",
     "vue-cli-plugin-electron-builder": "~2.1.1"
   },
   "eslintConfig": {

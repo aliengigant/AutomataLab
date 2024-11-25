@@ -26,12 +26,16 @@
         </div>
       </div>
       <div class="card-footer text-muted">
-        <a href="#" class="btn btn-danger btn-sm" @click="removeEdges(props.edgeId)">
+        <a
+          href="#"
+          class="btn btn-danger btn-sm"
+          @click="removeEdges(props.edgeId)"
+        >
           <i class="fa fa-trash fa-xs" aria-hidden="true"></i
-            ></a>
-          </div>
-        </div>
+        ></a>
       </div>
+    </div>
+  </div>
 </template>
 
 <script setup>

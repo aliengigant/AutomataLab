@@ -173,7 +173,7 @@ watch(
       edge.label = lab;
     }
   },
-  { deep: true }
+  { deep: true },
 );
 
 //Übereinanderliegende Transitionen
@@ -275,7 +275,7 @@ const edgePath = computed(() => {
   }
 });
 const edgeParams = computed(() =>
-  getEdgeParams(props.sourceNode, props.targetNode)
+  getEdgeParams(props.sourceNode, props.targetNode),
 );
 // returns the parameters (sx, sy, tx, ty, sourcePos, targetPos) you need to create an edge
 function getEdgeParams(source, target) {

@@ -8,7 +8,7 @@ export const storageHooksTrans = () => {
     if (localTransitionTable) {
       const TransitionTableArray = JSON.parse(localTransitionTable);
       const foundTransitionTable = TransitionTableArray.find(
-        (TransitionTable) => TransitionTable.id === id
+        (TransitionTable) => TransitionTable.id === id,
       );
       return foundTransitionTable; // Wenn die ID nicht gefunden wurde, wird null zurückgegeben
     }
@@ -38,7 +38,7 @@ export const storageHooksTrans = () => {
       // Die aktualisierten Daten zurück in den Local Storage speichern
       localStorage.setItem(
         "localTransitionTable",
-        JSON.stringify(existingData)
+        JSON.stringify(existingData),
       );
 
       console.log("Eintrag erfolgreich aktualisiert.");
@@ -51,7 +51,7 @@ export const storageHooksTrans = () => {
       // Die aktualisierten Daten zurück in den Local Storage speichern
       localStorage.setItem(
         "localTransitionTable",
-        JSON.stringify(existingData)
+        JSON.stringify(existingData),
       );
 
       console.log("Eintrag erfolgreich hinzugefügt.");

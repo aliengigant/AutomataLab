@@ -14,7 +14,6 @@ import { Panel, useVueFlow } from "@vue-flow/core";
 import { useRoute } from "vue-router";
 import { storageHooks } from "@/hooks/automatStorageHook";
 
-
 const { findAutomataById, SaveAutomatChanges } = storageHooks();
 const route = useRoute();
 const { toObject, addNodes } = useVueFlow();

@@ -29,7 +29,7 @@ class transitionTable {
     alphabet,
     nodes,
     createDate,
-    ableitung
+    ableitung,
   ) {
     this.id = id;
     this.name = name;
@@ -357,7 +357,7 @@ export const usetransitionTableElementsStore = defineStore({
           //  3.1 Wenn ja, überspring den hinzufüge Prozess
           if (
             NeaToDeaArray.find(
-              (e) => NodeTransition.transition_label == e.state_label
+              (e) => NodeTransition.transition_label == e.state_label,
             )
           ) {
             console.log("Übersprungen: " + NodeTransition.transition_label);
@@ -377,8 +377,8 @@ export const usetransitionTableElementsStore = defineStore({
                 this.getTransitionForNeaToDea(
                   transTable,
                   NodeTransition.transition_array,
-                  a.value
-                )
+                  a.value,
+                ),
               );
             }
             //Es kann sein, dass ein Transition 1 Übergang hat aber auch mehrere, das heißt, ich muss alle werte im TransitionArray durchlaufen und einen Ausnahmefall für [] machen
@@ -431,7 +431,7 @@ export const usetransitionTableElementsStore = defineStore({
         const transition = [];
         const alphabet = state.getAlphabet;
         const startNode = state.getNodes.find(
-          (element) => element.state_label == nodeLabel
+          (element) => element.state_label == nodeLabel,
         );
         // console.log(nodeLabel);
         //Durchlaufen jeder Alphabet
@@ -480,7 +480,7 @@ export const usetransitionTableElementsStore = defineStore({
           //   ];
           // }
           combinedTransition.push(
-            startNode.transition[alphabetIndex].transition_array
+            startNode.transition[alphabetIndex].transition_array,
           );
         }
         //Leere einträge werden ignoriert und Verhindere DupNodes
@@ -542,7 +542,7 @@ export const usetransitionTableElementsStore = defineStore({
       automat_id,
       alphabet,
       nodes,
-      transition
+      transition,
     ) {
       // Überprüfen Sie, ob das Array "nodes" existiert und mindestens ein Element enthält
       if (Array.isArray(nodes) && nodes.length > 0) {
@@ -572,7 +572,7 @@ export const usetransitionTableElementsStore = defineStore({
           type,
           automat_id,
           alphabet,
-          nodeIds
+          nodeIds,
         );
         this.elements;
         this.elements = newTable;
@@ -594,7 +594,7 @@ export const usetransitionTableElementsStore = defineStore({
           data.alphabet,
           data.states,
           data.createdAt,
-          data.ableitung
+          data.ableitung,
         );
         console.log(newTable);
         this.elements;
@@ -635,7 +635,7 @@ export const usetransitionTableElementsStore = defineStore({
         let newTransitions = "";
         if (this.getElements.id != null) {
           newTransitions = this.elements.states[initStateID].transitions.filter(
-            (element) => element.id != transitionId
+            (element) => element.id != transitionId,
           );
           states.transitions = newTransitions;
         }
@@ -651,7 +651,7 @@ export const usetransitionTableElementsStore = defineStore({
       if (stateID) {
         const states = this.elements.states;
         const stateType = states.find(
-          (element) => element.state_id == stateID
+          (element) => element.state_id == stateID,
         ).state_type;
         if (stateType != "start") {
           let newStates = "";
@@ -671,7 +671,7 @@ export const usetransitionTableElementsStore = defineStore({
       console.log(StateId + " wird geändert!");
       if (StateId.length > 0) {
         const state = this.elements.states.find(
-          (state) => state.state_id == StateId
+          (state) => state.state_id == StateId,
         );
         state.state_type = type;
       } else {

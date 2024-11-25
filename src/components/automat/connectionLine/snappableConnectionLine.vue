@@ -29,8 +29,7 @@ const props = defineProps({
   },
 });
 
-const { getNodes, connectionStartHandle, edges } =
-  useVueFlow();
+const { getNodes, connectionStartHandle, edges } = useVueFlow();
 
 const closest = reactive({
   node: null,
@@ -69,7 +68,7 @@ watch([() => props.targetY, () => props.targetX], (_, __, onCleanup) => {
     {
       distance: Number.MAX_VALUE,
       node: null,
-    }
+    },
   );
 
   if (!closestNode.node) {
@@ -84,14 +83,14 @@ watch([() => props.targetY, () => props.targetX], (_, __, onCleanup) => {
   const closestHandle = closestNode.node.handleBounds[type]?.reduce(
     (prev, curr) => {
       const prevDistance = Math.sqrt(
-        (prev.x - props.targetX) ** 2 + (prev.y - props.targetY) ** 2
+        (prev.x - props.targetX) ** 2 + (prev.y - props.targetY) ** 2,
       );
       const currDistance = Math.sqrt(
-        (curr.x - props.targetX) ** 2 + (curr.y - props.targetY) ** 2
+        (curr.x - props.targetX) ** 2 + (curr.y - props.targetY) ** 2,
       );
 
       return prevDistance < currDistance ? prev : curr;
-    }
+    },
   );
 
   if (
@@ -102,7 +101,7 @@ watch([() => props.targetY, () => props.targetX], (_, __, onCleanup) => {
         target: closestNode.node.id,
         targetHandle: closestHandle.id,
       },
-      edges.value
+      edges.value,
     )
   ) {
     return;

@@ -2,8 +2,20 @@
   <div class="bg-darkblue">
     <div class="row justify-content-center">
       <div class="bg-primary text-center">
-        <div class="red" @click="easterEggCounter++">
+        <div class="red" @click="Counter">
           <h1 class="display-1" style="color: aliceblue">AutomataLab</h1>
+          <div>
+            <button
+              v-if="easterEggCounter > 7"
+              id="bottomRightBtn"
+              type="button"
+              class="btn btn-danger"
+              data-toggle="modal"
+              :data-target="'#easterEggModal'"
+            >
+              Was ist das?
+            </button>
+          </div>
           <p class="lead" style="color: aliceblue">Ein Tool für dein Fantasy</p>
         </div>
       </div>
@@ -67,45 +79,64 @@
           </div> -->
     </div>
   </div>
-  <div v-if="easterEggCounter >= 7">
-    <p>lol du hast mich gefunden</p>
-    <p>Gib nun den einzige wahren Cheat Code ein</p>
-    <!-- Div-Container für die Felder -->
-    {{ codeString }}
-    <div id="fieldsContainer" v-if="code.length < 10">
-      <!-- 8 Felder mit IDs field1 bis field8 -->
-      <button id="field1" class="field" @click="addCodeEintrag('left')">
-        ←
-      </button>
-      <button id="field2" class="field" @click="addCodeEintrag('right')">
-        →
-      </button>
-      <button id="field3" class="field" @click="addCodeEintrag('up')">↑</button>
-      <button id="field4" class="field" @click="addCodeEintrag('down')">
-        ↓
-      </button>
-      <button id="field5" class="field" @click="addCodeEintrag('A')">A</button>
-      <button id="field6" class="field" @click="addCodeEintrag('B')">B</button>
-      <button id="field7" class="field" @click="addCodeEintrag('Start')">
-        Start
-      </button>
-      <button id="field8" class="field" @click="addCodeEintrag('Select')">
-        Select
-      </button>
+  <div
+    class="modal fade"
+    id="easterEggModal"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="easterEggModal"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="easterEggModal">
+            Wow, du hast mich gefunden?
+          </h5>
+          <button
+            type="button"
+            class="btn-close text-reset"
+            data-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <p>Gibt hier den einzig Wahren Cheat Code ein:</p>
+          <div id="fieldsContainer">
+            <!-- 8 Felder mit IDs field1 bis field8 -->
+            <button id="field1" class="btn btn-outline-primary" @click="addCodeEintrag('←')">←</button>
+            <button id="field2" class="btn btn-outline-primary" @click="addCodeEintrag('→')">→</button>
+            <button id="field3" class="btn btn-outline-primary" @click="addCodeEintrag('↑')">↑</button>
+            <button id="field4" class="btn btn-outline-primary" @click="addCodeEintrag('↓')">↓</button>
+            <button id="field5" class="btn btn-outline-primary" @click="addCodeEintrag('A')">A</button>
+            <button id="field6" class="btn btn-outline-primary" @click="addCodeEintrag('B')">B</button>
+            <button id="field7" class="btn btn-outline-primary" @click="addCodeEintrag('Start')">Start</button>
+            <button id="field8" class="btn btn-outline-primary" @click="addCodeEintrag('Select')">Select</button>
+          </div>
+          <ul class="code-list">
+            <li v-for="(string, index) in code" :key="index">{{ string }}</li>
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary">Bestätigen</button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from "vue";
+const code = ref([]);
 
 const easterEggCounter = ref(0);
-const code = ref("");
-let codeString = ref("Code eingabe: ");
+
+function Counter() {
+  easterEggCounter.value++;
+}
 
 function addCodeEintrag(wert) {
-  code.value += wert;
-  codeString.value += wert + ", ";
+  code.value.push(wert);
   if (code.value.length == 10) {
     console.log("LOL");
   }
@@ -113,6 +144,11 @@ function addCodeEintrag(wert) {
 </script>
 
 <style scoped>
+.code-list {
+  display: flex; /* Flexbox aktivieren */
+  list-style-type: none; /* Aufzählungszeichen entfernen */
+  padding: 0; /* Standard-Padding entfernen */
+}
 .bg-darkblue {
   background: linear-gradient(
     #0d6efd 50%,

@@ -374,7 +374,7 @@ function saveTransTable() {
     automat.value.id,
     automat.value.automat.alphabet,
     nodes.value,
-    edges.value
+    edges.value,
   );
 }
 function convertToDea() {
@@ -549,7 +549,7 @@ function linkEA(a) {
         ts = appendLinkedState(
           a,
           r,
-          a.states.find((as) => as.state_id === oldT.target)
+          a.states.find((as) => as.state_id === oldT.target),
         ); // add it recursively
       }
       // create and add transition from state to target (Label-Array becomes a map)
@@ -578,8 +578,8 @@ function linkEA(a) {
     a,
     result,
     a.states.find(
-      (s) => s.state_type === "start" || s.state_type === "startend"
-    )
+      (s) => s.state_type === "start" || s.state_type === "startend",
+    ),
   );
   return result;
 }
@@ -798,7 +798,7 @@ function linkedNea2Dea(linkedEA) {
     // build DEA-state based on set of neaStates
     var statename = neaStates.reduce(
       (n, s) => (n === "" ? s.Name : n + "+" + s.Name),
-      ""
+      "",
     ); // name: concatenated nea-states
     var state = dea.States.get(statename); // find existing dea-state
     if (state === undefined) {
@@ -833,7 +833,7 @@ function linkedNea2Dea(linkedEA) {
         // iterate the states reachable with a certain label
         // sort and remove doubles to build new combined state
         removeDoubles(tStates, (a, b) =>
-          a.Name > b.Name ? 1 : a.Name < b.Name ? -1 : 0
+          a.Name > b.Name ? 1 : a.Name < b.Name ? -1 : 0,
         );
         // determine according new dea-state recursively
         var targetstate = getDEAState(dea, tStates);
@@ -991,7 +991,7 @@ function NEAtoDEA() {
         // label = alphabet.find((e) => e.id == alphabetIndex);
 
         const target = r.automaton.States.find(
-          (e) => innerTransition.Target == e.ID
+          (e) => innerTransition.Target == e.ID,
         );
         targetId = target.ID;
         transID = sourceId + "to" + targetId;
@@ -1034,7 +1034,7 @@ function NEAtoDEA() {
         // label = alphabet.find((e) => e.id == alphabetIndex);
 
         const target = r.automaton.States.find(
-          (e) => innerTransition.Target == e.ID
+          (e) => innerTransition.Target == e.ID,
         );
         targetId = target.ID;
         transID = sourceId + "to" + targetId;
@@ -1304,7 +1304,7 @@ function checkTextSplit(checkText) {
     // Split the string based on "!"
     CheckTextArray.value = checkText.split("!");
     CheckTextArray.value = CheckTextArray.value.filter(
-      (error) => error.trim() !== ""
+      (error) => error.trim() !== "",
     );
   } else {
     CheckTextArray.value = ["Automat wurde korrekt definiert!"];
@@ -1327,7 +1327,7 @@ function automatSimulation() {
   let wordList = word;
   isEnd = false;
   let state = transitionTablle.getNodes.find(
-    (state) => state.state_type == "start" || state.state_type == "startend"
+    (state) => state.state_type == "start" || state.state_type == "startend",
   ); // state mit dem Startzustand (In folge immer der Aktuelle zustand)
   transListSimulation.value.push({ word: "start" });
   //stack für eventuelle rücksprünge für NEA
@@ -1360,7 +1360,7 @@ function automatSimulation() {
           else if (state.state_id != trans.target) {
             console.log("Ich habe einen anderen Node: " + trans.target_label);
             state = transitionTablle.getNodes.find(
-              (sta) => sta.state_id == trans.target
+              (sta) => sta.state_id == trans.target,
             );
 
             stateListSimulation.value.push({ value: state.state_label });
@@ -1374,7 +1374,7 @@ function automatSimulation() {
             char +
               " ist nicht gleich " +
               trans.transition_label +
-              "! nächste Transition"
+              "! nächste Transition",
           );
           continue;
         } else {
@@ -1382,7 +1382,7 @@ function automatSimulation() {
             "Es gibt keinen Übergang mit dem " +
               char +
               " in " +
-              state.state_label
+              state.state_label,
           );
         }
       }
@@ -1393,7 +1393,7 @@ function automatSimulation() {
           value: item.value,
           word: transListSimulation.value[index].word,
         };
-      }
+      },
     );
     ListSimulationResultat.value = ListSimulationResultat.value.map(
       (item, index) => {
@@ -1402,7 +1402,7 @@ function automatSimulation() {
           word: item.word,
           rest: alphabetListSimulation.value[index].rest,
         };
-      }
+      },
     );
     if (state.state_type == "end" || state.state_type == "startend") {
       isEnd = true;
@@ -1414,7 +1414,7 @@ function automatSimulation() {
       word,
       state.state_label,
       transitionTablle.getGrammarRowArray,
-      transitionTablle.getEnds
+      transitionTablle.getEnds,
     );
 
     ListSimulationResultat.value = stateListSimulation.value.map(
@@ -1423,7 +1423,7 @@ function automatSimulation() {
           value: item.value,
           word: transListSimulation.value[index]?.word || "",
         };
-      }
+      },
     );
     ListSimulationResultat.value = ListSimulationResultat.value.map(
       (item, index) => {
@@ -1432,11 +1432,11 @@ function automatSimulation() {
           word: item.word,
           rest: alphabetListSimulation.value[index]?.rest || "",
         };
-      }
+      },
     );
   } else {
     alert(
-      "Automate wurde nicht korrekt definiert! Bitte überprüft deinen Automaten."
+      "Automate wurde nicht korrekt definiert! Bitte überprüft deinen Automaten.",
     );
   }
 }
@@ -1518,11 +1518,11 @@ function DEAtoMinimalDEA() {
           for (let w = 0; w < automataAlphabet.value.length; w++) {
             let z1 = findTargetIndexForInput(
               s1,
-              automataAlphabet.value[w].value
+              automataAlphabet.value[w].value,
             );
             let z2 = findTargetIndexForInput(
               s2,
-              automataAlphabet.value[w].value
+              automataAlphabet.value[w].value,
             );
             if (z1 == -1 || z2 == -1) {
               continue;
@@ -1770,7 +1770,7 @@ function DEAtoMinimalDEA() {
         // label = alphabet.find((e) => e.id == alphabetIndex);
 
         const target = a.states.find(
-          (e) => innerTransition.target == e.state_id
+          (e) => innerTransition.target == e.state_id,
         );
         console.log(a.states);
         targetId = target.state_id;
@@ -1814,7 +1814,7 @@ function DEAtoMinimalDEA() {
         // label = alphabet.find((e) => e.id == alphabetIndex);
 
         const target = a.states.find(
-          (e) => innerTransition.target == e.state_id
+          (e) => innerTransition.target == e.state_id,
         );
         targetId = target.state_id;
         transID = sourceId + "to" + targetId;
@@ -1877,7 +1877,7 @@ function NEASimulation(
   acceptStates,
   path = [],
   transPath = [],
-  alphabetPath = []
+  alphabetPath = [],
 ) {
   // Aktuelles Zeichen und Rest des Wortes
   const currentChar = word[0];
@@ -1904,7 +1904,7 @@ function NEASimulation(
   // Finde alle möglichen nächsten Zustände
   const nextStates = transitions
     .filter(
-      (t) => t.sourceLabel === currentState && t.transitionVar === currentChar
+      (t) => t.sourceLabel === currentState && t.transitionVar === currentChar,
     )
     .map((t) => t.targetLabel);
   console.log(nextStates);
@@ -1925,7 +1925,7 @@ function NEASimulation(
         acceptStates,
         [...path],
         [...transPath],
-        [...alphabetPath]
+        [...alphabetPath],
       )
     ) {
       return true;

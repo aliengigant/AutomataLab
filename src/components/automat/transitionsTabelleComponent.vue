@@ -94,7 +94,7 @@ if (automatID) {
 
 function getEdgeLabelByNode(nodeID, edges) {
   const edgesFromSource = ref(
-    edges.value.filter((edge) => edge.source === nodeID)
+    edges.value.filter((edge) => edge.source === nodeID),
   );
   // for (const edge of edgesFromSource.value) {
   //   label = "{" + label + edge.label + findNode(edge.target).label + "}";

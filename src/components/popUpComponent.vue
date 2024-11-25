@@ -20,8 +20,9 @@
       data-toggle="modal"
       :data-target="prop.modalType"
     >
-      <i class="fa-solid fa-table"></i> {{ buttonLabel }}</a
-    >
+      <i class="fa-solid fa-table"></i>
+      {{ buttonLabel }}
+    </a>
   </div>
   <div v-else-if="modalType == '#Grammatik'">
     <a
@@ -30,8 +31,9 @@
       data-toggle="modal"
       :data-target="prop.modalType"
     >
-      <i class="fa-brands fa-fonticons-fi"></i> {{ buttonLabel }}</a
-    >
+      <i class="fa-brands fa-fonticons-fi"></i>
+      {{ buttonLabel }}
+    </a>
   </div>
   <div v-else-if="modalType == '#newRuleGrammatik'">
     <a
@@ -40,8 +42,9 @@
       data-toggle="modal"
       :data-target="prop.modalType"
     >
-      <i class="fa-solid fa-plus"></i> {{ buttonLabel }}</a
-    >
+      <i class="fa-solid fa-plus"></i>
+      {{ buttonLabel }}
+    </a>
   </div>
   <div v-else-if="modalType == '#Prolog'">
     <a
@@ -50,13 +53,13 @@
       data-toggle="modal"
       :data-target="prop.modalType"
     >
-      <i class="fa fa-calculator"></i> {{ buttonLabel }}</a
-    >
+      <i class="fa fa-calculator"></i>
+      {{ buttonLabel }}
+    </a>
   </div>
   <div v-else>{{ buttonLabel }}</div>
 
   <!--Die Modals/PopUpFenster-->
-
   <!-- Neue Automat erstellen: #newAutomata -->
   <div
     v-if="buttonLabel == 'default'"
@@ -120,9 +123,9 @@
           </form>
           <form>
             <div class="form-group">
-              <label class="input-group-text" for="fileInput"
-                >Oder Importiere einen Automaten</label
-              >
+              <label class="input-group-text" for="fileInput">
+                Oder Importiere einen Automaten
+              </label>
               <input
                 class="form-control"
                 type="file"
@@ -220,7 +223,6 @@
       </div>
     </div>
   </div>
-
   <!-- Übergangstabelle: #Übergangstabelle -->
   <div
     v-if="buttonLabel == 'Übergangstabelle'"
@@ -283,8 +285,9 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-primary" @click="saveGrammar">
-            Speichern</button
-          ><button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Speichern
+          </button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
             Close
           </button>
         </div>
@@ -318,9 +321,9 @@
             <div class="row g-3">
               <!-- Initial State -->
               <div class="col-3">
-                <label for="initState" class="form-label fw-bold"
-                  >Startzustand</label
-                >
+                <label for="initState" class="form-label fw-bold">
+                  Startzustand
+                </label>
                 <select
                   id="initState"
                   class="form-select"
@@ -342,9 +345,9 @@
 
               <!-- Transition -->
               <div class="col-3">
-                <label for="transition" class="form-label fw-bold"
-                  >Übergang</label
-                >
+                <label for="transition" class="form-label fw-bold">
+                  Übergang
+                </label>
                 <select
                   id="transition"
                   class="form-select"
@@ -359,9 +362,9 @@
 
               <!-- End State -->
               <div class="col-3">
-                <label for="endState" class="form-label fw-bold"
-                  >Endzustand</label
-                >
+                <label for="endState" class="form-label fw-bold">
+                  Endzustand
+                </label>
                 <select
                   id="endState"
                   class="form-select"

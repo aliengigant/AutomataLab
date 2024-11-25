@@ -7,10 +7,7 @@
           <div v-if="tables.length == 0">
             <h2
               class="display-2"
-              style="
-                text-align: center;
-                color: rgba(0, 0, 0, 0.4);
-              "
+              style="text-align: center; color: rgba(0, 0, 0, 0.4)"
             >
               Erstelle eine neue Grammatik indem du auf das Plus klickst!
             </h2>

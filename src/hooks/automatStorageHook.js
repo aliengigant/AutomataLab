@@ -26,7 +26,7 @@ export const storageHooks = () => {
 
       // Index des zu aktualisierenden Eintrags finden
       const indexToUpdate = parsedData.findIndex(
-        (item) => item.id === itemIdToUpdate
+        (item) => item.id === itemIdToUpdate,
       );
 
       if (indexToUpdate !== -1) {
@@ -68,7 +68,7 @@ export const storageHooks = () => {
   function exportLocalStorage(id) {
     // Daten aus dem Local Storage abrufen
     const storedData = localStorage.getItem("localAutomata"); // Ersetze 'deinSchluessel' durch den tatsächlichen Schlüssel, den du verwendet hast
-  
+
     // Überprüfen, ob Daten im Local Storage vorhanden sind
     if (storedData) {
       try {
@@ -79,21 +79,21 @@ export const storageHooks = () => {
         const blob = new Blob([JSON.stringify(parsedData)], {
           type: "application/json",
         });
-  
+
         // Blob in eine URL umwandeln
         const blobUrl = URL.createObjectURL(blob);
-  
+
         // Link erstellen und automatisch auf die Datei klicken lassen
         const link = document.createElement("a");
         link.href = blobUrl;
         link.download = parsedData.name + "_Exported_Data.json"; // Dateiname für die exportierte Datei
         document.body.appendChild(link);
         link.click();
-  
+
         // Link und Blob-Ressourcen freigeben
         document.body.removeChild(link);
         URL.revokeObjectURL(blobUrl);
-  
+
         console.log("Daten erfolgreich exportiert.");
       } catch (error) {
         console.error("Fehler beim Parsen der Daten:", error);
@@ -107,6 +107,6 @@ export const storageHooks = () => {
     SaveAutomatChanges,
     updateStorage,
     makeArray,
-    exportLocalStorage
+    exportLocalStorage,
   };
 };

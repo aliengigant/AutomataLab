@@ -100,7 +100,7 @@ onMounted(() => {
 
 //String für die Darstellung beim Tupel
 const variablenString = computed(
-  () => transitionTablle.getVariableStringForGrammarAsArray
+  () => transitionTablle.getVariableStringForGrammarAsArray,
 );
 const rows = computed(() => transitionTablle.getGrammarRowArray);
 // const Ableitung = computed(() =>
@@ -113,26 +113,26 @@ watch(
   () => {
     // Wenn sich der Store ändert, aktualisiere die Zeilen
     rows.value = transitionTablle.getGrammarRowArray;
-  }
+  },
 );
 
 function getStartState() {
   if (
     transitionTablle.elements.states.find(
-      (element) => element.state_type == "start"
+      (element) => element.state_type == "start",
     )
   ) {
     const test = transitionTablle.elements.states.find(
-      (element) => element.state_type == "start"
+      (element) => element.state_type == "start",
     );
     return test.state_label;
   } else if (
     transitionTablle.elements.states.find(
-      (element) => element.state_type == "startend"
+      (element) => element.state_type == "startend",
     )
   ) {
     const test = transitionTablle.elements.states.find(
-      (element) => element.state_type == "startend"
+      (element) => element.state_type == "startend",
     );
     return test.state_label;
   } else {

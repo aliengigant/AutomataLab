@@ -34,8 +34,8 @@ export const useAutomataElementsStore = defineStore({
       const data = saveToLocal(newData);
       this.addToData(data);
     },
-    async getData(){
-      console.log(this.elements)
-    }
+    async getData() {
+      console.log(this.elements);
+    },
   },
 });
