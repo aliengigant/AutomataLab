@@ -90,17 +90,17 @@
         <i class="fa-solid fa-arrow-left"></i
       ></a>
       <button
-        class="navbar-toggler"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#navbarNavDropdown"
-        aria-controls="navbarNavDropdown"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      class="navbar-toggler"
+      type="button"
+      data-toggle="collapse"
+      data-target="#navbarSupportedContent2"
+      aria-controls="navbarSupportedContent2"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent2">
         <ul class="navbar-nav">
           <!-- <li class="nav-item ml-2">
             Off Canvas für Informationen und Hilfe

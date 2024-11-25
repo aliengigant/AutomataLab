@@ -20,6 +20,9 @@ import { usetransitionTableElementsStore } from "@/store/TransitionTabelElements
 useVueFlow();
 
 usetransitionTableElementsStore();
+
+
+
 </script>
 
 <style></style>

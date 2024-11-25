@@ -1,9 +1,10 @@
 <template>
-  <div class="bg-darkblue">
-    <div class="row justify-content-center">
+  <div class="bg-darkblue justify-content-center">
+    <div class="container">
+    <div class="row">
       <div class="bg-primary text-center">
         <div class="red" @click="Counter">
-          <h1 class="display-1" style="color: aliceblue">AutomataLab</h1>
+          <div class="display-2" style="color: aliceblue">AutomataLab</div>
           <div>
             <button
               v-if="easterEggCounter > 7"
@@ -20,7 +21,7 @@
         </div>
       </div>
     </div>
-    <div class="row justify-content-center">
+    <div class="row">
       <hr />
       <figure class="text-center">
         <h5 style="color: aliceblue">
@@ -44,10 +45,10 @@
       </figure>
       <hr />
     </div>
-    <div class="row justify-content-center gy-1">
+    <div class="row justify-content-center">
       <div class="col-md-auto text-center">
         <a href="/automatOverview">
-          <div class="card" style="width: 15rem">
+          <div class="card" style="width: 12rem">
             <img src="@/assets/auto.jpg" class="card-img-top" alt="..." />
             <div class="class-body m-3">
               <h5 class="card-title">Automat</h5>
@@ -58,7 +59,7 @@
       </div>
       <div class="col-md-auto text-center">
         <a href="/grammatikOverview">
-          <div class="card" style="width: 15rem">
+          <div class="card" style="width: 12rem">
             <img src="@/assets/grammatik.jpg" class="card-img-top" alt="..." />
             <div class="class-body m-3">
               <h5 class="card-title">Grammatik</h5>
@@ -123,6 +124,7 @@
       </div>
     </div>
   </div>
+</div>
 </template>
 
 <script setup>
