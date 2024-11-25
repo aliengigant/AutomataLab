@@ -14,12 +14,10 @@
           <h5 class="modal-title" id="ExportModal">Löschen</h5>
           <button
             type="button"
-            class="close"
+            class="btn-close text-reset"
             data-dismiss="modal"
             aria-label="Close"
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
+          ></button>
         </div>
         <div class="modal-body">
           Wollen Sie wirklich diesen Automaten Exportieren wollen ?
@@ -55,12 +53,10 @@
           <h5 class="modal-title" id="DeaMinModal">Löschen</h5>
           <button
             type="button"
-            class="close"
+            class="btn-close text-reset"
             data-dismiss="modal"
             aria-label="Close"
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
+          ></button>
         </div>
         <div class="modal-body">
           Wollen Sie wirklich diesen Automaten minimieren ?
@@ -1282,7 +1278,10 @@ function checkAutomat() {
       }
     }
     if (start_count !== 1) {
-      CheckText.value += "Es muss genau einen Startzustand geben. Es sind aber: "+start_count+ "Startzustände!";
+      CheckText.value +=
+        "Es muss genau einen Startzustand geben. Es sind aber: " +
+        start_count +
+        "Startzustände!";
     }
 
     if (end_count < 1) {

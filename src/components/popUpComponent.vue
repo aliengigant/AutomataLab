@@ -73,12 +73,10 @@
           <h5 class="modal-title" id="ModalLabel">Neuen Automaten erstellen</h5>
           <button
             type="button"
-            class="close"
+            class="btn-close text-reset"
             data-dismiss="modal"
             aria-label="Close"
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
+          ></button>
         </div>
         <div class="modal-body">
           <form id="automata">
@@ -145,6 +143,7 @@
             type="button"
             class="btn btn-primary"
             data-dismiss="modal"
+            :disabled="automatName == ''"
           >
             Erstelle Automaten
           </button>
@@ -168,12 +167,10 @@
           <h5 class="modal-title" id="ModalLabel">Neue Grammatik erstellen</h5>
           <button
             type="button"
-            class="close"
+            class="btn-close text-reset"
             data-dismiss="modal"
             aria-label="Close"
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
+          ></button>
         </div>
         <div class="modal-body">
           <form id="grammatik">
@@ -215,6 +212,7 @@
             type="button"
             class="btn btn-primary"
             data-dismiss="modal"
+            :disabled="grammatikName == ''"
           >
             Erstelle Grammatik
           </button>
@@ -239,12 +237,10 @@
           <h5 class="modal-title" id="ModalName">Übergangstabelle</h5>
           <button
             type="button"
-            class="close"
+            class="btn-close text-reset"
             data-dismiss="modal"
             aria-label="Close"
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
+          ></button>
         </div>
         <div class="modal-body non-selectable">
           <!--Tabelle mit Übergängen-->
@@ -274,12 +270,10 @@
           <h5 class="modal-title" id="ModalName">Grammatik</h5>
           <button
             type="button"
-            class="close"
+            class="btn-close text-reset"
             data-dismiss="modal"
             aria-label="Close"
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
+          ></button>
         </div>
         <div class="modal-body">
           <div class="container">
@@ -313,12 +307,10 @@
           <h5 class="modal-title" id="ModalName">Neue Regel</h5>
           <button
             type="button"
-            class="close btn btn-dark"
+            class="btn-close text-reset"
             data-dismiss="modal"
             aria-label="Close"
-          >
-            <i class="fa-solid fa-xmark"></i>
-          </button>
+          ></button>
         </div>
         <div class="modal-body">
           <p>Gib hier deine Regel für die Grammatik ein:</p>
@@ -416,12 +408,10 @@
           <h5 class="modal-title" id="Prolog">Prolog</h5>
           <button
             type="button"
-            class="close"
+            class="btn-close text-reset"
             data-dismiss="modal"
             aria-label="Close"
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
+          ></button>
         </div>
         <div class="modal-body"><prologComponent></prologComponent></div>
         <div class="modal-footer">
@@ -447,12 +437,10 @@
           <h5 class="modal-title" id="exampleModalLabel">Das ist ein Test</h5>
           <button
             type="button"
-            class="close"
+            class="btn-close text-reset"
             data-dismiss="modal"
             aria-label="Close"
-          >
-            <span aria-hidden="true">&times;</span>
-          </button>
+          ></button>
         </div>
         <div class="modal-body">Hier könnte ihre</div>
         <div class="modal-footer">
