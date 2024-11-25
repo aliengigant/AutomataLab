@@ -89,7 +89,11 @@
                 type="text"
                 id="nameAutomata"
                 placeholder="Name des Automatens"
-                v-model="firstAutomatData.name"
+                v-model="automatName"
+                :class="{
+                  'is-invalid': automatName == '',
+                  'is-valid': automatName,
+                }"
               />
             </div>
             <div id="automataType" class="form-group">
@@ -180,7 +184,11 @@
                 type="text"
                 id="nameGrammatik"
                 placeholder="Name des Grammatiks"
-                v-model="firstGrammatikData.name"
+                v-model="grammatikName"
+                :class="{
+                  'is-invalid': grammatikName == '',
+                  'is-valid': grammatikName,
+                }"
               />
             </div>
             <div id="alphabet" class="form-group">
@@ -305,57 +313,89 @@
           <h5 class="modal-title" id="ModalName">Neue Regel</h5>
           <button
             type="button"
-            class="close"
+            class="close btn btn-dark"
             data-dismiss="modal"
             aria-label="Close"
           >
-            <span aria-hidden="true">&times;</span>
+            <i class="fa-solid fa-xmark"></i>
           </button>
         </div>
         <div class="modal-body">
+          <p>Gib hier deine Regel für die Grammatik ein:</p>
           <form id="newRuleForm">
-            <select
-              id="initState"
-              class="select"
-              v-model="selectedInitState"
-              :class="{
-                noValueInit: selectedInitState == null,
-                newValueInit: selectedInitState == 'new',
-              }"
-            >
-              <option
-                v-for="state of table.getNodes"
-                :key="state.state_id"
-                :value="state.state_id"
+            <div class="row g-3">
+              <!-- Initial State -->
+              <div class="col-3">
+                <label for="initState" class="form-label fw-bold"
+                  >Startzustand</label
+                >
+                <select
+                  id="initState"
+                  class="form-select"
+                  v-model="selectedInitState"
+                  :class="{
+                    'is-invalid': selectedInitState == null,
+                    'is-valid': selectedInitState == 'new',
+                  }"
+                >
+                  <option
+                    v-for="state of table.getNodes"
+                    :key="state.state_id"
+                    :value="state.state_id"
+                  >
+                    {{ state.state_label }}
+                  </option>
+                </select>
+              </div>
+
+              <!-- Transition -->
+              <div class="col-3">
+                <label for="transition" class="form-label fw-bold"
+                  >Übergang</label
+                >
+                <select
+                  id="transition"
+                  class="form-select"
+                  v-model="selectedTransition"
+                >
+                  <option v-for="(word, id) of table.getAlphabet" :key="id">
+                    {{ word.value }}
+                  </option>
+                  <option>e</option>
+                </select>
+              </div>
+
+              <!-- End State -->
+              <div class="col-3">
+                <label for="endState" class="form-label fw-bold"
+                  >Endzustand</label
+                >
+                <select
+                  id="endState"
+                  class="form-select"
+                  v-model="selectedEndState"
+                  :disabled="
+                    selectedInitState == null || selectedInitState == 'new'
+                  "
+                >
+                  <option :value="'/'">/</option>
+                  <option
+                    v-for="state of table.getNodes"
+                    :key="state.state_id"
+                    :value="state.state_id"
+                  >
+                    {{ state.state_label }}
+                  </option>
+                </select>
+              </div>
+              <button
+                class="btn btn-light"
+                @click.prevent="newRule"
+                data-dismiss="modal"
               >
-                {{ state.state_label }}
-              </option>
-            </select>
-            <select id="transition" class="select" v-model="selectedTransition">
-              <option v-for="(word, id) of table.getAlphabet" :key="id">
-                {{ word.value }}
-              </option>
-            </select>
-            <select
-              id="endState"
-              class="select"
-              v-model="selectedEndState"
-              :disabled="
-                selectedInitState == null || selectedInitState == 'new'
-              "
-            >
-              <option :value="'/'">/</option>
-              <option
-                v-for="state of table.getNodes"
-                :key="state.state_id"
-                :value="state.state_id"
-              >
-                {{ state.state_label }}
-              </option>
-            </select>
-            <button @click.prevent="newRule" data-dismiss="modal">
-              Setzen
-            </button>
+                Setzen
+              </button>
+            </div>
           </form>
         </div>
       </div>
@@ -427,7 +467,7 @@
 </template>
 
 <script setup>
-import { defineProps, ref } from "vue";
+import { defineProps, reactive, ref, watch } from "vue";
 import { useAutomataElementsStore } from "@/store/automataElementsStore";
 import { usetransitionTableElementsStore } from "@/store/TransitionTabelElementsStore";
 import { useRouter } from "vue-router";
@@ -443,11 +483,37 @@ const automat = useAutomataElementsStore();
 const router = useRouter();
 var ranId = () => Math.floor(Math.random() * 1000);
 const id = ranId();
+const automatName = ref("");
+const grammatikName = ref("");
 
-const firstAutomatData = {
+const now = new Date(); // Aktuelle Zeit
+const options = {
+  timeZone: "Europe/Berlin", // Deutsche Zeitzone
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+  hour12: false, // 24-Stunden-Format
+};
+
+const formattedTime = now.toLocaleString("de-DE", options); // Formatierung
+
+// Aktualisieren Sie den Namen, wenn sich automatName ändert
+watch(automatName, (newValue) => {
+  firstAutomatData.name = newValue;
+});
+// Aktualisieren Sie den Namen, wenn sich automatName ändert
+watch(grammatikName, (newValue) => {
+  firstGrammatikData.name = newValue;
+});
+
+const firstAutomatData = reactive({
   id: id,
-  name: "",
+  name: automatName.value,
   type: "DEA",
+  createdAt: formattedTime,
   automat: {
     alphabet: "[a,b]",
     nodes: [
@@ -462,8 +528,10 @@ const firstAutomatData = {
     ],
     edges: [],
   },
-};
-const firstGrammatikData = {
+});
+const firstGrammatikData = reactive({
+  ableitung: "rechts",
+  createdAt: formattedTime,
   id: id,
   name: "",
   type: "",
@@ -477,7 +545,7 @@ const firstGrammatikData = {
       transitions: [],
     },
   ],
-};
+});
 
 const prop = defineProps({
   modalType: {
@@ -491,11 +559,12 @@ const prop = defineProps({
 });
 
 const selectedInitState = ref();
-const selectedTransition = ref("a");
-const selectedEndState = ref("");
+const selectedTransition = ref("");
+const selectedEndState = ref("/");
 
 //Hinzufügen von einem neuen Automat EVENTUELL auslagern nach OverView
 function newAutomata() {
+  console.log(firstAutomatData);
   automat.addAutomat(firstAutomatData);
 
   console.log("Importierte Daten:", firstAutomatData.value);

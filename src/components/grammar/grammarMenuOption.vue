@@ -77,6 +77,10 @@ function newAutomata() {
   alert("Neuer Automat wurde erstellt!");
 }
 function convertGrammarToAutomat() {
+  if (table.getAbleitung == "links") {
+    table.toggleAbleitung();
+  }
+  console.log(table.getAbleitung);
   let automato = ConvertedAutomatData;
   const states = table.getNodes;
   const edges = table.getGrammarRowArray;
@@ -100,7 +104,7 @@ function convertGrammarToAutomat() {
   let counter = 0;
   // Benutze addEdges und AddNodes
   for (const state of states) {
-    console.log(state.state_id)
+    console.log(state.state_id);
     automato.automat.nodes.push({
       data: { state: state.state_type },
       id: counter,
@@ -208,7 +212,7 @@ function convertGrammarToAutomat() {
       position: { x: 300, y: 200 },
     });
   }
-  console.log(automato)
+  console.log(automato);
   return automato;
 }
 

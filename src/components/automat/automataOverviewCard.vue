@@ -41,7 +41,7 @@
     </div>
   </div>
 
-  <div v-if="visible" class="card border-5  non-selectable">
+  <div v-if="visible" class="card border-5 non-selectable">
     <div class="dropdown m-2">
       <button
         class="float-right btn btn-outline-secondary btn-circle btn-circle-sm"
@@ -79,6 +79,12 @@
           {{ props.type }}
         </p>
       </div>
+      <div class="card-footer">
+        <small class="text-muted">
+          Erstellt: <br />
+          {{ props.createDate }}</small
+        >
+      </div>
     </a>
   </div>
 </template>
@@ -94,6 +100,7 @@ const props = defineProps({
   id: Number,
   name: String,
   type: String,
+  createDate: Date,
 });
 var visible = ref(true);
 function openAutomat() {

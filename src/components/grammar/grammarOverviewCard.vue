@@ -1,7 +1,7 @@
 <template>
   <!-- Lösch Message fenster -->
   <div
-    class="modal fade  non-selectable"
+    class="modal fade non-selectable"
     :id="'deleteModal' + props.id"
     tabindex="-1"
     role="dialog"
@@ -67,10 +67,16 @@
       </ul>
     </div>
     <a href="#" @click="openGrammar">
-      <img src="@/assets/logo.png" class="card-img-top" alt="..." />
+      <!-- <img src="@/assets/logo.png" class="card-img-top" alt="..." /> -->
       <div class="card-body">
         <p v-if="fromAutomat">Vom Automat:</p>
         <h5 class="card-title">{{ props.name }}</h5>
+      </div>
+      <div class="card-footer">
+        <small class="text-muted">
+          Erstellt: <br />
+          {{ props.createDate }}</small
+        >
       </div>
     </a>
   </div>
@@ -88,6 +94,7 @@ const props = defineProps({
   name: String,
   type: String,
   fromAutomat: Boolean,
+  createDate: Date,
 });
 
 var visible = ref(true);

@@ -34,21 +34,29 @@
           :modal-type="'#newRuleGrammatik'"
           :buttonLabel="'neue Regel'"
         ></popUpComponent>
-        <button class="btn btn-secondary" @click="changeAbleitung">
+        <button
+          v-if="!props.automate"
+          class="btn btn-secondary"
+          @click="changeAbleitung"
+        >
           Ableitung
         </button>
-        <div class="form-check form-switch">
+        <!-- <div class="form-check form-switch">
           <input
+            v-if="!props.automate"
             class="form-check-input"
             type="checkbox"
             id="flexSwitchCheckChecked"
-            disabled
+            
             v-model="Ableitung"
           />
-          <label class="form-check-label" for="flexSwitchCheckChecked"
+          <label
+            v-if="!props.automate"
+            class="form-check-label"
+            for="flexSwitchCheckChecked"
             >Linksseitig</label
           >
-        </div>
+        </div> -->
         <!-- 
       <button @click="addRow" class="btn btn-primary">Hinzufügen</button>
       <button @click="showStore" class="btn btn-secondary">show store</button> -->
@@ -95,9 +103,9 @@ const variablenString = computed(
   () => transitionTablle.getVariableStringForGrammarAsArray
 );
 const rows = computed(() => transitionTablle.getGrammarRowArray);
-const Ableitung = computed(() =>
-  transitionTablle.getAbleitung == "links" ? true : false
-);
+// const Ableitung = computed(() =>
+//   transitionTablle.getAbleitung == "links" ? true : false
+// );
 const startState = computed(() => getStartState());
 // Watcher für Änderungen im Store
 watch(
@@ -107,7 +115,6 @@ watch(
     rows.value = transitionTablle.getGrammarRowArray;
   }
 );
-
 
 function getStartState() {
   if (
@@ -147,7 +154,7 @@ function newState() {
   SaveTransitionTable(transitionTablle.getElements);
 }
 function changeAbleitung() {
-  console.log(transitionTablle.getAbleitung)
+  console.log(transitionTablle.getAbleitung);
   transitionTablle.toggleAbleitung();
   if (transitionTablle.getAbleitung == "rechts") {
     console.log("lol");

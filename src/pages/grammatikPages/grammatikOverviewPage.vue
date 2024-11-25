@@ -26,6 +26,7 @@
                 :name="table.name"
                 :type="table.type"
                 :from-automat="table.automat_id"
+                :create-date="table.createdAt"
               ></grammarOverviewCard>
             </div>
           </div>

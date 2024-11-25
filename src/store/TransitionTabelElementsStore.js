@@ -3,19 +3,42 @@ Die Idee dieser Store ist es, dass wir einen Tabelle haben,
 mit der wir auch andere Module, wie Grammatik und Tabelle,
 nutzen können
 */
+const now = new Date(); // Aktuelle Zeit
+const options = {
+  timeZone: "Europe/Berlin", // Deutsche Zeitzone
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+  hour12: false, // 24-Stunden-Format
+};
+
+const formattedTime = now.toLocaleString("de-DE", options); // Formatierung
 
 import { defineStore } from "pinia";
 import { storageHooksTrans } from "@/hooks/transitionTableStorageHook";
 const { SaveTransitionTable } = storageHooksTrans();
 class transitionTable {
-  constructor(id, name, type, automat_id, alphabet, nodes, ableitung) {
+  constructor(
+    id,
+    name,
+    type,
+    automat_id,
+    alphabet,
+    nodes,
+    createDate,
+    ableitung
+  ) {
     this.id = id;
     this.name = name;
     this.type = type;
     this.automat_id = automat_id;
     this.alphabet = alphabet;
     this.states = nodes;
-    this.ableitung = ableitung;
+    this.createdAt = createDate || formattedTime;
+    this.ableitung = ableitung || "rechts";
   }
 }
 
@@ -164,7 +187,7 @@ export const usetransitionTableElementsStore = defineStore({
       const nodes = state.getNodes;
       let ends = [];
       for (const node of nodes) {
-        if (node.state_type == "end"|| node.state_type == "startend") {
+        if (node.state_type == "end" || node.state_type == "startend") {
           ends.push(node.state_label);
         }
       }
@@ -182,6 +205,9 @@ export const usetransitionTableElementsStore = defineStore({
       // ];
 
       //Da nur ein element gleichzeitig erzeugt wird, greifen wir immer auf den ersten Eintrag
+
+      console.log(state.getElements);
+      console.log(state.getAbleitung);
       const table = state.elements;
       if (table.states.length > 0) {
         const states = table.states;
@@ -559,6 +585,7 @@ export const usetransitionTableElementsStore = defineStore({
     },
     addGrammtiktoTransitionTable(data) {
       if (data != null) {
+        console.log(data);
         const newTable = new transitionTable(
           data.id,
           data.name,
@@ -566,8 +593,10 @@ export const usetransitionTableElementsStore = defineStore({
           data.automat_id,
           data.alphabet,
           data.states,
+          data.createdAt,
           data.ableitung
         );
+        console.log(newTable);
         this.elements;
         this.elements = newTable;
         SaveTransitionTable(newTable);

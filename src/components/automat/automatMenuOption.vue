@@ -1253,7 +1253,10 @@ function checkAutomat() {
     }
 
     if (start_count !== 1) {
-      CheckText.value += "Es muss genau einen Startzustand geben" + "!";
+      CheckText.value +=
+        "Es muss genau einen Startzustand geben. Es sind aber: " +
+        start_count +
+        "!";
     }
 
     if (end_count < 1) {
@@ -1273,10 +1276,13 @@ function checkAutomat() {
         start_count += 1; // oder start_count++;
       } else if (state.state_type == "end") {
         end_count += 1; // oder end_count++;
+      } else if (state.state_type == "startend") {
+        start_count += 1;
+        end_count += 1;
       }
     }
     if (start_count !== 1) {
-      CheckText.value += "Es muss genau einen Startzustand geben";
+      CheckText.value += "Es muss genau einen Startzustand geben. Es sind aber: "+start_count+ "Startzustände!";
     }
 
     if (end_count < 1) {

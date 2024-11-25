@@ -14,6 +14,7 @@
                 :id="automat.id"
                 :name="automat.name"
                 :type="automat.type"
+                :create-date="automat.createdAt"
               ></automataOverviewCard>
             </div>
           </div>
