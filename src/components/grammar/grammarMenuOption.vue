@@ -53,10 +53,24 @@ let ConvertedAutomatData;
 
 //Hinzufügen von einem neuen Automat EVENTUELL auslagern nach OverView
 function newAutomata() {
+  const now = new Date(); // Aktuelle Zeit
+  const options = {
+    timeZone: "Europe/Berlin", // Deutsche Zeitzone
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false, // 24-Stunden-Format
+  };
+  const formattedTime = now.toLocaleString("de-DE", options); // Formatierung
+
   ConvertedAutomatData = {
     id: id,
     name: "converted " + table.getName,
     type: "NEA",
+    createdAt: formattedTime,
     automat: {
       alphabet: table.getAlphabetString,
       nodes: [],
