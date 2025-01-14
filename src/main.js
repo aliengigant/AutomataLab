@@ -6,6 +6,7 @@ import router from "./router";
 
 //Import Bootstrap.js for Dropdown Function
 import "bootstrap/dist/js/bootstrap";
+import 'bootstrap/dist/css/bootstrap.css'
 import "bootstrap/dist/css/bootstrap.min.css";
 /* import the fontawesome core */
 import { library } from "@fortawesome/fontawesome-svg-core";
