@@ -5,6 +5,7 @@ import automatOverviewPage from "@/pages/automatPages/automatOverviewPage";
 import grammatikOverviewPage from "@/pages/grammatikPages/grammatikOverviewPage";
 import grammatikPage from "@/pages/grammatikPages/grammatikPage";
 import regAusdruckPage from "@/pages/regAusdruckPage";
+import grammatikComponent from "@/pages/grammatikPages/grammatikComponent";
 
 const router = createRouter({
   // optionen
@@ -38,6 +39,15 @@ const router = createRouter({
       path: "/regAusdruck",
       component: regAusdruckPage,
     },
+    {
+      path: "/:notFound(.*)",
+      redirect: "/", // redirect to home page
+    },
+    {
+      path:"/video",
+      name: "grammatikComponent",
+      component: grammatikComponent,
+    }
   ],
 });
 

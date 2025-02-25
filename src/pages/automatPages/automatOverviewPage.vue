@@ -8,7 +8,7 @@
             <div
               v-for="(automat, index) in automata"
               :key="index"
-              style="width: 15rem"
+              style="width: 15rem; height: 15rem;"
             >
               <automataOverviewCard
                 :id="automat.id"

@@ -205,7 +205,7 @@ const edgePathLoopLabel = computed(() => {
   return path;
 });
 const midPoints = computed(() => {
-  const heightFraction = 0.25;
+  const heightFraction = 0.18;
   // Knotenkoordinaten
   const A = { x: edgeParams.value.sx, y: edgeParams.value.sy };
   const B = { x: edgeParams.value.tx, y: edgeParams.value.ty };

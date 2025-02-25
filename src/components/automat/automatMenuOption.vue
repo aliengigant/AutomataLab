@@ -77,6 +77,73 @@
       </div>
     </div>
   </div>
+  <!-- NEA zu DEA Message Fenster -->
+  <div
+    class="modal fade"
+    id="NEAtoDEAModal"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="NEAtoDEAModal"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="NEAtoDEAModal">
+            Zustands-Label definieren
+          </h5>
+          <button
+            type="button"
+            class="btn-close text-reset"
+            data-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <h6 class="h6">Wie wollen Sie die Zustands-Label ?</h6>
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="flexRadioDefault"
+              id="flexRadioDefault1"
+              v-model="changeName"
+              :value="true"
+            />
+            <label class="form-check-label" for="flexRadioDefault1">
+              Neue Zustands-Label generieren
+            </label>
+          </div>
+          <div class="form-check">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="flexRadioDefault"
+              id="flexRadioDefault2"
+              v-model="changeName"
+              :value="false"
+            />
+            <label class="form-check-label" for="flexRadioDefault2">
+              Zusammengesetzte Zustands-Label verwenden
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            @click="convertToDea"
+            type="button"
+            class="btn btn-success"
+            data-dismiss="modal"
+          >
+            Konvetieren
+          </button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Abbrechen
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <nav class="navbar navbar-expand-sm bg-light non-selectable">
     <div class="container-fluid">
@@ -87,19 +154,19 @@
         title="Zurück zur Übersicht"
       >
         <!--zurück zur Übersicht-->
-        <i class="fa-solid fa-arrow-left"></i
-      ></a>
+        <i class="fa-solid fa-arrow-left"></i>
+      </a>
       <button
-      class="navbar-toggler"
-      type="button"
-      data-toggle="collapse"
-      data-target="#navbarSupportedContent2"
-      aria-controls="navbarSupportedContent2"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
-      <span class="navbar-toggler-icon"></span>
-    </button>
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarSupportedContent2"
+        aria-controls="navbarSupportedContent2"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
       <div class="collapse navbar-collapse" id="navbarSupportedContent2">
         <ul class="navbar-nav">
           <!-- <li class="nav-item ml-2">
@@ -112,15 +179,17 @@
           <li class="nav-item ml-2" @click="checkAutomatView()">
             <!--Überprüfen aussuchen-->
             <a class="nav-link" href="#">
-              <i class="fa-solid fa-circle-check"></i> Überprüfen</a
-            >
+              <i class="fa-solid fa-circle-check"></i>
+              Überprüfen
+            </a>
           </li>
           <!-- Simulation -->
           <li class="nav-item ml-2" @click="automatSimuView()">
             <!--Simulation aussuchen-->
             <a class="nav-link" href="#">
-              <i class="fa-solid fa-play"></i> Simulieren</a
-            >
+              <i class="fa-solid fa-play"></i>
+              Simulieren
+            </a>
           </li>
           <!-- Übergangstabelle -->
           <li class="nav-item ml-2">
@@ -138,10 +207,15 @@
             ></popUpComponent>
           </li>
           <!-- NEA zu DEA Konvetieren -->
-          <li class="nav-item ml-2" @click="convertToDea">
-            <a v-if="automat.type == 'NEA'" class="nav-link" href="#"
-              ><i class="fa-solid fa-arrows-spin"></i> NEA zu DEA</a
-            >
+          <li
+            class="nav-item ml-2"
+            data-toggle="modal"
+            :data-target="'#NEAtoDEAModal'"
+          >
+            <a v-if="automat.type == 'NEA'" class="nav-link" href="#">
+              <i class="fa-solid fa-arrows-spin"></i>
+              NEA zu DEA
+            </a>
           </li>
           <!-- DEA Minimieren -->
           <li
@@ -149,9 +223,10 @@
             data-toggle="modal"
             :data-target="'#DeaMinModal'"
           >
-            <a v-if="automat.type == 'DEA'" class="nav-link" href="#"
-              ><i class="fa-solid fa-arrows-spin"></i>DEA Minimieren</a
-            >
+            <a v-if="automat.type == 'DEA'" class="nav-link" href="#">
+              <i class="fa-solid fa-arrows-spin"></i>
+              DEA Minimieren
+            </a>
           </li>
           <!-- Exportieren -->
           <li
@@ -162,8 +237,8 @@
             <!--Exportieren eines Automatens-->
             <a class="nav-link" href="#">
               <i class="fa-solid fa-file-export"></i>
-              Export Automat</a
-            >
+              Export Automat
+            </a>
           </li>
           <!-- Prolog -->
           <li class="nav-item ml-2">
@@ -199,12 +274,14 @@
         <div v-for="(text, index) in CheckTextArray" :key="index">
           <div v-if="text != 'Automat wurde korrekt definiert!'">
             <li class="list-group-item list-group-item-danger">
-              <i class="fa-regular fa-circle-xmark"></i> {{ text }}
+              <i class="fa-regular fa-circle-xmark"></i>
+              {{ text }}
             </li>
           </div>
           <div v-else>
             <li class="list-group-item list-group-item-success">
-              <i class="fa-regular fa-circle-check"></i> {{ text }}
+              <i class="fa-regular fa-circle-check"></i>
+              {{ text }}
             </li>
           </div>
         </div>
@@ -245,8 +322,9 @@
                 class="dropdown-item"
                 href="#"
                 @click="selectedWord(word.value)"
-                >{{ word.value }}</a
               >
+                {{ word.value }}
+              </a>
             </li>
           </div>
         </ul>
@@ -279,8 +357,8 @@
           <h5 class="card-title">Ergebnis</h5>
           <h6 class="card-subtitle mb-2 text-muted">
             Das Eingabewort ist
-            <a v-if="isEnd" :style="{ color: 'green' }"> in der Sprache</a>
-            <a v-else :style="{ color: 'red' }"> nicht in der Sprache</a>
+            <a v-if="isEnd" :style="{ color: 'green' }">in der Sprache</a>
+            <a v-else :style="{ color: 'red' }">nicht in der Sprache</a>
           </h6>
 
           <table class="table table-striped">
@@ -334,8 +412,24 @@ const transListSimulation = ref([]);
 const stateListSimulation = ref([]);
 const alphabetListSimulation = ref([]);
 const ListSimulationResultat = ref([]);
+const changeName = ref(false);
 let isEnd = false;
 const selectedWordValue = ref("");
+
+const now = new Date(); // Aktuelle Zeit
+const options = {
+  timeZone: "Europe/Berlin", // Deutsche Zeitzone
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+  hour12: false, // 24-Stunden-Format
+};
+
+const formattedTime = now.toLocaleString("de-DE", options); // Formatierung
+
 if (automatID) {
   automat.value = findAutomataById(automatID);
   // Überprüfe, ob der automat und seine Eigenschaften vorhanden sind
@@ -374,7 +468,7 @@ function saveTransTable() {
     automat.value.id,
     automat.value.automat.alphabet,
     nodes.value,
-    edges.value,
+    edges.value
   );
 }
 function convertToDea() {
@@ -549,7 +643,7 @@ function linkEA(a) {
         ts = appendLinkedState(
           a,
           r,
-          a.states.find((as) => as.state_id === oldT.target),
+          a.states.find((as) => as.state_id === oldT.target)
         ); // add it recursively
       }
       // create and add transition from state to target (Label-Array becomes a map)
@@ -578,8 +672,8 @@ function linkEA(a) {
     a,
     result,
     a.states.find(
-      (s) => s.state_type === "start" || s.state_type === "startend",
-    ),
+      (s) => s.state_type === "start" || s.state_type === "startend"
+    )
   );
   return result;
 }
@@ -798,7 +892,7 @@ function linkedNea2Dea(linkedEA) {
     // build DEA-state based on set of neaStates
     var statename = neaStates.reduce(
       (n, s) => (n === "" ? s.Name : n + "+" + s.Name),
-      "",
+      ""
     ); // name: concatenated nea-states
     var state = dea.States.get(statename); // find existing dea-state
     if (state === undefined) {
@@ -833,7 +927,7 @@ function linkedNea2Dea(linkedEA) {
         // iterate the states reachable with a certain label
         // sort and remove doubles to build new combined state
         removeDoubles(tStates, (a, b) =>
-          a.Name > b.Name ? 1 : a.Name < b.Name ? -1 : 0,
+          a.Name > b.Name ? 1 : a.Name < b.Name ? -1 : 0
         );
         // determine according new dea-state recursively
         var targetstate = getDEAState(dea, tStates);
@@ -933,6 +1027,7 @@ function NEAtoDEA() {
     id: id,
     name: "DEA from " + transitionTablle.getName,
     type: "DEA",
+    createdAt: formattedTime,
     automat: {
       alphabet: transitionTablle.getAlphabetString,
       nodes: [],
@@ -955,9 +1050,13 @@ function NEAtoDEA() {
       type = "normal";
     }
 
+    var label = state.Name;
+    if (changeName.value) {
+      label = "q" + state.ID;
+    }
     ConvertedAutomatData.automat.nodes.push({
       id: state.ID,
-      label: `{${state.Name}}`,
+      label: label,
       //label: `q` + state.ID,
       type: type,
       position: { x: x, y: 100 },
@@ -991,7 +1090,7 @@ function NEAtoDEA() {
         // label = alphabet.find((e) => e.id == alphabetIndex);
 
         const target = r.automaton.States.find(
-          (e) => innerTransition.Target == e.ID,
+          (e) => innerTransition.Target == e.ID
         );
         targetId = target.ID;
         transID = sourceId + "to" + targetId;
@@ -1034,7 +1133,7 @@ function NEAtoDEA() {
         // label = alphabet.find((e) => e.id == alphabetIndex);
 
         const target = r.automaton.States.find(
-          (e) => innerTransition.Target == e.ID,
+          (e) => innerTransition.Target == e.ID
         );
         targetId = target.ID;
         transID = sourceId + "to" + targetId;
@@ -1304,7 +1403,7 @@ function checkTextSplit(checkText) {
     // Split the string based on "!"
     CheckTextArray.value = checkText.split("!");
     CheckTextArray.value = CheckTextArray.value.filter(
-      (error) => error.trim() !== "",
+      (error) => error.trim() !== ""
     );
   } else {
     CheckTextArray.value = ["Automat wurde korrekt definiert!"];
@@ -1327,7 +1426,7 @@ function automatSimulation() {
   let wordList = word;
   isEnd = false;
   let state = transitionTablle.getNodes.find(
-    (state) => state.state_type == "start" || state.state_type == "startend",
+    (state) => state.state_type == "start" || state.state_type == "startend"
   ); // state mit dem Startzustand (In folge immer der Aktuelle zustand)
   transListSimulation.value.push({ word: "start" });
   //stack für eventuelle rücksprünge für NEA
@@ -1360,7 +1459,7 @@ function automatSimulation() {
           else if (state.state_id != trans.target) {
             console.log("Ich habe einen anderen Node: " + trans.target_label);
             state = transitionTablle.getNodes.find(
-              (sta) => sta.state_id == trans.target,
+              (sta) => sta.state_id == trans.target
             );
 
             stateListSimulation.value.push({ value: state.state_label });
@@ -1374,7 +1473,7 @@ function automatSimulation() {
             char +
               " ist nicht gleich " +
               trans.transition_label +
-              "! nächste Transition",
+              "! nächste Transition"
           );
           continue;
         } else {
@@ -1382,7 +1481,7 @@ function automatSimulation() {
             "Es gibt keinen Übergang mit dem " +
               char +
               " in " +
-              state.state_label,
+              state.state_label
           );
         }
       }
@@ -1393,7 +1492,7 @@ function automatSimulation() {
           value: item.value,
           word: transListSimulation.value[index].word,
         };
-      },
+      }
     );
     ListSimulationResultat.value = ListSimulationResultat.value.map(
       (item, index) => {
@@ -1402,7 +1501,7 @@ function automatSimulation() {
           word: item.word,
           rest: alphabetListSimulation.value[index].rest,
         };
-      },
+      }
     );
     if (state.state_type == "end" || state.state_type == "startend") {
       isEnd = true;
@@ -1414,7 +1513,7 @@ function automatSimulation() {
       word,
       state.state_label,
       transitionTablle.getGrammarRowArray,
-      transitionTablle.getEnds,
+      transitionTablle.getEnds
     );
 
     ListSimulationResultat.value = stateListSimulation.value.map(
@@ -1423,7 +1522,7 @@ function automatSimulation() {
           value: item.value,
           word: transListSimulation.value[index]?.word || "",
         };
-      },
+      }
     );
     ListSimulationResultat.value = ListSimulationResultat.value.map(
       (item, index) => {
@@ -1432,11 +1531,11 @@ function automatSimulation() {
           word: item.word,
           rest: alphabetListSimulation.value[index]?.rest || "",
         };
-      },
+      }
     );
   } else {
     alert(
-      "Automate wurde nicht korrekt definiert! Bitte überprüft deinen Automaten.",
+      "Automate wurde nicht korrekt definiert! Bitte überprüft deinen Automaten."
     );
   }
 }
@@ -1518,11 +1617,11 @@ function DEAtoMinimalDEA() {
           for (let w = 0; w < automataAlphabet.value.length; w++) {
             let z1 = findTargetIndexForInput(
               s1,
-              automataAlphabet.value[w].value,
+              automataAlphabet.value[w].value
             );
             let z2 = findTargetIndexForInput(
               s2,
-              automataAlphabet.value[w].value,
+              automataAlphabet.value[w].value
             );
             if (z1 == -1 || z2 == -1) {
               continue;
@@ -1770,7 +1869,7 @@ function DEAtoMinimalDEA() {
         // label = alphabet.find((e) => e.id == alphabetIndex);
 
         const target = a.states.find(
-          (e) => innerTransition.target == e.state_id,
+          (e) => innerTransition.target == e.state_id
         );
         console.log(a.states);
         targetId = target.state_id;
@@ -1814,7 +1913,7 @@ function DEAtoMinimalDEA() {
         // label = alphabet.find((e) => e.id == alphabetIndex);
 
         const target = a.states.find(
-          (e) => innerTransition.target == e.state_id,
+          (e) => innerTransition.target == e.state_id
         );
         targetId = target.state_id;
         transID = sourceId + "to" + targetId;
@@ -1877,7 +1976,7 @@ function NEASimulation(
   acceptStates,
   path = [],
   transPath = [],
-  alphabetPath = [],
+  alphabetPath = []
 ) {
   // Aktuelles Zeichen und Rest des Wortes
   const currentChar = word[0];
@@ -1904,7 +2003,7 @@ function NEASimulation(
   // Finde alle möglichen nächsten Zustände
   const nextStates = transitions
     .filter(
-      (t) => t.sourceLabel === currentState && t.transitionVar === currentChar,
+      (t) => t.sourceLabel === currentState && t.transitionVar === currentChar
     )
     .map((t) => t.targetLabel);
   console.log(nextStates);
@@ -1925,7 +2024,7 @@ function NEASimulation(
         acceptStates,
         [...path],
         [...transPath],
-        [...alphabetPath],
+        [...alphabetPath]
       )
     ) {
       return true;
