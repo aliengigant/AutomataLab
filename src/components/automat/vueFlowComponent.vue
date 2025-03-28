@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div style="height: 500px">
+    <div style="height: 80vh;">
       <VueFlow
         :nodes="Anodes"
         :edges="Aedges"
@@ -8,7 +8,7 @@
         auto-connect
         connection-mode="strict"
       >
-        <Background gap="10" variant="lines"></Background>
+        <Background gap="5" color="grey"  variant="dots"></Background>
         <vueFlowControlsComponent></vueFlowControlsComponent>
         <template #connection-line="edgeProps">
           />

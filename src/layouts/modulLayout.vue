@@ -1,9 +1,10 @@
 <template>
   <div>
     <header>
-      <!--Navbar-->
-      <navBarComponent :title="modulName"></navBarComponent>
-      <!-- -->
+      <div class="bg-darkblue">
+        <!--Navbar-->
+        <navBarComponent :title="modulName"></navBarComponent>
+      </div>
     </header>
     <!-- Content Area-->
     <main>
@@ -23,4 +24,8 @@ const modalStore = useModalNameStore();
 var modulName = computed(() => modalStore.getModalName);
 </script>
 
-<style></style>
+<style scoped>
+.bg-darkblue {
+  background:#000000 ;
+}
+</style>

@@ -2,20 +2,21 @@
   <div class="container w-auto">
     <div class="list-group list-group-horizontal">
       <div class="display-6">G= ( {</div>
-      <p
-        class="list-group-item"
-        v-for="variablen in variablenString"
-        :key="variablen.id"
-      >
-        <GrammarVariable
-          :id="variablen.id"
-          :variable="variablen.variable"
-        ></GrammarVariable>
-      </p>
+      <div class="display-6 d-flex align-items-center flex-wrap gap-1">
+        <div
+          v-for="(variablen) in variablenString"
+          :key="variablen.id"
+          class="grammar-hover"
+        >
+          <GrammarVariable :id="variablen.id" :variable="variablen.variable" />
+      </div>
+      </div>
       <button v-if="!props.automate" class="btn" @click="newState">
         <i class="fa fa-plus-circle" aria-hidden="true"></i>
       </button>
-      <div class="display-6">} ,E,{{ startState }})</div>
+      <div class="display-6">
+        } ,{ {{ getAlphabetString }} }, {{ startState }} )
+      </div>
     </div>
     <div class="card">
       <div class="card-header">
@@ -34,13 +35,13 @@
           :modal-type="'#newRuleGrammatik'"
           :buttonLabel="'neue Regel'"
         ></popUpComponent>
-        <button
+        <!-- <button
           v-if="!props.automate"
           class="btn btn-secondary"
           @click="changeAbleitung"
         >
           Ableitung
-        </button>
+        </button> -->
         <!-- <div class="form-check form-switch">
           <input
             v-if="!props.automate"
@@ -93,14 +94,16 @@ function loadDataFromStorage() {
     console.log("Es wurde kein TransTable mit der ID " + id + " gefunden!");
   }
 }
-
+const getAlphabetString = computed(() => {
+  return transitionTablle.getAlphabetString;
+});
 onMounted(() => {
   loadDataFromStorage();
 });
 
 //String für die Darstellung beim Tupel
 const variablenString = computed(
-  () => transitionTablle.getVariableStringForGrammarAsArray,
+  () => transitionTablle.getVariableStringForGrammarAsArray
 );
 const rows = computed(() => transitionTablle.getGrammarRowArray);
 // const Ableitung = computed(() =>
@@ -113,26 +116,26 @@ watch(
   () => {
     // Wenn sich der Store ändert, aktualisiere die Zeilen
     rows.value = transitionTablle.getGrammarRowArray;
-  },
+  }
 );
 
 function getStartState() {
   if (
     transitionTablle.elements.states.find(
-      (element) => element.state_type == "start",
+      (element) => element.state_type == "start"
     )
   ) {
     const test = transitionTablle.elements.states.find(
-      (element) => element.state_type == "start",
+      (element) => element.state_type == "start"
     );
     return test.state_label;
   } else if (
     transitionTablle.elements.states.find(
-      (element) => element.state_type == "startend",
+      (element) => element.state_type == "startend"
     )
   ) {
     const test = transitionTablle.elements.states.find(
-      (element) => element.state_type == "startend",
+      (element) => element.state_type == "startend"
     );
     return test.state_label;
   } else {
@@ -153,13 +156,13 @@ function newState() {
   transitionTablle.elements.states.push(newState);
   SaveTransitionTable(transitionTablle.getElements);
 }
-function changeAbleitung() {
-  console.log(transitionTablle.getAbleitung);
-  transitionTablle.toggleAbleitung();
-  if (transitionTablle.getAbleitung == "rechts") {
-    console.log("lol");
-  }
-}
+// function changeAbleitung() {
+//   console.log(transitionTablle.getAbleitung);
+//   transitionTablle.toggleAbleitung();
+//   if (transitionTablle.getAbleitung == "rechts") {
+//     console.log("lol");
+//   }
+// }
 // const addRow = () => {
 //   const id = instance.getNodes.value.length - 1;
 //   console.log(id);
@@ -184,5 +187,12 @@ function changeAbleitung() {
 <style scoped>
 .narrow-Input {
   width: 100px;
+}
+.grammar-hover {
+  transition: background-color 0.5s ease;
+  cursor: pointer;
+}
+.grammar-hover:hover {
+  background-color: #ff0000be;
 }
 </style>

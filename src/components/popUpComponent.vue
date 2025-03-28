@@ -37,7 +37,7 @@
   </div>
   <div v-else-if="modalType == '#newRuleGrammatik'">
     <a
-      class="btn btn-danger"
+      class="btn btn-primary"
       href="#"
       data-toggle="modal"
       :data-target="prop.modalType"
@@ -709,5 +709,11 @@ function handleFileSelect(event) {
 
 .newValueInit {
   border: 2px solid green;
+}
+nav-link {
+  color: rgb(255, 255, 255);
+}
+.nav-link:hover {
+  color: #40beaa;
 }
 </style>

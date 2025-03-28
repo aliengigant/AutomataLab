@@ -17,6 +17,9 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 /* import specific icons */
 import { faUserSecret } from "@fortawesome/free-solid-svg-icons";
 
+import "../src/assets/styles/custom-bootstrap.scss";
+
+
 /* add icons to the library */
 library.add(faUserSecret);
 

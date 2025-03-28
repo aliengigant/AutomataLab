@@ -1,12 +1,14 @@
 <template>
-  <modulLayout>
-    <template #option>
-      <automatMenuOption></automatMenuOption>
-    </template>
-    <template #content>
-      <vueFlowComponent></vueFlowComponent>
-    </template>
-  </modulLayout>
+  <div class="container">
+    <modulLayout>
+      <template #option>
+        <automatMenuOption></automatMenuOption>
+      </template>
+      <template #content>
+        <vueFlowComponent></vueFlowComponent>
+      </template>
+    </modulLayout>
+  </div>
 </template>
 
 <script setup>
@@ -20,9 +22,6 @@ import { usetransitionTableElementsStore } from "@/store/TransitionTabelElements
 useVueFlow();
 
 usetransitionTableElementsStore();
-
-
-
 </script>
 
 <style></style>

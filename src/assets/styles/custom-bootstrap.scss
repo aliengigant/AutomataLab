@@ -1,0 +1,18 @@
+// Beispiel: CI-Farben überschreiben
+$primary: #000000;
+$secondary: #ffffff;
+$success: #28a745;
+$danger: #dc3545;
+$warning: #ffc107;
+$info: #40BEAA;
+$light: #f8f9fa;
+$dark: #343a40;
+
+// Optional: Custom Farben
+$custom-colors: (
+  "brandblue": #004080,
+  "orange": #f28c28,
+);
+
+// Bootstrap importieren (nach den Variablen!)
+@import "/node_modules/bootstrap/scss/bootstrap";

@@ -6,7 +6,7 @@
         <!--Klick mich 8 mal an-->
         <div class="bg-primary text-center">
           <div class="red" @click="Counter">
-            <div class="display-2" style="color: aliceblue">AutomataLab</div>
+            <div class="display-2 text-info">AutomataLab</div>
             <div>
               <button
                 v-if="easterEggCounter > 7"
@@ -30,9 +30,8 @@
         <figure class="text-center">
           <h5 style="color: aliceblue">
             <p class="lead">Über AutomataLab</p>
-
-            Willkommen beim Online-Tool für "Theoretische Informatik und Logik"
-            von Professor Dr. Faßbender an der FH Aachen!
+            Willkommen beim Online-Tool für "Theoretische Informatik und
+            Logik" von Professor Dr. Faßbender an der FH Aachen!
             <br />
             <br />
             Diese Webseite ist deine virtuelle Schatzkarte für die faszinierende
@@ -44,7 +43,9 @@
             um die komplexen Konzepte zu verstehen und zu beherrschen.
             <br />
             <br />
-            Unser interaktives Tool bietet dir:
+            <div class="text-info">
+              Unser interaktives Tool bietet dir:
+            </div>
           </h5>
         </figure>
         <hr />
@@ -96,7 +97,7 @@
       aria-labelledby="easterEggModal"
       aria-hidden="true"
     >
-    <!--Du bist Falsch hier, such ein Weg diesen Modal zu triggern =>-->
+      <!--Du bist Falsch hier, such ein Weg diesen Modal zu triggern =>-->
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -224,17 +225,20 @@ function addCodeEintrag(wert, id) {
 }
 .bg-darkblue {
   background: linear-gradient(
-    #0d6efd 50%,
+    #000000 50%,
     #ffffff 95%
   ); /* Schöner Schwarz-Blau-Ton */
 }
 .card {
-  /* transition: box-shadow 0.3s; */
-  transition: 0.3s;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  z-index: 0;
+  position: relative;
 }
 .card:hover {
-  transform: translate(-12px, -12px);
-  box-shadow: 12px 12px 10px rgba(0, 0, 0, 0.35);
+  transform: scale(1.1);
+  box-shadow: 0 12px 124px rgb(64, 190, 169);
+  z-index: 10; /* damit sie über andere Cards schwebt */
+  border: 2px solid #40BEAA;
 }
 a,
 a:hover,

@@ -79,4 +79,12 @@ onMounted(() => {
   line-height: 35px;
   font-size: 0.9rem;
 }
+.bg-darkblue {
+  background: linear-gradient(
+    #000000 50%,
+    #ffffff 95%
+  ); /* Schöner Schwarz-Blau-Ton */
+  min-height: 100vh;
+}
+
 </style>

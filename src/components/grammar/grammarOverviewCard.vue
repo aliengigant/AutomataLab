@@ -43,7 +43,7 @@
   <div v-if="visible" class="card border-5 non-selectable">
     <div class="dropdown m-2">
       <button
-        class="float-right btn btn-outline-secondary btn-circle btn-circle-sm"
+        class="float-right btn btn-outline-info btn-circle btn-circle-sm"
         type="button"
         data-bs-toggle="dropdown"
         aria-expanded="false"
@@ -51,11 +51,11 @@
         <i class="fa fa-cog"></i>
       </button>
       <ul class="dropdown-menu">
-        <li>
+        <li class="list-group-item">
           <a class="dropdown-item" @click="openGrammar" href="#">Bearbeiten</a>
         </li>
-        <li><a class="dropdown-item" href="#">Exportieren</a></li>
-        <li>
+        <li class="list-group-item"><a class="dropdown-item" href="#">Exportieren</a></li>
+        <li class="list-group-item">
           <a
             class="dropdown-item"
             data-toggle="modal"
@@ -134,12 +134,18 @@ function deleteGrammar() {
 
 <style scoped>
 .card {
-  /* transition: box-shadow 0.3s; */
-  transition: 0.3s;
+  margin-top: 2rem;
+  /* transition: transform 0.3s ease, box-shadow 0.3s ease; */
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+  z-index: 0;
+  position: relative;
+  box-shadow: none;
 }
 .card:hover {
-  transform: translate(-12px, -12px);
-  box-shadow: 12px 12px 10px rgba(0, 0, 0, 0.35);
+  transform: scale(1.1);
+  box-shadow: 0 12px 124px rgba(64, 190, 169, 0.658);
+  z-index: 10; /* damit sie über andere Cards schwebt */
+  border: 2px solid #40BEAA;
 }
 a,
 a:hover,
@@ -147,5 +153,12 @@ a:visited,
 a:active {
   color: inherit;
   text-decoration: none;
+}
+
+.list-group-item {
+  transition: 0.3s;
+  color : rgb(0, 0, 0) ease;
+}.list-group-item:hover {
+  color : #40BEAA;
 }
 </style>

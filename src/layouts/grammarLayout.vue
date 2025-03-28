@@ -1,12 +1,14 @@
 <template>
-  <modulLayout>
-    <template #option>
-      <grammarMenuOption></grammarMenuOption>
-    </template>
-    <template #content>
-      <grammarComponent></grammarComponent>
-    </template>
-  </modulLayout>
+  <div class="container">
+    <modulLayout>
+      <template #option>
+        <grammarMenuOption></grammarMenuOption>
+      </template>
+      <template #content>
+        <grammarComponent></grammarComponent>
+      </template>
+    </modulLayout>
+  </div>
 </template>
 
 <script setup>

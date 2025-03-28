@@ -2037,10 +2037,13 @@ function NEASimulation(
 }
 </script>
 
-<style>
+<style scoped>
 .non-selectable {
   user-select: none;
   cursor: default;
   /* pointer-events: none; */
+}
+.nav-link:hover {
+  color: #40BEAA
 }
 </style>

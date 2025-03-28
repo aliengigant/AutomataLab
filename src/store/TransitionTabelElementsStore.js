@@ -73,7 +73,8 @@ export const usetransitionTableElementsStore = defineStore({
       return state.elements.type;
     },
     getAlphabetString(state) {
-      return state.elements.alphabet;
+      const alphabet = String(state?.elements?.alphabet || "");
+      return alphabet.replace(/[{}]/g, "").slice(1, -1);
     },
     getAbleitung(state) {
       return state.elements.ableitung;

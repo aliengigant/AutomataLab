@@ -189,7 +189,6 @@ function convertGrammarToAutomat() {
           t.flag = true;
         }
       }
-
       automato.automat.edges.push({
         data: {
           transitions: transitions,
@@ -208,7 +207,6 @@ function convertGrammarToAutomat() {
       });
     }
   }
-
   // console.log(automato.automat.edges);
   addNodes(automato.automat.nodes);
   addEdges(automato.automat.edges);
