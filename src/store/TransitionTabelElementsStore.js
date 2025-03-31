@@ -137,6 +137,8 @@ export const usetransitionTableElementsStore = defineStore({
           .split(",");
         let id = 0;
         let alphabetArray = [];
+        console.log(state.elements.alphabet);
+        console.log(alphabetArraytmp);
         for (const a of alphabetArraytmp) {
           alphabetArray.push({
             id: id,

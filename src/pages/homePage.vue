@@ -5,8 +5,9 @@
       <div class="row">
         <!--Klick mich 8 mal an-->
         <div class="bg-primary text-center">
+          <img src="../../public/favicon4.png" alt="Logo" width="400" />
           <div class="red" @click="Counter">
-            <div class="display-2 text-info">AutomataLab</div>
+            <!-- <div class="display-2 text-info">AutomataLab</div> -->
             <div>
               <button
                 v-if="easterEggCounter > 7"

@@ -439,7 +439,9 @@ if (automatID) {
     automat.value.automat.nodes &&
     automat.value.automat.alphabet
   ) {
-    automataAlphabet.value = makeArray(automat.value.automat.alphabet);
+    if (!(Array.isArray(automataAlphabet.value))) {
+      automataAlphabet.value = makeArray(automat.value.automat.alphabet);
+    }
   } else {
     // Behandle den Fall, wenn der automat oder seine Eigenschaften nicht gefunden werden
     console.error("Automat or its properties not found");
@@ -1000,8 +1002,9 @@ function NEAtoDEA() {
   // wir wollen nun, dass pro Übergang mit den selben Target ein Eintrag ist und wie transitions_Label als
   // Array zusammengefasst wird [a,b] oder einfach nur [a]
   combineTransition(automaton);
-  automaton.alphabet = transitionTablle.getAlphabetWithoutValue;
-
+  automaton.alphabet = transitionTablle.getAlphabet;
+  console.log(transitionTablle.getAlphabet);
+  console.log(automaton);
   var linkedEA = linkEA(automaton);
   console.log("linkedEA");
   console.log(linkedEA);
@@ -1270,10 +1273,11 @@ function checkAutomat() {
       else if (element.transitions.length < automataAlphabet.value.length) {
         CheckText.value +=
           "Es fehlen für " + element.state_label + " Übergänge!";
-      } else {
-        CheckText.value +=
-          "Für " + element.state_label + " wurden zuviele Übergänge definiert!";
       }
+      //  else if(element.transitions.length > automataAlphabet.value.length) {
+      //   CheckText.value +=
+      //     "Für " + element.state_label + " wurden zuviele Übergänge definiert!";
+      // }
     }
 
     //Überprüfen der Vollständigkeit der Übergänge
@@ -1782,7 +1786,7 @@ function DEAtoMinimalDEA() {
     name: "Minimal DEA from " + transitionTablle.getName,
     type: "DEA",
     automat: {
-      alphabet: transitionTablle.getAlphabetString,
+      alphabet: a.alphabet,
       nodes: [],
       edges: [],
     },
@@ -2044,6 +2048,6 @@ function NEASimulation(
   /* pointer-events: none; */
 }
 .nav-link:hover {
-  color: #40BEAA
+  color: #40beaa;
 }
 </style>

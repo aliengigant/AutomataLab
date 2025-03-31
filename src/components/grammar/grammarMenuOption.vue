@@ -100,7 +100,7 @@ function convertGrammarToAutomat() {
   const edges = table.getGrammarRowArray;
   const alphabet = table.getAlphabet;
   let isThereEnd = false;
-  console.log(edges);
+  console.log(alphabet);
   //Gibt es ein Ende?
   for (const state of states) {
     for (const transitions of state.transitions) {
