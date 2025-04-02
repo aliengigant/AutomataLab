@@ -20,8 +20,7 @@ Die Anwendung basiert vollständig auf **Vue.js** und lässt sich lokal einfach 
 - **Minimierung** deterministischer Automaten
 - Fehlererkennung bei Automatendefinitionen
 - Darstellung als **Zustandsdiagramm und Transitionstabelle**
-- **Persistente Datenspeicherung** im Browser
-- **Offline-Verfügbarkeit** dank PWA-Technologie
+- **Persistente Datenspeicherung** im Browser und Lokal
 
 ---
 
