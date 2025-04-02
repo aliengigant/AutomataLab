@@ -55,11 +55,13 @@ Localhost:  http://localhost:8080/
 
 ---
 ## ❓ Häufige Fragen
-Ich kenne mich mit Vue nicht aus – was muss ich beachten?
+**Ich kenne mich mit Vue nicht aus – was muss ich beachten?**
+
 Kein Problem! Du musst kein Vue-Experte sein, um die Anwendung zu starten oder zu nutzen. Du brauchst nur Node.js und den Paketmanager npm. Die Anwendung ist bereits vollständig programmiert – du musst nichts anpassen, nur ausführen.
 
 ## 👤 Autor
 Dieses Projekt wurde im Rahmen eines Universitätsprojekts entwickelt von:
 
 Hakan Kanak
+
 GitHub: https://github.com/aliengigant/trafoweb
