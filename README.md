@@ -37,11 +37,12 @@ npm run serve
 Nach kurzer Zeit zeigt das Terminal eine lokale Adresse an, z. B.:
 Localhost:  http://localhost:8080/
 
-❓ Häufige Fragen
+---
+## ❓ Häufige Fragen
 Ich kenne mich mit Vue nicht aus – was muss ich beachten?
 Kein Problem! Du musst kein Vue-Experte sein, um die Anwendung zu starten oder zu nutzen. Du brauchst nur Node.js und den Paketmanager npm. Die Anwendung ist bereits vollständig programmiert – du musst nichts anpassen, nur ausführen.
 
-👤 Autor
+## 👤 Autor
 Dieses Projekt wurde im Rahmen eines Universitätsprojekts entwickelt von:
 
 Hakan Kanak
