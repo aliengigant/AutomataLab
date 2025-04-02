@@ -64,4 +64,4 @@ Dieses Projekt wurde im Rahmen eines Universitätsprojekts entwickelt von:
 
 Hakan Kanak
 
-GitHub: https://github.com/aliengigant/trafoweb
+GitHub: https://github.com/aliengigant/AutomataLab
