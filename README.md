@@ -1,25 +1,42 @@
-# AutomataLab 
+# 🚀 AutomataLab
 
-**AutomataLab** ist eine Webanwendung, die im Rahmen eines universitären Projekts entwickelt wurde. Ziel ist es, Informationen zu Transformatoren strukturiert zu erfassen, darzustellen und zu verwalten – z. B. für Studium, Laborübungen oder Demonstrationszwecke.
+**AutomataLab** ist eine interaktive Webanwendung zur Visualisierung und Transformation endlicher Automaten und Typ-3-Grammatiken. Sie wurde im Rahmen eines universitären Projekts mit dem Ziel entwickelt, Studierende im Fach *Theoretische Informatik und Logik (TILO)* sowie Lehrende und Interessierte bei der praxisnahen Auseinandersetzung mit formalen Sprachen und Automatenmodellen zu unterstützen.
+
+Die Anwendung bietet Funktionen zur Erstellung, Umwandlung und Simulation von deterministischen und nichtdeterministischen endlichen Automaten (DEA, NEA), Typ-3-Grammatiken sowie zur Ausgabe in Prolog-Format. Darüber hinaus unterstützt AutomataLab die Minimierung von DEA und die interaktive Simulation von Eingabewörtern.
 
 Die Anwendung basiert vollständig auf **Vue.js** und lässt sich lokal einfach ausführen – auch ohne tiefgehende Vorkenntnisse in Webentwicklung.
 
 ---
 
-## 🔧 Voraussetzungen
+## ✨ Features
 
-Damit du das Projekt ausführen kannst, benötigst du:
-
-- **[Node.js](https://nodejs.org/)** (Version 16 oder höher)  
-  > Node.js beinhaltet auch den Paketmanager **npm**, den du ebenfalls benötigst.
+- Erstellung und Bearbeitung von **DEA**, **NEA** und **Typ-3-Grammatiken**
+- Intuitive **graphische Benutzeroberfläche**
+- Interaktive **Simulation** von Eingabewörtern mit visuellem Zustands-Feedback
+- Transformationen:
+  - DEA ⇄ Typ-3-Grammatik
+  - Typ-3-Grammatik → NEA → DEA
+  - DEA → **Prolog-Code**
+- **Minimierung** deterministischer Automaten
+- Fehlererkennung bei Automatendefinitionen
+- Darstellung als **Zustandsdiagramm und Transitionstabelle**
+- **Persistente Datenspeicherung** im Browser
+- **Offline-Verfügbarkeit** dank PWA-Technologie
 
 ---
 
-## 🚀 Projekt lokal starten
+## 🔧 Voraussetzungen
+
+Damit du das Projekt lokal ausführen kannst, benötigst du:
+
+- **[Node.js](https://nodejs.org/)** (Version 16 oder höher)  
+  > Node.js beinhaltet auch den Paketmanager **npm**, der ebenfalls benötigt wird.
+
+---
+
+## ⚙️ Projekt lokal starten
 
 ### 1. Repository herunterladen
-
-Öffne ein Terminal oder die Eingabeaufforderung und gib Folgendes ein:
 
 ```bash
 git clone https://github.com/aliengigant/trafoweb.git
