@@ -43,7 +43,7 @@
   <div v-if="visible" class="card border-5 non-selectable">
     <div class="dropdown m-2">
       <button
-        class="float-right btn btn-outline-info btn-circle btn-circle-sm"
+        class="float-right btn btn-outline-primary btn-circle btn-circle-sm"
         type="button"
         data-bs-toggle="dropdown"
         aria-expanded="false"
@@ -139,7 +139,14 @@ function deleteGrammar() {
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
   z-index: 0;
   position: relative;
-  box-shadow: none;
+  /* box-shadow: none; */
+
+  background: rgba(255, 255, 255, 0.75);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  /* backdrop-filter: blur(13.8px);
+  -webkit-backdrop-filter: blur(13.8px); */
+  border: 1px solid rgba(255, 255, 255, 0.42);
 }
 .card:hover {
   transform: scale(1.1);

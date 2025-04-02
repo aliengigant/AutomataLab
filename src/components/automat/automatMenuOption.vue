@@ -11,7 +11,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="ExportModal">Löschen</h5>
+          <h5 class="modal-title" id="ExportModal">Exportieren</h5>
           <button
             type="button"
             class="btn-close text-reset"
@@ -31,7 +31,7 @@
           >
             Ja
           </button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">
             Nein
           </button>
         </div>
@@ -50,7 +50,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="DeaMinModal">Löschen</h5>
+          <h5 class="modal-title" id="DeaMinModal">DEA Minimieren</h5>
           <button
             type="button"
             class="btn-close text-reset"
@@ -70,7 +70,7 @@
           >
             Ja
           </button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">
             Nein
           </button>
         </div>
@@ -316,7 +316,7 @@
           <i class="fa fa-plus" aria-hidden="true"></i>
         </button>
         <ul class="dropdown-menu">
-          <div v-for="(word, id) in automataAlphabet" :key="id">
+          <div v-for="(word, id) in alp" :key="id">
             <li>
               <a
                 class="dropdown-item"
@@ -392,7 +392,7 @@ import { storageHooks } from "@/hooks/automatStorageHook";
 import { useAutomataElementsStore } from "@/store/automataElementsStore";
 import popUpComponent from "../popUpComponent.vue";
 import { useVueFlow } from "@vue-flow/core";
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { Offcanvas } from "bootstrap";
 
@@ -429,7 +429,7 @@ const options = {
 };
 
 const formattedTime = now.toLocaleString("de-DE", options); // Formatierung
-
+const alp= computed(()=>  makeArray(automat.value.automat.alphabet));
 if (automatID) {
   automat.value = findAutomataById(automatID);
   // Überprüfe, ob der automat und seine Eigenschaften vorhanden sind
@@ -1261,7 +1261,7 @@ function checkAutomat() {
     console.log(grammarRows);
 
     for (const element of table.states) {
-      if (element.transitions.length == automataAlphabet.value.length) {
+      if (element.transitions.length == alp.value.length) {
         //Do Something
       }
       // Überprüfe, ob es leere Transitionen gibt
@@ -1270,7 +1270,7 @@ function checkAutomat() {
           "Es muss für " + element.state_label + " Übergänge definiert werden!";
       }
       // Überprüfe, ob es leere Transitionen gibt
-      else if (element.transitions.length < automataAlphabet.value.length) {
+      else if (element.transitions.length < alp.value.length) {
         CheckText.value +=
           "Es fehlen für " + element.state_label + " Übergänge!";
       }
@@ -1289,7 +1289,7 @@ function checkAutomat() {
         ruleString += rule;
       }
       console.log("RuleString: " + ruleString);
-      for (const letter of automataAlphabet.value) {
+      for (const letter of alp.value) {
         for (let i = 0; i < ruleString.length; i++) {
           if (ruleString[i].value == letter) {
             count++;
@@ -1618,14 +1618,14 @@ function DEAtoMinimalDEA() {
         if (z < i && M[i][z] == false) {
           let s1 = a.states[i];
           let s2 = a.states[z];
-          for (let w = 0; w < automataAlphabet.value.length; w++) {
+          for (let w = 0; w < alp.value.length; w++) {
             let z1 = findTargetIndexForInput(
               s1,
-              automataAlphabet.value[w].value
+              alp.value[w].value
             );
             let z2 = findTargetIndexForInput(
               s2,
-              automataAlphabet.value[w].value
+              alp.value[w].value
             );
             if (z1 == -1 || z2 == -1) {
               continue;

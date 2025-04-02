@@ -3,7 +3,7 @@
     <header>
       <div class="bg-darkblue">
         <!--Navbar-->
-        <navBarComponent :title="modulName"></navBarComponent>
+        <navBarComponent :title="modulName" :componentData="componentData"></navBarComponent>
       </div>
     </header>
     <!-- Content Area-->
@@ -18,10 +18,13 @@
 <script setup>
 import navBarComponent from "../components/navBarComponent.vue";
 import { useModalNameStore } from "@/store/modalNameStore";
+import { usetransitionTableElementsStore } from "@/store/TransitionTabelElementsStore";
 import { computed } from "vue";
 
 const modalStore = useModalNameStore();
+const tr = usetransitionTableElementsStore();
 var modulName = computed(() => modalStore.getModalName);
+var componentData = computed(() => tr);
 </script>
 
 <style scoped>

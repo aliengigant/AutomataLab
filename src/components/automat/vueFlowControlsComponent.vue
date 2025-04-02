@@ -1,10 +1,10 @@
 <template>
   <Panel position="bottom-rigth">
-    <button class="pnl-Button" @click="onAdd()">
-      <i class="fa-solid fa-plus"></i> Add Node
+    <button class="btn btn-info" @click="onAdd()">
+      <i class="fa-solid fa-plus"></i> Neuer Zustand
     </button>
-    <button @click="onSave()">
-      <i class="fa-regular fa-floppy-disk"></i> Save
+    <button class="btn btn-primary" @click="onSave()">
+      <i class="fa-regular fa-floppy-disk"></i> Speichern
     </button>
   </Panel>
 </template>

@@ -249,8 +249,8 @@
           <table-component></table-component>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">
-            Close
+          <button type="button" class="btn btn-info" data-dismiss="modal">
+            Schließen
           </button>
         </div>
       </div>
@@ -284,11 +284,11 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-primary" @click="saveGrammar">
+          <button type="button" class="btn btn-info" @click="saveGrammar">
             Speichern
           </button>
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">
-            Close
+          <button type="button" class="btn btn-primary" data-dismiss="modal">
+            Schließen
           </button>
         </div>
       </div>
@@ -418,8 +418,8 @@
         </div>
         <div class="modal-body"><prologComponent></prologComponent></div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">
-            Close
+          <button type="button" class="btn btn-primary" data-dismiss="modal">
+            Schließen
           </button>
         </div>
       </div>

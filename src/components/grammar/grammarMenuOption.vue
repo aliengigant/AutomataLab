@@ -72,7 +72,7 @@ function newAutomata() {
     type: "NEA",
     createdAt: formattedTime,
     automat: {
-      alphabet: table.getAlphabetString,
+      alphabet: table.getAlphabet2,
       nodes: [],
       edges: [],
     },

@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <!-- <div class="container"> -->
     <modulLayout>
       <template #option>
         <automatMenuOption></automatMenuOption>
@@ -8,7 +8,7 @@
         <vueFlowComponent></vueFlowComponent>
       </template>
     </modulLayout>
-  </div>
+  <!-- </div> -->
 </template>
 
 <script setup>

@@ -130,7 +130,7 @@ export const usetransitionTableElementsStore = defineStore({
       return result;
     },
     getAlphabet(state) {
-      // Wenn Sie auf das Alphabet des ersten Elements im Array zugreifen möchten
+      // Alphabet als Array zurückgeben z.B. [id:"0",value:"a",id:"1",value:"b"]
       if (state.elements.alphabet != null) {
         const alphabetArraytmp = state.elements.alphabet
           .slice(1, -1)
@@ -149,6 +149,11 @@ export const usetransitionTableElementsStore = defineStore({
         return alphabetArray;
       }
       return null; // Oder eine Standardwert, wenn das Array leer ist
+    },
+    getAlphabet2(state) {
+      //alphabet als ursprüngliches String zurückgeben
+      // Beispiel: "[a,b,c]"
+    return state.elements.alphabet;
     },
     getAlphabetWithoutValue(state) {
       // Wenn Sie auf das Alphabet des ersten Elements im Array zugreifen möchten

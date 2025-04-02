@@ -5,10 +5,11 @@
       <div class="row">
         <!--Klick mich 8 mal an-->
         <div class="bg-primary text-center">
-          <img src="../../public/favicon4.png" alt="Logo" width="400" />
-          <div class="red" @click="Counter">
-            <!-- <div class="display-2 text-info">AutomataLab</div> -->
-            <div>
+          <div class="col-md-auto">
+            <div class="red" @click="Counter">
+              <!-- <img src="../../public/favicon4.png" alt="Logo" width="350" /> -->
+              <img src="../../public/Logo.png" alt="Logo" width="350" />
+              <!-- <div class="display-2 text-info">AutomataLab</div> -->
               <button
                 v-if="easterEggCounter > 7"
                 id="bottomRightBtn"
@@ -21,7 +22,7 @@
               </button>
             </div>
             <p class="lead" style="color: aliceblue">
-              Ein Tool für dein Fantasy
+              Ein Tool für deine Fantasie
             </p>
           </div>
         </div>
@@ -31,8 +32,8 @@
         <figure class="text-center">
           <h5 style="color: aliceblue">
             <p class="lead">Über AutomataLab</p>
-            Willkommen beim Online-Tool für "Theoretische Informatik und
-            Logik" von Professor Dr. Faßbender an der FH Aachen!
+            Willkommen beim Online-Tool für "Theoretische Informatik und Logik"
+            von Professor Dr. Faßbender an der FH Aachen!
             <br />
             <br />
             Diese Webseite ist deine virtuelle Schatzkarte für die faszinierende
@@ -44,9 +45,7 @@
             um die komplexen Konzepte zu verstehen und zu beherrschen.
             <br />
             <br />
-            <div class="text-info">
-              Unser interaktives Tool bietet dir:
-            </div>
+            <div class="text-info">Unser interaktives Tool bietet dir:</div>
           </h5>
         </figure>
         <hr />
@@ -231,7 +230,9 @@ function addCodeEintrag(wert, id) {
   ); /* Schöner Schwarz-Blau-Ton */
 }
 .card {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
   z-index: 0;
   position: relative;
 }
@@ -239,7 +240,7 @@ function addCodeEintrag(wert, id) {
   transform: scale(1.1);
   box-shadow: 0 12px 124px rgb(64, 190, 169);
   z-index: 10; /* damit sie über andere Cards schwebt */
-  border: 2px solid #40BEAA;
+  border: 2px solid #40beaa;
 }
 a,
 a:hover,
