@@ -63,6 +63,6 @@ Kein Problem! Du musst kein Vue-Experte sein, um die Anwendung zu starten oder z
 ## 👤 Autor
 Dieses Projekt wurde im Rahmen eines Universitätsprojekts entwickelt von:
 
-Hakan Kanak
+Hakan
 
 GitHub: https://github.com/aliengigant/AutomataLab
