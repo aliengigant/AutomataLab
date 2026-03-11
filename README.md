@@ -1,3 +1,4 @@
+![screenshot](public/favicon4.png)
 # 🚀 AutomataLab
 
 **AutomataLab** ist eine interaktive Webanwendung zur Visualisierung und Transformation endlicher Automaten und Typ-3-Grammatiken. Sie wurde im Rahmen eines universitären Projekts mit dem Ziel entwickelt, Studierende im Fach *Theoretische Informatik und Logik (TILO)* sowie Lehrende und Interessierte bei der praxisnahen Auseinandersetzung mit formalen Sprachen und Automatenmodellen zu unterstützen.
